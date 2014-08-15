@@ -2,8 +2,13 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+    <style name="AppTheme" parent="android:Theme.Holo.Light">
         <!-- Customize your theme here. -->
+
+        <!-- Disables the action bar application wide -->
+        <item name="android:windowActionBar"> false </item>
+        <!-- Disables the title bar -->
+        <item name="android:windowNoTitle"> true </item>
     </style>
 
 </resources>

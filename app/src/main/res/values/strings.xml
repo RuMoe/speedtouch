@@ -2,5 +2,10 @@
 <resources>
 
     <string name="app_name">Speedtouch</string>
+    <string name="title_activity_game">GameActivity</string>
+    <string name="hello_world">Hello world!</string>
 
+    <!-- Main game activity -->
+    <string name="score_label">Score:</string>
+    <string name="time_remaining">_TIME_</string>
 </resources>
