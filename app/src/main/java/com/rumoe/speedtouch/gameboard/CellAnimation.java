@@ -1,10 +1,13 @@
 package com.rumoe.speedtouch.gameboard;
 
 
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.SurfaceHolder;
+
+import com.rumoe.speedtouch.R;
 
 
 // TODO handle onpause and onresume
@@ -13,20 +16,23 @@ public class CellAnimation implements Runnable {
     private SurfaceHolder cellSurface;
     private final Paint cellPaint;
     private int backgroundColor;
+    private int shadowColor;
 
-    private float cellRadius;
+    private float maxCellRadius;
     private float cellXCenter;
     private float cellYCenter;
 
     private Thread drawThread;
 
-    public CellAnimation(SurfaceHolder surface, int cellColor, int backgroundColor) {
+    public CellAnimation(SurfaceHolder surface) {
         cellSurface = surface;
 
-        this.backgroundColor = backgroundColor;
+        backgroundColor = Resources.getSystem().getColor(R.color.game_board_background);
+        shadowColor     = Resources.getSystem().getColor(R.color.cell_shadow);
 
         cellPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        cellPaint.setColor(cellColor);
+        cellPaint.setColor(Resources.getSystem().getColor(R.color.cell_standard));
+        cellPaint.setShadowLayer(10.0f, 0.0f, 5.0f, shadowColor);
     }
 
     /**
@@ -37,7 +43,7 @@ public class CellAnimation implements Runnable {
      * @param cellPadding The padding of the cell
      */
     public void setDimensions(int cellWidth, int cellHeight, int cellPadding) {
-        cellRadius = (Math.min(cellWidth, cellHeight) - 2 * cellPadding) * 0.5f;
+        maxCellRadius = (Math.min(cellWidth, cellHeight) - 2 * cellPadding) * 0.5f;
 
         cellXCenter = cellWidth / 2.0f;
         cellYCenter = cellHeight / 2.0f;
@@ -69,10 +75,10 @@ public class CellAnimation implements Runnable {
             Canvas canvas = cellSurface.lockCanvas();
 
             canvas.drawColor(backgroundColor);  // over-paint everything from previous frame
-            canvas.drawCircle(cellXCenter, cellYCenter, cellRadius, cellPaint);
+
+            canvas.drawCircle(cellXCenter, cellYCenter, maxCellRadius, cellPaint);
 
             cellSurface.unlockCanvasAndPost(canvas);
-
         } else {
             Log.e("CellAnimation", "Cell surface invalid while attempting to draw");
         }

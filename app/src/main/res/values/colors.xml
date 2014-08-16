@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="game_board_background">#FFFFFF</color>
-    <color name="cell_standard_color">#000000</color>
+    <color name="cell_shadow">#000000</color>
+    <color name="cell_standard">#000000</color>
 </resources>

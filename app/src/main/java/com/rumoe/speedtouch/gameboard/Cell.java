@@ -22,17 +22,12 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
     public Cell(Context context) {
         super(context);
 
-        int backgroundColor = getResources().getColor(R.color.game_board_background);
-        int cellColor = getResources().getColor(R.color.cell_standard_color);
-        animation = new CellAnimation(getHolder(), cellColor, backgroundColor);
+        animation = new CellAnimation(getHolder());
         isActive = false;
 
         // a cell is part of one game board -> in most cases there is exactly one observer
         // (except multiplayer)
         observer = new ArrayList<CellObserver>(1);
-
-        int cellPadding = (int) getResources().getDimension(R.dimen.board_cell_padding);
-        setPadding(cellPadding, cellPadding, cellPadding, cellPadding);
 
         // registers the listener
         getHolder().addCallback(this);
