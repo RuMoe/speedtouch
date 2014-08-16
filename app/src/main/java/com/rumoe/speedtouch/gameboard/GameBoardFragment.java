@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch;
+package com.rumoe.speedtouch.gameboard;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
+import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.gameboard.Cell;
 import com.rumoe.speedtouch.gameboard.CellObserver;
 

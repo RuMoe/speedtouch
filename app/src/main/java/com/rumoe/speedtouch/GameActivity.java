@@ -3,6 +3,8 @@ package com.rumoe.speedtouch;
 import android.app.Activity;
 import android.os.Bundle;
 
+import com.rumoe.speedtouch.gameboard.GameBoardFragment;
+
 public class GameActivity extends Activity {
 
     @Override

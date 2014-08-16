@@ -8,6 +8,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.rumoe.speedtouch.R;
+import com.rumoe.speedtouch.gameboard.animation.CellAnimation;
 
 import java.util.ArrayList;
 
@@ -17,13 +18,13 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
 
     private CellAnimation animation;
     private ArrayList<CellObserver> observer;
-    private boolean isActive;
+    private boolean active;
 
     public Cell(Context context) {
         super(context);
 
-        animation = new CellAnimation(getHolder());
-        isActive = false;
+        animation = new CellAnimation(getHolder(), getContext());
+        active = false;
 
         // a cell is part of one game board -> in most cases there is exactly one observer
         // (except multiplayer)
@@ -42,7 +43,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
     public void surfaceDestroyed(SurfaceHolder holder) {
         //TODO stop thread
         Log.i("Cell", "surface destroyed");
-        isActive = false;
+        active = false;
     }
 
     @Override
@@ -57,10 +58,15 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
         super.onTouchEvent(e);
 
         if (e.getAction() == MotionEvent.ACTION_DOWN) {
-            if (isActive) {
-                //TODO check if missed etc
+            if (active) {
+                if (animation.isTargetHit(e.getX(), e.getY())) {
+                    animation.hideCell();
+                    active = false;
+                } else {
+
+                }
             } else {
-                animation.startAnimation();
+
             }
         }
         return true;
@@ -98,9 +104,40 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
         return false;
     }
 
+    /**
+     * Notify all observer that the cell is now active.
+     */
     private void notifyAllOnActive() {
         for (CellObserver obs : observer) {
             obs.notifyOnActive(this);
+        }
+    }
+
+    /**
+     * Notify all observer that the cell is now inactive due to timeout.
+     */
+    private void notifyAllOnTimeout() {
+        for (CellObserver obs : observer) {
+            obs.notifyOnTimeout(this);
+        }
+    }
+
+    /**
+     * Notify all observer that the cell is now inactive due to touch event.
+     */
+    private void notifyAllOnTouch() {
+        for (CellObserver obs : observer) {
+            obs.notifyOnTouch(this);
+        }
+    }
+
+    /**
+     * Notify all observer tht there was a touch event which did not hit a
+     * target.
+     */
+    private void notifyAllOnMissedTouch() {
+        for (CellObserver obs : observer) {
+            obs.notifyOnMissedTouch(this);
         }
     }
 }
