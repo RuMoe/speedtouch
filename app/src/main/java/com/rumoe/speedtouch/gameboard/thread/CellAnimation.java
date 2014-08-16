@@ -111,10 +111,7 @@ public class CellAnimation implements Runnable {
                     Log.w("CellAnimation", "Lifecycle thread interrupted");
                     return;
                 }
-                if (isInterrupted()) {
-                    Log.d("CellAnimation", "test2");
-                }
-                Log.d("CellAnimation", "test");
+
                 shrinkAnimation(shrinkTime);
             }
         };
