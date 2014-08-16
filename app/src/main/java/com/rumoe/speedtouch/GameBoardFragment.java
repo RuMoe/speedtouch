@@ -1,28 +1,27 @@
 package com.rumoe.speedtouch;
 
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
 
-/**
- * A placeholder fragment containing a simple view.
- */
-public class GameBoardFragment extends Fragment {
+import com.rumoe.speedtouch.gameboard.Cell;
+import com.rumoe.speedtouch.gameboard.CellObserver;
+
+public class GameBoardFragment extends Fragment implements CellObserver{
 
     private static final int ROW_COUNT      = 5;
     private static final int COLUMN_COUNT   = 3;
 
-    private View[][] cells;
+    private Cell[][] cells;
+    private int activeCells;
 
     public GameBoardFragment() {
-        cells = new View[ROW_COUNT][COLUMN_COUNT];
+        cells = new Cell[ROW_COUNT][COLUMN_COUNT];
+        activeCells = 0;
     }
 
     @Override
@@ -39,15 +38,43 @@ public class GameBoardFragment extends Fragment {
             gameBoard.addView(tr, new TableLayout.LayoutParams(0,0, cellHeight));
 
             for (int j = 0; j < COLUMN_COUNT; j++) {
-                TextView tv = new TextView(tr.getContext());
-                tv.setText("test" + (i + j) + " ");
+                Cell cell = new Cell(tr.getContext());
+                tr.addView(cell, new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, cellWidth));
 
-                tr.addView(tv, new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, cellWidth));
-
-                cells[i][j] = tv;
+                cell.registerObserver(this);
+                cells[i][j] = cell;
             }
         }
 
         return rootView;
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        for (Cell[] row : cells) {
+            for (Cell c : row) {
+                c.removeObserver(this);
+            }
+        }
+    }
+
+    @Override
+    public void notifyOnActive(Cell c) {
+        activeCells++;
+    }
+
+    @Override
+    public void notifyOnTimeout(Cell c) {
+        activeCells--;
+    }
+
+    @Override
+    public void notifyOnTouch(Cell c) {
+        activeCells--;
+    }
+
+    @Override
+    public void notifyOnMissedTouch(Cell c) {}
 }
