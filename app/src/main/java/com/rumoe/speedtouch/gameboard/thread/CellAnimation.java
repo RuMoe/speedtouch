@@ -13,7 +13,6 @@ import com.rumoe.speedtouch.gameboard.strategy.cellradius.LinearGrowthStrategy;
 
 // TODO add event to tell cell that lifecycle ended
 // TODO handle onpause and onresume
-// TODO check only one calculation thread/drawthread/lifecyclethread at a time
 public class CellAnimation implements Runnable {
 
     private static final int DEFAULT_GROW_ANIMATION_DURATION    = 100;
@@ -100,6 +99,8 @@ public class CellAnimation implements Runnable {
     }
 
     public boolean startLifecycle(final int growTime, final int constantTime,final int shrinkTime) {
+        if (lifecycleThread.isAlive()) return false;
+
         lifecycleThread = new Thread() {
             public void run() {
                 growAnimation(growTime);
@@ -126,6 +127,8 @@ public class CellAnimation implements Runnable {
     }
 
     public boolean growAnimation(CellRadiusCalcStrategy strategy, int duration) {
+       if (calculationThread.isAlive()) return false;
+
         calculationThread = new CellRadiusCalc(strategy, duration, maxCellRadius);
         calculationThread.start();
 
@@ -144,6 +147,8 @@ public class CellAnimation implements Runnable {
     }
 
     public boolean shrinkAnimation(CellRadiusCalcStrategy strategy, int duration) {
+        if (calculationThread.isAlive()) return false;
+
         calculationThread = new CellRadiusCalc(strategy, duration, minCelLRadius);
         calculationThread.start();
 
