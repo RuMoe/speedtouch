@@ -62,14 +62,25 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
                 if (animation.isTargetHit(e.getX(), e.getY())) {
                     animation.hideCell();
                     active = false;
+                    notifyAllOnTouch();
                 } else {
-
+                    notifyAllOnMissedTouch();
                 }
             } else {
-
+                notifyAllOnMissedTouch();
             }
         }
         return true;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void activate() {
+        active = true;
+        notifyAllOnActive();
+        animation.growAnimation();
     }
 
     /**
