@@ -42,7 +42,7 @@ public class CellAnimation implements Runnable {
 
         cellPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         cellPaint.setColor(context.getResources().getColor(R.color.cell_standard));
-        cellPaint.setShadowLayer(10.0f, 0.0f, 5.0f, shadowColor);
+        cellPaint.setShadowLayer(15.0f, 0.0f, 0.0f, shadowColor);
     }
 
     /**
