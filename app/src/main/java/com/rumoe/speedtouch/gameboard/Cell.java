@@ -41,9 +41,9 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        //TODO stop thread
         Log.i("Cell", "surface destroyed");
         active = false;
+        animation.stopAnimation();
     }
 
     @Override
