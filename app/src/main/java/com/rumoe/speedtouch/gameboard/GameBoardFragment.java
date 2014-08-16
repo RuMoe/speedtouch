@@ -9,8 +9,6 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 
 import com.rumoe.speedtouch.R;
-import com.rumoe.speedtouch.gameboard.Cell;
-import com.rumoe.speedtouch.gameboard.CellObserver;
 import com.rumoe.speedtouch.gameboard.thread.GameThread;
 
 public class GameBoardFragment extends Fragment{
