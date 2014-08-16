@@ -99,7 +99,8 @@ public class CellAnimation implements Runnable {
     }
 
     public boolean startLifecycle(final int growTime, final int constantTime,final int shrinkTime) {
-        if (lifecycleThread.isAlive()) return false;
+        if ((lifecycleThread != null && lifecycleThread.isAlive()) ||
+                (calculationThread != null && calculationThread.isAlive())) return false;
 
         lifecycleThread = new Thread() {
             public void run() {
@@ -127,7 +128,7 @@ public class CellAnimation implements Runnable {
     }
 
     public boolean growAnimation(CellRadiusCalcStrategy strategy, int duration) {
-       if (calculationThread.isAlive()) return false;
+       if (calculationThread != null && calculationThread.isAlive()) return false;
 
         calculationThread = new CellRadiusCalc(strategy, duration, maxCellRadius);
         calculationThread.start();
@@ -147,7 +148,7 @@ public class CellAnimation implements Runnable {
     }
 
     public boolean shrinkAnimation(CellRadiusCalcStrategy strategy, int duration) {
-        if (calculationThread.isAlive()) return false;
+        if (calculationThread != null && calculationThread.isAlive()) return false;
 
         calculationThread = new CellRadiusCalc(strategy, duration, minCelLRadius);
         calculationThread.start();
@@ -165,6 +166,7 @@ public class CellAnimation implements Runnable {
     public boolean clearCell() {
         if (animationRunning) {
             calculationThread.abortCalculations();
+            lifecycleThread.interrupt();
             animationRunning = false;
         }
 
@@ -197,7 +199,7 @@ public class CellAnimation implements Runnable {
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
-                Log.e("CellAnimation", "Sleep in cell draw thread interrupted");
+                Log.w("CellAnimation", "Sleep in cell draw thread interrupted");
             }
             framesDrawn++;
         }
@@ -208,7 +210,7 @@ public class CellAnimation implements Runnable {
      * This runnable' task is it to change the cell radius from zero - max or vise versa
      * in a given time with given number of steps.
      */
-    class CellRadiusCalc extends Thread {
+    private class CellRadiusCalc extends Thread {
 
         private CellRadiusCalcStrategy radiusCalcStrategy;
 
@@ -235,6 +237,7 @@ public class CellAnimation implements Runnable {
 
         void abortCalculations() {
             abortCalc = true;
+            interrupt();
         }
 
         @Override
@@ -257,7 +260,7 @@ public class CellAnimation implements Runnable {
                     float time = ((float) remainingTime) / remainingSteps;
                     Thread.sleep((int) time, ((int) (time * 1000000)) % 1000000);
                 } catch (InterruptedException e) {
-                    Log.e("CellAnimation", "Sleep in cell radius calculation thread interrupted");
+                    Log.w("CellAnimation", "Sleep in cell radius calculation thread interrupted");
                 }
                 currentStep++;
             }
