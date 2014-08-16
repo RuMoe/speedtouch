@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.rumoe.speedtouch.R;
+import com.rumoe.speedtouch.gameboard.strategy.cellradius.CellRadiusCalcStrategy;
+import com.rumoe.speedtouch.gameboard.strategy.cellradius.LinearGrowthStrategy;
 
 
 // TODO handle onpause and onresume
@@ -91,7 +93,11 @@ public class CellAnimation implements Runnable {
     }
 
     public boolean growAnimation(int duration) {
-        calculationThread = new CellRadiusCalc(duration);
+        return growAnimation(new LinearGrowthStrategy(), duration);
+    }
+
+    public boolean growAnimation(CellRadiusCalcStrategy strategy, int duration) {
+        calculationThread = new CellRadiusCalc(strategy, duration, maxCellRadius);
         calculationThread.start();
 
         drawThread = new Thread(this);
@@ -100,7 +106,11 @@ public class CellAnimation implements Runnable {
         return true;
     }
 
-    public boolean hideCell() {
+    /**
+     * Clear the content of the cell and stop all animations.
+     * @return true
+     */
+    public boolean clearCell() {
         if (animationRunning) {
             calculationThread.abortCalculations();
             animationRunning = false;
@@ -112,6 +122,10 @@ public class CellAnimation implements Runnable {
     }
 
     @Override
+    /**
+     * As long as the thread for recalculation of the cell radius works, update
+     * the cell for the user in regular intervals.
+     */
     public void run() {
         int framesDrawn = 0;
         while (animationRunning) {
@@ -144,20 +158,26 @@ public class CellAnimation implements Runnable {
      */
     class CellRadiusCalc extends Thread {
 
+        private CellRadiusCalcStrategy radiusCalcStrategy;
+
         private boolean abortCalc;
 
+        private float targetRadius;
         private int numberOfSteps;
         private int duration;
 
-        CellRadiusCalc (int duration) {
-            this(duration, duration / 2);
+        CellRadiusCalc (CellRadiusCalcStrategy strategy, int duration, float targetRadius) {
+            this(strategy, duration, duration / 2, targetRadius);
         }
 
-        CellRadiusCalc (int duration, int numberOfSteps) {
+        CellRadiusCalc (CellRadiusCalcStrategy strategy, int duration, int numberOfSteps,
+                        float targetRadius) {
+            this.radiusCalcStrategy = strategy;
             this.duration = duration;
             this.numberOfSteps = numberOfSteps;
-            abortCalc = false;
+            this.targetRadius = targetRadius;
 
+            abortCalc = false;
             animationRunning = true;
         }
 
@@ -176,9 +196,8 @@ public class CellAnimation implements Runnable {
 
                 if (abortCalc) return;
 
-                // test linear growth
-                float radiusDif = maxCellRadius - currentCellRadius;
-                currentCellRadius += radiusDif / remainingSteps;
+                currentCellRadius = radiusCalcStrategy.calculateRadius(targetRadius,
+                        currentCellRadius, currentStep, remainingSteps);
 
                 if (abortCalc) return;
                 try {

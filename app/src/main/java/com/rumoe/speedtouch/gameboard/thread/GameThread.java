@@ -87,7 +87,7 @@ public class GameThread implements Runnable, CellObserver{
     private void unsubscribeToCells() {
         for (Cell[] row : board) {
             for (Cell cell : row) {
-                cell.registerObserver(this);
+                cell.removeObserver(this);
             }
         }
     }
