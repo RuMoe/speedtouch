@@ -11,11 +11,14 @@ import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.gameboard.strategy.cellradius.CellRadiusCalcStrategy;
 import com.rumoe.speedtouch.gameboard.strategy.cellradius.LinearGrowthStrategy;
 
-
+// TODO add event to tell cell that lifecycle ended
 // TODO handle onpause and onresume
+// TODO check only one calculation thread/drawthread/lifecyclethread at a time
 public class CellAnimation implements Runnable {
 
-    private static final int DEFAULT_GROW_ANIMATION_DURATION = 100;
+    private static final int DEFAULT_GROW_ANIMATION_DURATION    = 100;
+    private static final int DEFAULT_CONSTANT_DURATION          = 500;
+    private static final int DEFAULT_SHRINK_ANIMATION_DURATION  = 1000;
 
     private Context context;
 
@@ -25,11 +28,13 @@ public class CellAnimation implements Runnable {
     private int shadowColor;
 
     private float currentCellRadius;
+    private float minCelLRadius;
     private float maxCellRadius;
     private float cellXCenter;
     private float cellYCenter;
 
     private Thread drawThread;
+    private Thread lifecycleThread;
     private CellRadiusCalc calculationThread;
     private boolean animationRunning;
 
@@ -49,13 +54,14 @@ public class CellAnimation implements Runnable {
 
     /**
      * This should be called whenever the dimensions of the cells are changed.
-     * Updates the cell center as well as the maximal circle size.
+     * Updates the cell center as well as the maximal and minimal cell size.
      * @param cellWidth The width of the cell-surface
      * @param cellHeight The height of the cell-surface
      * @param cellPadding The padding of the cell
      */
     public void setDimensions(int cellWidth, int cellHeight, int cellPadding) {
         maxCellRadius = (Math.min(cellWidth, cellHeight) - 2 * cellPadding) * 0.5f;
+        minCelLRadius = 0;
 
         cellXCenter = cellWidth / 2.0f;
         cellYCenter = cellHeight / 2.0f;
@@ -87,6 +93,29 @@ public class CellAnimation implements Runnable {
         return xDif*xDif + yDif*yDif <= currentCellRadius*currentCellRadius;
     }
 
+    public boolean startLifecycle() {
+        return startLifecycle(DEFAULT_GROW_ANIMATION_DURATION,
+                DEFAULT_CONSTANT_DURATION,
+                DEFAULT_SHRINK_ANIMATION_DURATION);
+    }
+
+    public boolean startLifecycle(final int growTime, final int constantTime,final int shrinkTime) {
+        lifecycleThread = new Thread() {
+            public void run() {
+                growAnimation(growTime);
+                try {
+                    Thread.sleep(constantTime);
+                } catch (InterruptedException e) {
+                    Log.w("CellAnimation", "Lifecycle thread interrupted");
+                    return;
+                }
+                shrinkAnimation(shrinkTime);
+            }
+        };
+        lifecycleThread.start();
+
+        return true;
+    }
 
     public boolean growAnimation() {
         return growAnimation(DEFAULT_GROW_ANIMATION_DURATION);
@@ -98,6 +127,24 @@ public class CellAnimation implements Runnable {
 
     public boolean growAnimation(CellRadiusCalcStrategy strategy, int duration) {
         calculationThread = new CellRadiusCalc(strategy, duration, maxCellRadius);
+        calculationThread.start();
+
+        drawThread = new Thread(this);
+        drawThread.start();
+
+        return true;
+    }
+
+    public boolean shrinkAnimation() {
+        return shrinkAnimation(DEFAULT_SHRINK_ANIMATION_DURATION);
+    }
+
+    public boolean shrinkAnimation(int duration) {
+        return shrinkAnimation(new LinearGrowthStrategy(), duration);
+    }
+
+    public boolean shrinkAnimation(CellRadiusCalcStrategy strategy, int duration) {
+        calculationThread = new CellRadiusCalc(strategy, duration, minCelLRadius);
         calculationThread.start();
 
         drawThread = new Thread(this);
