@@ -80,7 +80,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
     public boolean activate() {
         if (active) return false;
 
-        if (animation.growAnimation()) {
+        if (animation.startLifecycle()) {
             active = true;
             notifyAllOnActive();
         }

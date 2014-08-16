@@ -15,8 +15,8 @@ import com.rumoe.speedtouch.gameboard.strategy.cellradius.LinearGrowthStrategy;
 // TODO handle onpause and onresume
 public class CellAnimation implements Runnable {
 
-    private static final int DEFAULT_GROW_ANIMATION_DURATION    = 100;
-    private static final int DEFAULT_CONSTANT_DURATION          = 500;
+    private static final int DEFAULT_GROW_ANIMATION_DURATION    = 1000;
+    private static final int DEFAULT_CONSTANT_SIZE_DURATION     = 1000;
     private static final int DEFAULT_SHRINK_ANIMATION_DURATION  = 1000;
 
     private Context context;
@@ -94,7 +94,7 @@ public class CellAnimation implements Runnable {
 
     public boolean startLifecycle() {
         return startLifecycle(DEFAULT_GROW_ANIMATION_DURATION,
-                DEFAULT_CONSTANT_DURATION,
+                DEFAULT_CONSTANT_SIZE_DURATION,
                 DEFAULT_SHRINK_ANIMATION_DURATION);
     }
 
@@ -106,11 +106,15 @@ public class CellAnimation implements Runnable {
             public void run() {
                 growAnimation(growTime);
                 try {
-                    Thread.sleep(constantTime);
+                    Thread.sleep(10000);
                 } catch (InterruptedException e) {
                     Log.w("CellAnimation", "Lifecycle thread interrupted");
                     return;
                 }
+                if (isInterrupted()) {
+                    Log.d("CellAnimation", "test2");
+                }
+                Log.d("CellAnimation", "test");
                 shrinkAnimation(shrinkTime);
             }
         };
@@ -164,11 +168,13 @@ public class CellAnimation implements Runnable {
      * @return true
      */
     public boolean clearCell() {
-        if (animationRunning) {
-            calculationThread.abortCalculations();
+        if (lifecycleThread != null)
             lifecycleThread.interrupt();
-            animationRunning = false;
-        }
+
+        if (calculationThread != null)
+            calculationThread.abortCalculations();
+
+        animationRunning = false;
 
         currentCellRadius = 0;
         clearBackground();
@@ -200,6 +206,7 @@ public class CellAnimation implements Runnable {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
                 Log.w("CellAnimation", "Sleep in cell draw thread interrupted");
+                return;
             }
             framesDrawn++;
         }
@@ -261,6 +268,7 @@ public class CellAnimation implements Runnable {
                     Thread.sleep((int) time, ((int) (time * 1000000)) % 1000000);
                 } catch (InterruptedException e) {
                     Log.w("CellAnimation", "Sleep in cell radius calculation thread interrupted");
+                    return;
                 }
                 currentStep++;
             }
