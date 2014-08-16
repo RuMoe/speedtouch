@@ -8,7 +8,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.rumoe.speedtouch.R;
-import com.rumoe.speedtouch.gameboard.animation.CellAnimation;
+import com.rumoe.speedtouch.gameboard.thread.CellAnimation;
 
 import java.util.ArrayList;
 

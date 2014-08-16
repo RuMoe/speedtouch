@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.gameboard.animation;
+package com.rumoe.speedtouch.gameboard.thread;
 
 
 import android.content.Context;
@@ -13,7 +13,7 @@ import com.rumoe.speedtouch.R;
 // TODO handle onpause and onresume
 public class CellAnimation implements Runnable {
 
-    private static final int DEFAULT_GROW_ANIMATION_DURATION = 75;
+    private static final int DEFAULT_GROW_ANIMATION_DURATION = 100;
 
     private Context context;
 
@@ -91,7 +91,7 @@ public class CellAnimation implements Runnable {
     }
 
     public boolean growAnimation(int duration) {
-        calculationThread =new CellRadiusCalc(duration);
+        calculationThread = new CellRadiusCalc(duration);
         calculationThread.start();
 
         drawThread = new Thread(this);
@@ -105,18 +105,16 @@ public class CellAnimation implements Runnable {
             calculationThread.abortCalculations();
             animationRunning = false;
         }
+
+        currentCellRadius = 0;
         clearBackground();
         return true;
     }
 
     @Override
     public void run() {
-        boolean onceMore = true;
         int framesDrawn = 0;
-        while (animationRunning || onceMore) {
-            if (!animationRunning) {
-                onceMore = false;
-            }
+        while (animationRunning) {
 
             if (cellSurface.getSurface().isValid()) {
                 Canvas canvas = cellSurface.lockCanvas();
@@ -203,8 +201,6 @@ public class CellAnimation implements Runnable {
                         "ms. Expected " + duration);
             }
 
-            if (abortCalc) return;
-            currentCellRadius = maxCellRadius;
             animationRunning = false;
         }
     }
