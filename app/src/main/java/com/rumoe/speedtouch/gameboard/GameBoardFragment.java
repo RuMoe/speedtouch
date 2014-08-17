@@ -37,7 +37,7 @@ public class GameBoardFragment extends Fragment{
             gameBoard.addView(tr, new TableLayout.LayoutParams(0,0, cellHeight));
 
             for (int j = 0; j < COLUMN_COUNT; j++) {
-                Cell cell = new Cell(tr.getContext());
+                Cell cell = new Cell(tr.getContext(), j, i);
                 tr.addView(cell, new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, cellWidth));
 
                 cells[i][j] = cell;
