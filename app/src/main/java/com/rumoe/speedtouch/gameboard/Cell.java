@@ -16,7 +16,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
 
     // TODO and cell type
 
-    private static final int DEFAULT_WAIT_BEFORE_SHRINK_TIME = 2000;
+    private static final int DEFAULT_WAIT_BEFORE_SHRINK_TIME = 1000;
 
     private CellAnimation animation;
     private Thread lifecycle;

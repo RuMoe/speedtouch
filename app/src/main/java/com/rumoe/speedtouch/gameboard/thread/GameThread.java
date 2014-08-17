@@ -11,7 +11,7 @@ public class GameThread implements Runnable, CellObserver{
     private Thread thread;
 
     /** Sleep time between to actions of the game thread in ms */
-    private static final long CLOCK_RATE = 400;
+    private static final long CLOCK_RATE = 100;
     private boolean stopped;
 
     private Cell[][] board;
@@ -54,12 +54,13 @@ public class GameThread implements Runnable, CellObserver{
 
         while (!stopped) {
 
-            if (activeCells < 1) {
+            if (activeCells < 5) {
                 Cell randomCell;
                 do {
                     int randomCellNr = (int) (Math.random() * rows * columns);
-                    int row = randomCellNr / rows;
+                    int row = randomCellNr / columns;
                     int column = randomCellNr % columns;
+
                     randomCell = board[row][column];
                 }while(randomCell.isActive());
 
