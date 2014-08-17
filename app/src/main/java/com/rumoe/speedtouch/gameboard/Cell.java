@@ -103,8 +103,8 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
                     "inactive");
 
             // try to kill every running thread to get an consistent state again
-            animation.clearCell();
             deactivate();
+            animation.clearCell();
         }
         return true;
     }
