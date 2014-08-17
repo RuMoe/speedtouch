@@ -10,6 +10,7 @@ import android.view.SurfaceHolder;
 import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.gameboard.CellType;
 import com.rumoe.speedtouch.gameboard.strategy.cellradius.CellRadiusCalcStrategy;
+import com.rumoe.speedtouch.gameboard.strategy.cellradius.ExponentialStrategy;
 import com.rumoe.speedtouch.gameboard.strategy.cellradius.LinearGrowthStrategy;
 
 public class CellAnimation implements Runnable {
@@ -278,7 +279,7 @@ public class CellAnimation implements Runnable {
                 if (abortCalc) return;
 
                 currentCellRadius = radiusCalcStrategy.calculateRadius(targetRadius,
-                        currentCellRadius, currentStep, remainingSteps);
+                        currentCellRadius, currentStep, numberOfSteps);
 
                 if (abortCalc) return;
                 try {
