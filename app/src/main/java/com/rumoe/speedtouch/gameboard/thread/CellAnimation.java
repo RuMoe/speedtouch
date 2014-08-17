@@ -137,7 +137,7 @@ public class CellAnimation implements Runnable {
     }
 
     public boolean shrinkAnimation(int duration) {
-        return shrinkAnimation(new LinearGrowthStrategy(), duration);
+        return shrinkAnimation(new ExponentialStrategy(), duration);
     }
 
     public boolean shrinkAnimation(CellRadiusCalcStrategy strategy, int duration) {
