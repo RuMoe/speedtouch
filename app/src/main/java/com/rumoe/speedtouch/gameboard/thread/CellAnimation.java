@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.rumoe.speedtouch.R;
+import com.rumoe.speedtouch.gameboard.CellType;
 import com.rumoe.speedtouch.gameboard.strategy.cellradius.CellRadiusCalcStrategy;
 import com.rumoe.speedtouch.gameboard.strategy.cellradius.LinearGrowthStrategy;
 
@@ -17,11 +18,10 @@ public class CellAnimation implements Runnable {
     private static final int DEFAULT_SHRINK_ANIMATION_DURATION  = 1000;
 
     private Context context;
+    private CellType cellType;
 
     private SurfaceHolder cellSurface;
-    private final Paint cellPaint;
-    private int backgroundColor;
-    private int shadowColor;
+    private Paint cellPaint;
 
     private float currentCellRadius;
     private float minCelLRadius;
@@ -33,18 +33,20 @@ public class CellAnimation implements Runnable {
     private CellRadiusCalc calculationThread;
     private boolean animationRunning;
 
-    public CellAnimation(SurfaceHolder surface, Context context) {
+    public CellAnimation(SurfaceHolder surface, CellType cellType, Context context) {
         this.context = context;
+        this.cellType = cellType;
 
         cellSurface = surface;
         animationRunning = false;
 
-        backgroundColor = context.getResources().getColor(R.color.game_board_background);
-        shadowColor     = context.getResources().getColor(R.color.cell_shadow);
+        updatePaint();
+    }
 
+    private void updatePaint() {
         cellPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        cellPaint.setColor(context.getResources().getColor(R.color.cell_standard));
-        cellPaint.setShadowLayer(15.0f, 0.0f, 0.0f, shadowColor);
+        cellPaint.setColor(CellType.getCellColor(cellType, context));
+        cellPaint.setShadowLayer(15.0f, 0.0f, 0.0f, CellType.getShadowColor(cellType, context));
     }
 
     /**
@@ -63,6 +65,14 @@ public class CellAnimation implements Runnable {
     }
 
     /**
+     * Sets the type of the cell. This will affect its color.
+     */
+    public void setCellType(CellType newType) {
+        this.cellType = newType;
+        updatePaint();
+    }
+
+    /**
      * Fills the cell with its background color.
      * @return true iif operation executed successfully, false otherwise
      */
@@ -70,7 +80,7 @@ public class CellAnimation implements Runnable {
         try {
             if (cellSurface.getSurface().isValid()) {
                 Canvas canvas = cellSurface.lockCanvas();
-                canvas.drawColor(backgroundColor);
+                canvas.drawColor(context.getResources().getColor(R.color.game_board_background));
                 cellSurface.unlockCanvasAndPost(canvas);
                 return true;
             } else {
@@ -195,7 +205,7 @@ public class CellAnimation implements Runnable {
                     Canvas canvas = cellSurface.lockCanvas();
 
                     // over-paint everything from previous frame
-                    canvas.drawColor(backgroundColor);
+                    canvas.drawColor(context.getResources().getColor(R.color.game_board_background));
                     canvas.drawCircle(cellXCenter, cellYCenter, currentCellRadius, cellPaint);
 
                     cellSurface.unlockCanvasAndPost(canvas);

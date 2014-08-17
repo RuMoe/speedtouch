@@ -14,12 +14,12 @@ import java.util.ArrayList;
 
 public class Cell extends SurfaceView implements SurfaceHolder.Callback{
 
-    // TODO and cell type
-
     private static final int DEFAULT_WAIT_BEFORE_SHRINK_TIME = 1000;
 
     private CellAnimation animation;
     private Thread lifecycle;
+
+    private CellType type;
 
     private ArrayList<CellObserver> observer;
     private boolean active;
@@ -27,8 +27,9 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
     public Cell(Context context) {
         super(context);
 
-        animation = new CellAnimation(getHolder(), getContext());
+        type = CellType.STANDARD;
         active = false;
+        animation = new CellAnimation(getHolder(), CellType.STANDARD, context);
 
         // a cell is part of one game board -> in most cases there is exactly one observer
         // (except multiplayer)
@@ -113,9 +114,11 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
         return true;
     }
 
-    public boolean activate() {
+    public boolean activate(CellType type) {
         if (!checkActivatePossibility()) return false;
 
+        this.type = type;
+        animation.setCellType(type);
         animation.growAnimation();
         active = true;
         notifyAllOnActive();
@@ -123,9 +126,11 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
         return active;
     }
 
-    public boolean activateLifecycle() {
+    public boolean activateLifecycle(CellType type) {
         if (!checkActivatePossibility()) return false;
 
+        this.type = type;
+        animation.setCellType(type);
         active = true;
         notifyAllOnActive();
 

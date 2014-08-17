@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.rumoe.speedtouch.gameboard.Cell;
 import com.rumoe.speedtouch.gameboard.CellObserver;
+import com.rumoe.speedtouch.gameboard.CellType;
 
 // TODO stop gamethread if application is minimized
 public class GameThread implements Runnable, CellObserver{
@@ -64,7 +65,9 @@ public class GameThread implements Runnable, CellObserver{
                     randomCell = board[row][column];
                 }while(randomCell.isActive());
 
-                randomCell.activateLifecycle();
+                CellType nextType = CellType.STANDARD;
+                if (Math.random() < 0.05) nextType = CellType.BAD;
+                randomCell.activateLifecycle(nextType);
             }
 
             try {
