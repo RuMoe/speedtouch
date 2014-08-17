@@ -25,7 +25,7 @@ public class CellAnimation implements Runnable {
     private Paint cellPaint;
 
     private float currentCellRadius;
-    private float minCelLRadius;
+    private float minCellRadius;
     private float maxCellRadius;
     private float cellXCenter;
     private float cellYCenter;
@@ -59,7 +59,7 @@ public class CellAnimation implements Runnable {
      */
     public void setDimensions(int cellWidth, int cellHeight, int cellPadding) {
         maxCellRadius = (Math.min(cellWidth, cellHeight) - 2 * cellPadding) * 0.5f;
-        minCelLRadius = 0;
+        minCellRadius = 0;
 
         cellXCenter = cellWidth / 2.0f;
         cellYCenter = cellHeight / 2.0f;
@@ -123,7 +123,7 @@ public class CellAnimation implements Runnable {
     public boolean growAnimation(CellRadiusCalcStrategy strategy, int duration) {
        if (isAnimationRunning()) return false;
 
-        calculationThread = new CellRadiusCalc(strategy, duration, maxCellRadius);
+        calculationThread = new CellRadiusCalc(strategy, duration, currentCellRadius, maxCellRadius);
         calculationThread.start();
 
         drawThread = new Thread(this);
@@ -143,7 +143,7 @@ public class CellAnimation implements Runnable {
     public boolean shrinkAnimation(CellRadiusCalcStrategy strategy, int duration) {
         if (isAnimationRunning()) return false;
 
-        calculationThread = new CellRadiusCalc(strategy, duration, minCelLRadius);
+        calculationThread = new CellRadiusCalc(strategy, duration, currentCellRadius, minCellRadius);
         calculationThread.start();
 
         drawThread = new Thread(this);
@@ -243,20 +243,22 @@ public class CellAnimation implements Runnable {
 
         private boolean abortCalc;
 
+        private float startRadius;
         private float targetRadius;
         private int numberOfSteps;
         private int duration;
 
-        CellRadiusCalc (CellRadiusCalcStrategy strategy, int duration, float targetRadius) {
-            this(strategy, duration, duration / 2, targetRadius);
+        CellRadiusCalc (CellRadiusCalcStrategy strategy, int duration, float startRadius, float targetRadius) {
+            this(strategy, duration, duration / 2, startRadius, targetRadius);
         }
 
         CellRadiusCalc (CellRadiusCalcStrategy strategy, int duration, int numberOfSteps,
-                        float targetRadius) {
+                        float startRadius, float targetRadius) {
             this.radiusCalcStrategy = strategy;
             this.duration = duration;
             this.numberOfSteps = numberOfSteps;
             this.targetRadius = targetRadius;
+            this.startRadius = startRadius;
 
             abortCalc = false;
             animationRunning = true;
@@ -278,7 +280,7 @@ public class CellAnimation implements Runnable {
 
                 if (abortCalc) return;
 
-                currentCellRadius = radiusCalcStrategy.calculateRadius(targetRadius,
+                currentCellRadius = radiusCalcStrategy.calculateRadius(startRadius, targetRadius,
                         currentCellRadius, currentStep, numberOfSteps);
 
                 if (abortCalc) return;
