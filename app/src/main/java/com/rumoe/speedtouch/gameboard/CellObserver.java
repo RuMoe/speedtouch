@@ -1,13 +1,12 @@
 package com.rumoe.speedtouch.gameboard;
 
-//TODO think of useable method params
 public interface CellObserver {
 
-    void notifyOnActive(Cell c);
+    void notifyOnActive(int xPos, int yPos, CellType type);
 
-    void notifyOnTimeout(Cell c);
+    void notifyOnTimeout(int xPos, int yPos, CellType type);
 
-    void notifyOnTouch(Cell c);
+    void notifyOnTouch(int xPos, int yPos, CellType type);
 
-    void notifyOnMissedTouch(Cell c);
+    void notifyOnMissedTouch(int xPos, int yPos, CellType type);
 }

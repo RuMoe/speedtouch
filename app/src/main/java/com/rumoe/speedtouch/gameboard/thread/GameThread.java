@@ -98,20 +98,20 @@ public class GameThread implements Runnable, CellObserver{
     }
 
     @Override
-    public void notifyOnActive(Cell c) {
+    public void notifyOnActive(int xPos, int yPos, CellType type) {
         activeCells++;
     }
 
     @Override
-    public void notifyOnTimeout(Cell c) {
+    public void notifyOnTimeout(int xPos, int yPos, CellType type) {
         activeCells--;
     }
 
     @Override
-    public void notifyOnTouch(Cell c) {
+    public void notifyOnTouch(int xPos, int yPos, CellType type) {
         activeCells--;
     }
 
     @Override
-    public void notifyOnMissedTouch(Cell c) {}
+    public void notifyOnMissedTouch(int xPos, int yPos, CellType type) {}
 }

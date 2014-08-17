@@ -20,14 +20,19 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
     private Thread lifecycle;
 
     private CellType type;
+    private int xPos;
+    private int yPos;
 
     private ArrayList<CellObserver> observer;
     private boolean active;
 
-    public Cell(Context context) {
+    public Cell(Context context, int xPos, int yPos) {
         super(context);
 
         type = CellType.STANDARD;
+        this.xPos = xPos;
+        this.yPos = yPos;
+
         active = false;
         animation = new CellAnimation(getHolder(), CellType.STANDARD, context);
 
@@ -210,7 +215,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
      */
     private void notifyAllOnActive() {
         for (CellObserver obs : observer) {
-            obs.notifyOnActive(this);
+            obs.notifyOnActive(xPos, yPos, type);
         }
     }
 
@@ -219,7 +224,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
      */
     private void notifyAllOnTimeout() {
         for (CellObserver obs : observer) {
-            obs.notifyOnTimeout(this);
+            obs.notifyOnTimeout(xPos, yPos, type);
         }
     }
 
@@ -228,7 +233,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
      */
     private void notifyAllOnTouch() {
         for (CellObserver obs : observer) {
-            obs.notifyOnTouch(this);
+            obs.notifyOnTouch(xPos, yPos, type);
         }
     }
 
@@ -238,7 +243,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
      */
     private void notifyAllOnMissedTouch() {
         for (CellObserver obs : observer) {
-            obs.notifyOnMissedTouch(this);
+            obs.notifyOnMissedTouch(xPos, yPos, type);
         }
     }
 }
