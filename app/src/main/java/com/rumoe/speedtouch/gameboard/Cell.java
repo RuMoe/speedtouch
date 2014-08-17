@@ -100,7 +100,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
      * @return true iff activation is possible, false otherwise
      */
     private boolean checkActivatePossibility() {
-        if (active) return false;
+        if (active || getHolder() == null || !getHolder().getSurface().isValid()) return false;
 
         if (animation.isAnimationRunning()) {
             Log.e("Cell", "Inconsistent cell state: Animation running but cell appears " +
