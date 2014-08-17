@@ -5,6 +5,7 @@ import android.util.Log;
 import com.rumoe.speedtouch.gameboard.Cell;
 import com.rumoe.speedtouch.gameboard.CellObserver;
 
+// TODO stop gamethread if application is minimized
 public class GameThread implements Runnable, CellObserver{
 
     private Thread thread;

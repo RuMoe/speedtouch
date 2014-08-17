@@ -64,14 +64,23 @@ public class CellAnimation implements Runnable {
 
     /**
      * Fills the cell with its background color.
+     * @return true iif operation executed successfully, false otherwise
      */
-    public void clearBackground() {
-        if (cellSurface.getSurface().isValid()) {
-            Canvas canvas = cellSurface.lockCanvas();
-            canvas.drawColor(backgroundColor);
-            cellSurface.unlockCanvasAndPost(canvas);
-        } else {
-            Log.e("CellAnimation", "Surface invalid while clearing background");
+    public boolean clearBackground() {
+        try {
+            if (cellSurface.getSurface().isValid()) {
+                Canvas canvas = cellSurface.lockCanvas();
+                canvas.drawColor(backgroundColor);
+                cellSurface.unlockCanvasAndPost(canvas);
+                return true;
+            } else {
+                Log.e("CellAnimation", "Surface invalid while clearing background");
+                return false;
+            }
+        } catch (NullPointerException e) {
+            // we need this in case the surface is destroyed during drawing
+            Log.e("CellAnimation", "Surface destroyed while trying to clear background");
+            return false;
         }
     }
 
@@ -179,28 +188,37 @@ public class CellAnimation implements Runnable {
      */
     public void run() {
         int framesDrawn = 0;
-        while (animationRunning) {
+        try {
+            while (animationRunning) {
 
-            if (cellSurface.getSurface().isValid()) {
-                Canvas canvas = cellSurface.lockCanvas();
+                if (cellSurface.getSurface().isValid()) {
+                    Canvas canvas = cellSurface.lockCanvas();
 
-                // over-paint everything from previous frame
-                canvas.drawColor(backgroundColor);
-                canvas.drawCircle(cellXCenter, cellYCenter, currentCellRadius, cellPaint);
+                    // over-paint everything from previous frame
+                    canvas.drawColor(backgroundColor);
+                    canvas.drawCircle(cellXCenter, cellYCenter, currentCellRadius, cellPaint);
 
-                cellSurface.unlockCanvasAndPost(canvas);
-            } else {
-                Log.e("CellAnimation", "Cell surface invalid while attempting to draw");
+                    cellSurface.unlockCanvasAndPost(canvas);
+                } else {
+                    Log.e("CellAnimation", "Cell surface invalid while attempting to draw");
+                }
+
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    Log.w("CellAnimation", "Sleep in cell draw thread interrupted");
+                    return;
+                }
+                framesDrawn++;
             }
-
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                Log.w("CellAnimation", "Sleep in cell draw thread interrupted");
-                return;
-            }
-            framesDrawn++;
+        } catch (NullPointerException e) {
+            // we need this in case the surface is destroyed during drawing
+            Log.e("CellAnimation", "Surface destroyed while trying to draw the animation ");
+            // end the thread because we cannot do anything anymore
+            stopAnimation();
+            return;
         }
+
         Log.d("CellAnimation", "" + framesDrawn + " frames during animation drawn.");
     }
 
