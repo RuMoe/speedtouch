@@ -53,7 +53,7 @@ public class GameThread implements Runnable, CellObserver{
 
         while (!stopped) {
 
-            if (activeCells <= 3) {
+            if (activeCells < 1) {
                 Cell randomCell;
                 do {
                     int randomCellNr = (int) (Math.random() * rows * columns);
@@ -62,7 +62,7 @@ public class GameThread implements Runnable, CellObserver{
                     randomCell = board[row][column];
                 }while(randomCell.isActive());
 
-                randomCell.activate();
+                randomCell.activateLifecycle();
             }
 
             try {

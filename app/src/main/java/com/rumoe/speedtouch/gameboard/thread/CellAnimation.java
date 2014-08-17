@@ -11,11 +11,9 @@ import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.gameboard.strategy.cellradius.CellRadiusCalcStrategy;
 import com.rumoe.speedtouch.gameboard.strategy.cellradius.LinearGrowthStrategy;
 
-// TODO add event to tell cell that lifecycle ended
 public class CellAnimation implements Runnable {
 
-    private static final int DEFAULT_GROW_ANIMATION_DURATION    = 1000;
-    private static final int DEFAULT_CONSTANT_SIZE_DURATION     = 1000;
+    private static final int DEFAULT_GROW_ANIMATION_DURATION    = 100;
     private static final int DEFAULT_SHRINK_ANIMATION_DURATION  = 1000;
 
     private Context context;
@@ -32,7 +30,6 @@ public class CellAnimation implements Runnable {
     private float cellYCenter;
 
     private Thread drawThread;
-    private Thread lifecycleThread;
     private CellRadiusCalc calculationThread;
     private boolean animationRunning;
 
@@ -91,32 +88,8 @@ public class CellAnimation implements Runnable {
         return xDif*xDif + yDif*yDif <= currentCellRadius*currentCellRadius;
     }
 
-    public boolean startLifecycle() {
-        return startLifecycle(DEFAULT_GROW_ANIMATION_DURATION,
-                DEFAULT_CONSTANT_SIZE_DURATION,
-                DEFAULT_SHRINK_ANIMATION_DURATION);
-    }
-
-    public boolean startLifecycle(final int growTime, final int constantTime,final int shrinkTime) {
-        if ((lifecycleThread != null && lifecycleThread.isAlive()) ||
-                (calculationThread != null && calculationThread.isAlive())) return false;
-
-        lifecycleThread = new Thread() {
-            public void run() {
-                growAnimation(growTime);
-                try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException e) {
-                    Log.w("CellAnimation", "Lifecycle thread interrupted");
-                    return;
-                }
-
-                shrinkAnimation(shrinkTime);
-            }
-        };
-        lifecycleThread.start();
-
-        return true;
+    public boolean isAnimationRunning() {
+        return (drawThread != null && drawThread.isAlive());
     }
 
     public boolean growAnimation() {
@@ -128,7 +101,7 @@ public class CellAnimation implements Runnable {
     }
 
     public boolean growAnimation(CellRadiusCalcStrategy strategy, int duration) {
-       if (calculationThread != null && calculationThread.isAlive()) return false;
+       if (isAnimationRunning()) return false;
 
         calculationThread = new CellRadiusCalc(strategy, duration, maxCellRadius);
         calculationThread.start();
@@ -148,7 +121,7 @@ public class CellAnimation implements Runnable {
     }
 
     public boolean shrinkAnimation(CellRadiusCalcStrategy strategy, int duration) {
-        if (calculationThread != null && calculationThread.isAlive()) return false;
+        if (isAnimationRunning()) return false;
 
         calculationThread = new CellRadiusCalc(strategy, duration, minCelLRadius);
         calculationThread.start();
@@ -156,6 +129,19 @@ public class CellAnimation implements Runnable {
         drawThread = new Thread(this);
         drawThread.start();
 
+        return true;
+    }
+
+    /**
+     * Blocks the calling thread until the animation is ended.
+     * @return false iff block was interrupted, true otherwise.
+     */
+    public boolean waitUntilAnimationEnded() {
+        try {
+            drawThread.join();
+        } catch (InterruptedException e) {
+            return false;
+        }
         return true;
     }
 
@@ -176,10 +162,6 @@ public class CellAnimation implements Runnable {
      */
     public void stopAnimation() {
         animationRunning = false;
-
-        if (lifecycleThread != null) {
-            lifecycleThread.interrupt();
-        }
 
         if (calculationThread != null) {
             calculationThread.abortCalculations();

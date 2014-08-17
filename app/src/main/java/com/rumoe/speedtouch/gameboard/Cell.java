@@ -14,9 +14,13 @@ import java.util.ArrayList;
 
 public class Cell extends SurfaceView implements SurfaceHolder.Callback{
 
-    // TODO add timeout and cell type
+    // TODO and cell type
+
+    private static final int DEFAULT_WAIT_BEFORE_SHRINK_TIME = 2000;
 
     private CellAnimation animation;
+    private Thread lifecycle;
+
     private ArrayList<CellObserver> observer;
     private boolean active;
 
@@ -42,8 +46,9 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         Log.i("Cell", "surface destroyed");
-        active = false;
-        animation.stopAnimation();
+
+        deactivate();
+        animation.clearCell();
     }
 
     @Override
@@ -60,8 +65,9 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
         if (e.getAction() == MotionEvent.ACTION_DOWN) {
             if (active) {
                 if (animation.isTargetHit(e.getX(), e.getY())) {
+                    deactivate();
                     animation.clearCell();
-                    active = false;
+
                     notifyAllOnTouch();
                 } else {
                     notifyAllOnMissedTouch();
@@ -73,18 +79,89 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
         return true;
     }
 
+    private void deactivate() {
+        if (lifecycle != null) lifecycle.interrupt();
+        animation.stopAnimation();
+        active = false;
+    }
+
     public boolean isActive() {
         return active;
     }
 
-    public boolean activate() {
+    /**
+     * Checks if the cell is already active and a new action can be performed.
+     * Also checks for consistency between cell state and animation state and tries
+     * to fix any issues.
+     * @return true iff activation is possible, false otherwise
+     */
+    private boolean checkActivatePossibility() {
         if (active) return false;
 
-        if (animation.startLifecycle()) {
-            active = true;
-            notifyAllOnActive();
+        if (animation.isAnimationRunning()) {
+            Log.e("Cell", "Inconsistent cell state: Animation running but cell appears " +
+                    "inactive");
+
+            // try to kill every running thread to get an consistent state again
+            animation.clearCell();
+            deactivate();
         }
+        return true;
+    }
+
+    public boolean activate() {
+        if (!checkActivatePossibility()) return false;
+
+        animation.growAnimation();
+        active = true;
+        notifyAllOnActive();
+
         return active;
+    }
+
+    public boolean activateLifecycle() {
+        if (!checkActivatePossibility()) return false;
+
+        active = true;
+        notifyAllOnActive();
+
+        lifecycle = new Thread() {
+            @Override
+            public void run() {
+                animation.growAnimation();
+                if (!animation.waitUntilAnimationEnded()) return;
+                try {
+                    Thread.sleep(DEFAULT_WAIT_BEFORE_SHRINK_TIME);
+                } catch (InterruptedException e) {
+                    Log.d("Cell", "Lifecycle-Thread interrupted");
+                    return;
+                }
+                animation.shrinkAnimation();
+                if (!animation.waitUntilAnimationEnded()) return;
+
+                    // the cell is not visible anymore --> player didn't touch it in time
+                notifyAllOnTimeout();
+            }
+        };
+        startLifecycle();
+        return true;
+    }
+
+    private void startLifecycle() {
+        new Thread() {
+            @Override
+            public void run() {
+                lifecycle.start();
+                try {
+                    lifecycle.join();
+                } catch (InterruptedException e) {
+                    // Does not matter why we don't wait anymore -
+                    // deactivate the cell in any case.
+                } finally {
+                    deactivate();
+                }
+            }
+        }.start();
     }
 
     /**
