@@ -1,6 +1,6 @@
 package com.rumoe.speedtouch.gameboard.strategy.cellradius;
 
-public class LinearGrowthStrategy implements CellRadiusCalcStrategy {
+public class LinearStrategy implements CellRadiusCalcStrategy {
 
     @Override
     public float calculateRadius(float startRadius, float targetRadius, float currentRadius,

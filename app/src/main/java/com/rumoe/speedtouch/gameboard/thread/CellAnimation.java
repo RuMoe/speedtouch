@@ -11,7 +11,7 @@ import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.gameboard.CellType;
 import com.rumoe.speedtouch.gameboard.strategy.cellradius.CellRadiusCalcStrategy;
 import com.rumoe.speedtouch.gameboard.strategy.cellradius.ExponentialStrategy;
-import com.rumoe.speedtouch.gameboard.strategy.cellradius.LinearGrowthStrategy;
+import com.rumoe.speedtouch.gameboard.strategy.cellradius.LinearStrategy;
 
 public class CellAnimation implements Runnable {
 
@@ -117,7 +117,7 @@ public class CellAnimation implements Runnable {
     }
 
     public boolean growAnimation(int duration) {
-        return growAnimation(new LinearGrowthStrategy(), duration);
+        return growAnimation(new LinearStrategy(), duration);
     }
 
     public boolean growAnimation(CellRadiusCalcStrategy strategy, int duration) {
@@ -200,7 +200,14 @@ public class CellAnimation implements Runnable {
     public void run() {
         int framesDrawn = 0;
         try {
-            while (animationRunning) {
+            // the variable oneMore is necessary the make sure that no radius changes are made
+            // which are not drawn.
+            // Without it, the radius calc thread could finish and set animationRunning to false
+            // in between the canvas draw and the next iteration --> the last changes are lost which
+            // would lead to an inconsistent cell-size.
+            boolean oneMore = true;
+            while (oneMore) {
+                oneMore = animationRunning;
 
                 if (cellSurface.getSurface().isValid()) {
                     Canvas canvas = cellSurface.lockCanvas();
