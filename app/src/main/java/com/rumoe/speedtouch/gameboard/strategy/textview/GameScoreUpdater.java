@@ -5,7 +5,6 @@ import android.widget.TextView;
 
 import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.gameboard.CellEvent;
-import com.rumoe.speedtouch.gameboard.CellType;
 
 /**
  * Created by jan on 30.08.2014.
@@ -16,11 +15,15 @@ public abstract class GameScoreUpdater extends TextViewUpdater {
 
     public GameScoreUpdater (Activity rootActivity) {
         super(rootActivity, (TextView) rootActivity.findViewById(SCORE_VIEW_ID));
+        updateText(getScoreAsString());
     }
 
     public void updateScore(CellEvent event) {
-        updateText(generateScore(event));
+        calculateNewScore(event);
+        updateText(getScoreAsString());
     }
 
-    abstract String generateScore(CellEvent event);
+    abstract void calculateNewScore(CellEvent event);
+
+    abstract String getScoreAsString();
 }
