@@ -7,6 +7,7 @@ import com.rumoe.speedtouch.gameboard.Cell;
 import com.rumoe.speedtouch.gameboard.CellEvent;
 import com.rumoe.speedtouch.gameboard.CellObserver;
 import com.rumoe.speedtouch.gameboard.CellType;
+import com.rumoe.speedtouch.gameboard.strategy.textview.GameScoreUpdater;
 
 // TODO stop gamethread if application is minimized
 public class GameThread implements Runnable, CellObserver {
@@ -18,13 +19,15 @@ public class GameThread implements Runnable, CellObserver {
     private boolean stopped;
 
     private final Cell[][] board;
+    private final GameScoreUpdater scoreUpdater;
     private final int rows;
     private final int columns;
 
     private int activeCells;
 
-    public GameThread(final Cell[][] board) {
+    public GameThread(final Cell[][] board, final GameScoreUpdater scoreUpdater) {
         this.board = board;
+        this.scoreUpdater = scoreUpdater;
 
         rows = board.length;
         columns = board[0].length;
@@ -104,18 +107,23 @@ public class GameThread implements Runnable, CellObserver {
     @Override
     public void notifyOnActive(CellEvent event) {
         activeCells++;
+        scoreUpdater.updateScore(event);
     }
 
     @Override
-    public void notifyOnTimeout(CellEvent evente) {
+    public void notifyOnTimeout(CellEvent event) {
         activeCells--;
+        scoreUpdater.updateScore(event);
     }
 
     @Override
     public void notifyOnTouch(CellEvent event) {
         activeCells--;
+        scoreUpdater.updateScore(event);
     }
 
     @Override
-    public void notifyOnMissedTouch(CellEvent event) {}
+    public void notifyOnMissedTouch(CellEvent event) {
+        scoreUpdater.updateScore(event);
+    }
 }

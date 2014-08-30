@@ -8,7 +8,7 @@ import com.rumoe.speedtouch.gameboard.CellType;
 /**
  * Created by jan on 30.08.2014.
  */
-abstract class GameScoreUpdater extends TextViewUpdater {
+public abstract class GameScoreUpdater extends TextViewUpdater {
 
     public GameScoreUpdater (TextView scoreTextView) {
         super(scoreTextView);
@@ -17,7 +17,6 @@ abstract class GameScoreUpdater extends TextViewUpdater {
     public void updateScore(CellEvent event) {
         updateText(generateScore(event));
     }
-
 
     abstract String generateScore(CellEvent event);
 }
