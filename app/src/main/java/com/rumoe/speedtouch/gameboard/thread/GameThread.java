@@ -1,13 +1,15 @@
 package com.rumoe.speedtouch.gameboard.thread;
 
 import android.util.Log;
+import android.widget.TextView;
 
 import com.rumoe.speedtouch.gameboard.Cell;
+import com.rumoe.speedtouch.gameboard.CellEvent;
 import com.rumoe.speedtouch.gameboard.CellObserver;
 import com.rumoe.speedtouch.gameboard.CellType;
 
 // TODO stop gamethread if application is minimized
-public class GameThread implements Runnable, CellObserver{
+public class GameThread implements Runnable, CellObserver {
 
     private Thread thread;
 
@@ -15,13 +17,15 @@ public class GameThread implements Runnable, CellObserver{
     private static final long CLOCK_RATE = 100;
     private boolean stopped;
 
-    private Cell[][] board;
-    private int rows;
-    private int columns;
+    private final Cell[][] board;
+    private final int rows;
+    private final int columns;
+
     private int activeCells;
 
-    public GameThread(Cell[][] board) {
+    public GameThread(final Cell[][] board) {
         this.board = board;
+
         rows = board.length;
         columns = board[0].length;
 
@@ -98,20 +102,20 @@ public class GameThread implements Runnable, CellObserver{
     }
 
     @Override
-    public void notifyOnActive(int xPos, int yPos, CellType type) {
+    public void notifyOnActive(CellEvent event) {
         activeCells++;
     }
 
     @Override
-    public void notifyOnTimeout(int xPos, int yPos, CellType type) {
+    public void notifyOnTimeout(CellEvent evente) {
         activeCells--;
     }
 
     @Override
-    public void notifyOnTouch(int xPos, int yPos, CellType type) {
+    public void notifyOnTouch(CellEvent event) {
         activeCells--;
     }
 
     @Override
-    public void notifyOnMissedTouch(int xPos, int yPos, CellType type) {}
+    public void notifyOnMissedTouch(CellEvent event) {}
 }

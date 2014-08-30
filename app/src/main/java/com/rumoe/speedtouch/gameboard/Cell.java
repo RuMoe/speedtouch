@@ -12,7 +12,7 @@ import com.rumoe.speedtouch.gameboard.thread.CellAnimation;
 
 import java.util.ArrayList;
 
-public class Cell extends SurfaceView implements SurfaceHolder.Callback{
+public class Cell extends SurfaceView implements SurfaceHolder.Callback {
 
     private static final int DEFAULT_WAIT_BEFORE_SHRINK_TIME = 1000;
 
@@ -25,6 +25,9 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
 
     private ArrayList<CellObserver> observer;
     private boolean active;
+
+    private long cellActivatedTime;
+    private long cellTimeoutTime;
 
     public Cell(Context context, int xPos, int yPos) {
         super(context);
@@ -122,6 +125,9 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
     public boolean activate(CellType type) {
         if (!checkActivatePossibility()) return false;
 
+        cellActivatedTime = System.currentTimeMillis();
+        cellTimeoutTime = Long.MAX_VALUE;   // there is no timeout here
+
         this.type = type;
         animation.setCellType(type);
         animation.growAnimation();
@@ -133,6 +139,12 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
 
     public boolean activateLifecycle(CellType type) {
         if (!checkActivatePossibility()) return false;
+
+        cellActivatedTime = System.currentTimeMillis();
+        cellTimeoutTime = cellActivatedTime +
+                DEFAULT_WAIT_BEFORE_SHRINK_TIME +
+                CellAnimation.DEFAULT_GROW_ANIMATION_DURATION +
+                CellAnimation.DEFAULT_SHRINK_ANIMATION_DURATION;
 
         this.type = type;
         animation.setCellType(type);
@@ -214,8 +226,11 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
      * Notify all observer that the cell is now active.
      */
     private void notifyAllOnActive() {
+        long time = System.currentTimeMillis();
+        CellEvent event = CellEvent.generateActivatedEvent(xPos, yPos, type, time - cellTimeoutTime);
+
         for (CellObserver obs : observer) {
-            obs.notifyOnActive(xPos, yPos, type);
+            obs.notifyOnActive(event);
         }
     }
 
@@ -223,8 +238,11 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
      * Notify all observer that the cell is now inactive due to timeout.
      */
     private void notifyAllOnTimeout() {
+        CellEvent event = CellEvent.generateTimeoutEvent(xPos, yPos, type,
+                cellTimeoutTime - cellActivatedTime);
+
         for (CellObserver obs : observer) {
-            obs.notifyOnTimeout(xPos, yPos, type);
+            obs.notifyOnTimeout(event);
         }
     }
 
@@ -232,8 +250,12 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
      * Notify all observer that the cell is now inactive due to touch event.
      */
     private void notifyAllOnTouch() {
+        long time = System.currentTimeMillis();
+        CellEvent event = CellEvent.generateTouchedEvent(xPos, yPos, type, time - cellActivatedTime,
+                cellTimeoutTime - time);
+
         for (CellObserver obs : observer) {
-            obs.notifyOnTouch(xPos, yPos, type);
+            obs.notifyOnTouch(event);
         }
     }
 
@@ -242,8 +264,12 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback{
      * target.
      */
     private void notifyAllOnMissedTouch() {
+        long time = System.currentTimeMillis();
+        CellEvent event = CellEvent.generateTouchedEvent(xPos, yPos, type, time - cellActivatedTime,
+                cellTimeoutTime - time);
+
         for (CellObserver obs : observer) {
-            obs.notifyOnMissedTouch(xPos, yPos, type);
+            obs.notifyOnMissedTouch(event);
         }
     }
 }
