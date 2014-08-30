@@ -53,6 +53,7 @@ public class GameThread implements Runnable, CellObserver {
 
     public void stopThread() {
         stopped = true;
+        thread.interrupt();
     }
 
     @Override
@@ -149,6 +150,12 @@ public class GameThread implements Runnable, CellObserver {
     }
 
     private void initializeGameOver() {
-
+        Log.i("GameThread", "Game Over!");
+        for (Cell[] row : board) {
+            for (Cell c : row) {
+                c.clearCell();
+            }
+        }
+        stopThread();
     }
 }

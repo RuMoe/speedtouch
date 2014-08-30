@@ -57,10 +57,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         Log.i("Cell", "surface destroyed");
-        if (active) {
-            deactivate();
-            animation.clearCell();
-        }
+        clearCell();
     }
 
     @Override
@@ -98,6 +95,11 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
         if (lifecycle != null) lifecycle.interrupt();
         animation.stopAnimation();
         active = false;
+    }
+
+    public void clearCell() {
+        deactivate();
+        animation.clearCell();
     }
 
     public boolean isActive() {
