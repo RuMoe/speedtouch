@@ -24,16 +24,22 @@ public class SurvivalLifeUpdater extends GameLifeUpdater {
         switch (event.getEventType()) {
             case TIMEOUT:
                 if (!event.getCellType().equals(CellType.BAD)) {
-                    lifeCount--;
+                    decrementLife();
                 }
                 break;
             case TOUCHED:
                 if (event.getCellType().equals(CellType.BAD)) {
-                  lifeCount--;
+                  decrementLife();
                 }
                 break;
             default:
                 // do nothing otherwise
+        }
+    }
+
+    private void decrementLife() {
+        if (lifeCount > 0) {
+            lifeCount--;
         }
     }
 
