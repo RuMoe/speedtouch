@@ -38,9 +38,9 @@ public class SurvivalLifeUpdater extends GameLifeUpdater {
     }
 
     private void decrementLife() {
-        if (lifeCount > 0) {
+       if (lifeCount > 0) {
             lifeCount--;
-        }
+       }
     }
 
     @Override

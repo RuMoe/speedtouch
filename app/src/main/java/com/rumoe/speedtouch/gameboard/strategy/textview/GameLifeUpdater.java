@@ -17,7 +17,7 @@ public abstract class GameLifeUpdater extends TextViewUpdater {
         super(activity, (TextView) activity.findViewById(LIFE_VIEW_ID));
     }
 
-    public void updateLife(CellEvent event) {
+    public synchronized void updateLife(CellEvent event) {
         calculateNewLife(event);
         updateText(getLifeAsString());
     }

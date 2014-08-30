@@ -18,7 +18,7 @@ public abstract class GameScoreUpdater extends TextViewUpdater {
         updateText(getScoreAsString());
     }
 
-    public void updateScore(CellEvent event) {
+    public synchronized void updateScore(CellEvent event) {
         calculateNewScore(event);
         updateText(getScoreAsString());
     }
