@@ -279,7 +279,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
      */
     private void notifyAllOnMissedTouch() {
         long time = System.currentTimeMillis();
-        CellEvent event = CellEvent.generateTouchedEvent(xPos, yPos, type, time - cellActivatedTime,
+        CellEvent event = CellEvent.generateMissedEvent(xPos, yPos, type, time - cellActivatedTime,
                 cellTimeoutTime - time);
 
         for (CellObserver obs : observer) {
