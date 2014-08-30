@@ -51,6 +51,6 @@ public class SurvivalLifeUpdater extends GameLifeUpdater {
 
     @Override
     public boolean isGameOver() {
-        return lifeCount > 0;
+        return lifeCount <= 0;
     }
 }
