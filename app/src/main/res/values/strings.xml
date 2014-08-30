@@ -7,5 +7,5 @@
 
     <!-- Main game activity -->
     <string name="score_label">Score:</string>
-    <string name="time_remaining">\u2665</string>
+    <string name="life_remaining">\u2665</string>
 </resources>

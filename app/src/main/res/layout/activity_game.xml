@@ -18,10 +18,11 @@
             android:text="@string/score_label"
             android:textSize="19sp"/>
         <TextView
+            android:id="@+id/gameLifeView"
             android:layout_toRightOf="@id/gameScoreView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/time_remaining"
+            android:text="@string/life_remaining"
             android:gravity="right"
             android:textSize="19sp"/>
     </RelativeLayout>
