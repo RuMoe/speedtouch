@@ -1,7 +1,9 @@
 package com.rumoe.speedtouch.gameboard.strategy.textview;
 
+import android.app.Activity;
 import android.widget.TextView;
 
+import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.gameboard.CellEvent;
 import com.rumoe.speedtouch.gameboard.CellType;
 
@@ -10,8 +12,10 @@ import com.rumoe.speedtouch.gameboard.CellType;
  */
 public abstract class GameScoreUpdater extends TextViewUpdater {
 
-    public GameScoreUpdater (TextView scoreTextView) {
-        super(scoreTextView);
+    private static final int SCORE_VIEW_ID = R.id.gameScoreView;
+
+    public GameScoreUpdater (Activity rootActivity) {
+        super(rootActivity, (TextView) rootActivity.findViewById(SCORE_VIEW_ID));
     }
 
     public void updateScore(CellEvent event) {
