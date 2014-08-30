@@ -15,9 +15,6 @@ import com.rumoe.speedtouch.gameboard.strategy.cellradius.LinearStrategy;
 
 public class CellAnimation implements Runnable {
 
-    public static final int DEFAULT_GROW_ANIMATION_DURATION    = 100;
-    public static final int DEFAULT_SHRINK_ANIMATION_DURATION  = 2000;
-
     private Context context;
     private CellType cellType;
 
@@ -112,10 +109,6 @@ public class CellAnimation implements Runnable {
         return (drawThread != null && drawThread.isAlive());
     }
 
-    public boolean growAnimation() {
-        return growAnimation(DEFAULT_GROW_ANIMATION_DURATION);
-    }
-
     public boolean growAnimation(int duration) {
         return growAnimation(new LinearStrategy(), duration);
     }
@@ -130,10 +123,6 @@ public class CellAnimation implements Runnable {
         drawThread.start();
 
         return true;
-    }
-
-    public boolean shrinkAnimation() {
-        return shrinkAnimation(DEFAULT_SHRINK_ANIMATION_DURATION);
     }
 
     public boolean shrinkAnimation(int duration) {

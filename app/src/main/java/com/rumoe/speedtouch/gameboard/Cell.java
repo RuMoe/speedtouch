@@ -15,6 +15,8 @@ import java.util.ArrayList;
 public class Cell extends SurfaceView implements SurfaceHolder.Callback {
 
     public static final int DEFAULT_WAIT_BEFORE_SHRINK_TIME = 1000;
+    public static final int DEFAULT_GROW_ANIMATION_DURATION    = 100;
+    public static final int DEFAULT_SHRINK_ANIMATION_DURATION  = 2000;
 
     private CellAnimation animation;
     private Thread lifecycle;
@@ -123,6 +125,10 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public boolean activate(CellType type) {
+        return activate(type, DEFAULT_GROW_ANIMATION_DURATION);
+    }
+
+    public boolean activate(CellType type, int growDuration) {
         if (!checkActivatePossibility()) return false;
 
         cellActivatedTime = System.currentTimeMillis();
@@ -130,7 +136,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
 
         this.type = type;
         animation.setCellType(type);
-        animation.growAnimation();
+        animation.growAnimation(growDuration);
         active = true;
         notifyAllOnActive();
 
@@ -138,13 +144,21 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public boolean activateLifecycle(CellType type) {
+        return activateLifecycle(type,
+                DEFAULT_GROW_ANIMATION_DURATION,
+                DEFAULT_WAIT_BEFORE_SHRINK_TIME,
+                DEFAULT_SHRINK_ANIMATION_DURATION);
+    }
+
+    public boolean activateLifecycle(CellType type, final int growDuration, final int waitDuration,
+                                     final int shrinkDuration) {
         if (!checkActivatePossibility()) return false;
 
         cellActivatedTime = System.currentTimeMillis();
         cellTimeoutTime = cellActivatedTime +
-                DEFAULT_WAIT_BEFORE_SHRINK_TIME +
-                CellAnimation.DEFAULT_GROW_ANIMATION_DURATION +
-                CellAnimation.DEFAULT_SHRINK_ANIMATION_DURATION;
+                growDuration +
+                waitDuration +
+                shrinkDuration;
 
         this.type = type;
         animation.setCellType(type);
@@ -154,18 +168,18 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
         lifecycle = new Thread() {
             @Override
             public void run() {
-                animation.growAnimation();
+                animation.growAnimation(growDuration);
                 if (!animation.waitUntilAnimationEnded()) return;
                 try {
-                    Thread.sleep(DEFAULT_WAIT_BEFORE_SHRINK_TIME);
+                    Thread.sleep(waitDuration);
                 } catch (InterruptedException e) {
                     Log.d("Cell", "Lifecycle-Thread interrupted");
                     return;
                 }
-                animation.shrinkAnimation();
+                animation.shrinkAnimation(shrinkDuration);
                 if (!animation.waitUntilAnimationEnded()) return;
 
-                    // the cell is not visible anymore --> player didn't touch it in time
+                // the cell is not visible anymore --> player didn't touch it in time
                 notifyAllOnTimeout();
             }
         };
