@@ -15,8 +15,8 @@ import com.rumoe.speedtouch.gameboard.strategy.cellradius.LinearStrategy;
 
 public class CellAnimation implements Runnable {
 
-    private static final int DEFAULT_GROW_ANIMATION_DURATION    = 100;
-    private static final int DEFAULT_SHRINK_ANIMATION_DURATION  = 1000;
+    public static final int DEFAULT_GROW_ANIMATION_DURATION    = 100;
+    public static final int DEFAULT_SHRINK_ANIMATION_DURATION  = 2000;
 
     private Context context;
     private CellType cellType;
