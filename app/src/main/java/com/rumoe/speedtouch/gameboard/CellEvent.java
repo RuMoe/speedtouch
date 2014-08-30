@@ -11,13 +11,13 @@ public class CellEvent {
     private final long delay;
     private final long timeUntilDecay;
 
-    class CellPosition {
+    public class CellPosition {
         public final int x;
         public final int y;
         CellPosition(int x, int y) {this.x = x; this.y = y;}
     }
 
-    enum EventType {
+    public enum EventType {
         ACTIVATED, MISSED, TIMEOUT, TOUCHED;
     }
 
