@@ -13,7 +13,7 @@ public abstract class GameScoreUpdater extends TextViewUpdater {
 
     private static final int SCORE_VIEW_ID = R.id.gameScoreView;
 
-    public GameScoreUpdater (Activity rootActivity) {
+    GameScoreUpdater (Activity rootActivity) {
         super(rootActivity, (TextView) rootActivity.findViewById(SCORE_VIEW_ID));
         updateText(getScoreAsString());
     }
