@@ -9,7 +9,9 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 
 import com.rumoe.speedtouch.R;
+import com.rumoe.speedtouch.gameboard.strategy.textview.GameLifeUpdater;
 import com.rumoe.speedtouch.gameboard.strategy.textview.GameScoreUpdater;
+import com.rumoe.speedtouch.gameboard.strategy.textview.SurvivalLifeUpdater;
 import com.rumoe.speedtouch.gameboard.strategy.textview.SurvivalScoreUpdater;
 import com.rumoe.speedtouch.gameboard.thread.GameThread;
 
@@ -55,8 +57,9 @@ public class GameBoardFragment extends Fragment{
 
         //TODO for now scoreUpdater and lifeUpdater will be hardcoded.. change that at some point
         GameScoreUpdater scoreUpdater = new SurvivalScoreUpdater(getActivity());
+        GameLifeUpdater lifeUpdater = new SurvivalLifeUpdater(getActivity());
 
-        thread = new GameThread(cells, scoreUpdater);
+        thread = new GameThread(cells, scoreUpdater, lifeUpdater);
 
         thread.startThread();
 

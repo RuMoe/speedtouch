@@ -1,12 +1,12 @@
 package com.rumoe.speedtouch.gameboard.thread;
 
 import android.util.Log;
-import android.widget.TextView;
 
 import com.rumoe.speedtouch.gameboard.Cell;
 import com.rumoe.speedtouch.gameboard.CellEvent;
 import com.rumoe.speedtouch.gameboard.CellObserver;
 import com.rumoe.speedtouch.gameboard.CellType;
+import com.rumoe.speedtouch.gameboard.strategy.textview.GameLifeUpdater;
 import com.rumoe.speedtouch.gameboard.strategy.textview.GameScoreUpdater;
 
 // TODO stop gamethread if application is minimized
@@ -20,14 +20,17 @@ public class GameThread implements Runnable, CellObserver {
 
     private final Cell[][] board;
     private final GameScoreUpdater scoreUpdater;
+    private final GameLifeUpdater lifeUpdater;
     private final int rows;
     private final int columns;
 
     private int activeCells;
 
-    public GameThread(final Cell[][] board, final GameScoreUpdater scoreUpdater) {
+    public GameThread(final Cell[][] board, final GameScoreUpdater scoreUpdater,
+                      final GameLifeUpdater lifeUpdater) {
         this.board = board;
         this.scoreUpdater = scoreUpdater;
+        this.lifeUpdater = lifeUpdater;
 
         rows = board.length;
         columns = board[0].length;
@@ -108,22 +111,44 @@ public class GameThread implements Runnable, CellObserver {
     public void notifyOnActive(CellEvent event) {
         activeCells++;
         scoreUpdater.updateScore(event);
+        lifeUpdater.updateLife(event);
+
+        checkGameOver();
     }
 
     @Override
     public void notifyOnTimeout(CellEvent event) {
         activeCells--;
         scoreUpdater.updateScore(event);
+        lifeUpdater.updateLife(event);
+
+        checkGameOver();
     }
 
     @Override
     public void notifyOnTouch(CellEvent event) {
         activeCells--;
         scoreUpdater.updateScore(event);
+        lifeUpdater.updateLife(event);
+
+        checkGameOver();
     }
 
     @Override
     public void notifyOnMissedTouch(CellEvent event) {
         scoreUpdater.updateScore(event);
+        lifeUpdater.updateLife(event);
+
+        checkGameOver();
+    }
+
+    private void checkGameOver() {
+        if (lifeUpdater.isGameOver()) {
+            initializeGameOver();
+        }
+    }
+
+    private void initializeGameOver() {
+
     }
 }
