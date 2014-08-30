@@ -15,7 +15,7 @@ public class GameThread implements Runnable, CellObserver {
     private Thread thread;
 
     /** Sleep time between to actions of the game thread in ms */
-    private static final long CLOCK_RATE = 100;
+    private static final long CLOCK_RATE = 1000;
     private boolean stopped;
 
     private final Cell[][] board;
