@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class Cell extends SurfaceView implements SurfaceHolder.Callback {
 
-    private static final int DEFAULT_WAIT_BEFORE_SHRINK_TIME = 1000;
+    public static final int DEFAULT_WAIT_BEFORE_SHRINK_TIME = 1000;
 
     private CellAnimation animation;
     private Thread lifecycle;
