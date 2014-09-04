@@ -8,14 +8,21 @@ import com.rumoe.speedtouch.game.gameboard.CellPosition;
 public class GameStatEvent extends GameEvent {
 
     private final CellPosition causingCell;
+        // amount the game stat changed
+    private final double quantity;
 
-    public GameStatEvent(EventType type, CellPosition cause) {
+    public GameStatEvent(EventType type, CellPosition cause, double quantity) {
         super(type);
         if (type.isLifeCycleEvent()) {
             throw new IllegalArgumentException("Event of type " + type +
                     " is a lifecycle event");
         }
         causingCell = cause;
+        this.quantity = quantity;
+    }
+
+    public double getQuantity() {
+        return quantity;
     }
 
     public CellPosition getCausingCell() {
