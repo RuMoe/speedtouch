@@ -32,6 +32,6 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.rumoe.speedtouch.GameActivity"
+        tools:context="com.rumoe.speedtouch.game.GameActivity"
         tools:ignore="MergeRootFrame" />
 </LinearLayout>

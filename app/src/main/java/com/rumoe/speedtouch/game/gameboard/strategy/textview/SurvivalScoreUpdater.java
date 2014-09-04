@@ -1,10 +1,10 @@
-package com.rumoe.speedtouch.gameboard.strategy.textview;
+package com.rumoe.speedtouch.game.gameboard.strategy.textview;
 
 import android.app.Activity;
 import android.util.Log;
 
-import com.rumoe.speedtouch.gameboard.CellEvent;
-import com.rumoe.speedtouch.gameboard.CellType;
+import com.rumoe.speedtouch.game.gameboard.CellEvent;
+import com.rumoe.speedtouch.game.gameboard.CellType;
 
 /**
  * Created by jan on 30.08.2014.

@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.gameboard;
+package com.rumoe.speedtouch.game.gameboard;
 
 import android.content.Context;
 import android.util.Log;

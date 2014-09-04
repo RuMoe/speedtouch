@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.gameboard;
+package com.rumoe.speedtouch.game;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -9,11 +9,12 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 
 import com.rumoe.speedtouch.R;
-import com.rumoe.speedtouch.gameboard.strategy.textview.GameLifeUpdater;
-import com.rumoe.speedtouch.gameboard.strategy.textview.GameScoreUpdater;
-import com.rumoe.speedtouch.gameboard.strategy.textview.SurvivalLifeUpdater;
-import com.rumoe.speedtouch.gameboard.strategy.textview.SurvivalScoreUpdater;
-import com.rumoe.speedtouch.gameboard.thread.GameThread;
+import com.rumoe.speedtouch.game.gameboard.Cell;
+import com.rumoe.speedtouch.game.gameboard.strategy.textview.GameLifeUpdater;
+import com.rumoe.speedtouch.game.gameboard.strategy.textview.GameScoreUpdater;
+import com.rumoe.speedtouch.game.gameboard.strategy.textview.SurvivalLifeUpdater;
+import com.rumoe.speedtouch.game.gameboard.strategy.textview.SurvivalScoreUpdater;
+import com.rumoe.speedtouch.game.gameboard.thread.GameThread;
 
 public class GameBoardFragment extends Fragment{
 

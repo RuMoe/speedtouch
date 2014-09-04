@@ -1,9 +1,9 @@
-package com.rumoe.speedtouch;
+package com.rumoe.speedtouch.game;
 
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.rumoe.speedtouch.gameboard.GameBoardFragment;
+import com.rumoe.speedtouch.R;
 
 public class GameActivity extends Activity {
 

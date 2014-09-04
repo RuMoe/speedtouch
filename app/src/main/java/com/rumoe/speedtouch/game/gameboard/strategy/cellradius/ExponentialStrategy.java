@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.gameboard.strategy.cellradius;
+package com.rumoe.speedtouch.game.gameboard.strategy.cellradius;
 
 public class ExponentialStrategy implements CellRadiusCalcStrategy {
 

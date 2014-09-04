@@ -1,13 +1,13 @@
-package com.rumoe.speedtouch.gameboard.thread;
+package com.rumoe.speedtouch.game.gameboard.thread;
 
 import android.util.Log;
 
-import com.rumoe.speedtouch.gameboard.Cell;
-import com.rumoe.speedtouch.gameboard.CellEvent;
-import com.rumoe.speedtouch.gameboard.CellObserver;
-import com.rumoe.speedtouch.gameboard.CellType;
-import com.rumoe.speedtouch.gameboard.strategy.textview.GameLifeUpdater;
-import com.rumoe.speedtouch.gameboard.strategy.textview.GameScoreUpdater;
+import com.rumoe.speedtouch.game.gameboard.Cell;
+import com.rumoe.speedtouch.game.gameboard.CellEvent;
+import com.rumoe.speedtouch.game.gameboard.CellObserver;
+import com.rumoe.speedtouch.game.gameboard.CellType;
+import com.rumoe.speedtouch.game.gameboard.strategy.textview.GameLifeUpdater;
+import com.rumoe.speedtouch.game.gameboard.strategy.textview.GameScoreUpdater;
 
 // TODO stop gamethread if application is minimized
 public class GameThread implements Runnable, CellObserver {
