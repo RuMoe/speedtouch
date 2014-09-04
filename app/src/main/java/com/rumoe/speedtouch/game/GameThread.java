@@ -4,11 +4,14 @@ import android.util.Log;
 
 import com.rumoe.speedtouch.game.event.CellEvent;
 import com.rumoe.speedtouch.game.event.CellObserver;
+import com.rumoe.speedtouch.game.event.GameEvent;
+import com.rumoe.speedtouch.game.event.GameEventManager;
+import com.rumoe.speedtouch.game.event.GameObserver;
 import com.rumoe.speedtouch.game.gameboard.Cell;
 import com.rumoe.speedtouch.game.gameboard.CellType;
 
 // TODO stop gamethread if application is minimized
-public class GameThread implements Runnable, CellObserver {
+public class GameThread implements Runnable, CellObserver, GameObserver {
 
     private Thread thread;
 
@@ -24,38 +27,17 @@ public class GameThread implements Runnable, CellObserver {
     private int activeCells;
 
     public GameThread(final Cell[][] board) {
+        GameEventManager.getInstance().register(this);
         this.board = board;
 
         rows = board.length;
         columns = board[0].length;
 
-        stopped = false;
         activeCells = 0;
-    }
-
-    public void startThread() {
-        thread = new Thread(this);
-        thread.start();
-    }
-
-    public void resumeThread() {
-        if (stopped) {
-            stopped = false;
-            startThread();
-        }
-    }
-
-    public void stopThread() {
-        stopped = true;
-        thread.interrupt();
     }
 
     @Override
     public void run() {
-        try {
-            Thread.sleep(1000);
-        } catch (Exception e) {}
-
         while (!stopped) {
 
             if (activeCells < 5) {
@@ -81,6 +63,18 @@ public class GameThread implements Runnable, CellObserver {
         }
     }
 
+    private void gameOver() {
+        GameEventManager.getInstance().unregister(this);
+        stopped = true;
+        thread.interrupt();
+    }
+
+    private void gameStart() {
+        thread = new Thread(this);
+        stopped = false;
+        thread.start();
+    }
+
     @Override
     public void notifyOnActive(CellEvent event) {
         activeCells++;
@@ -98,4 +92,16 @@ public class GameThread implements Runnable, CellObserver {
 
     @Override
     public void notifyOnMissedTouch(CellEvent event) {}
+
+    @Override
+    public void notifyOnGameEvent(GameEvent event) {
+        switch (event.getType()) {
+            case GAME_OVER:
+                gameOver();
+                break;
+            case GAME_START:
+                gameStart();
+                break;
+        }
+    }
 }

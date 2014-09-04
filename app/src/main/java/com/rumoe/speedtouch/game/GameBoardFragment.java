@@ -10,6 +10,9 @@ import android.widget.TableRow;
 
 import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.game.event.CellObserver;
+import com.rumoe.speedtouch.game.event.GameEvent;
+import com.rumoe.speedtouch.game.event.GameEventManager;
+import com.rumoe.speedtouch.game.event.GameLifecycleEvent;
 import com.rumoe.speedtouch.game.gameboard.Cell;
 import com.rumoe.speedtouch.game.strategy.textview.GameLifeUpdater;
 import com.rumoe.speedtouch.game.strategy.textview.GameScoreUpdater;
@@ -62,13 +65,24 @@ public class GameBoardFragment extends Fragment{
         thread = new GameThread(cells);
 
         subscribeToCells(scoreUpdater, lifeUpdater, thread);
-        thread.startThread();
+
+        //TODO temporary clusterfuck
+        new Thread() {
+            public void run() {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {}
+
+                GameEventManager.getInstance()
+                    .notifyAll(new GameLifecycleEvent(GameEvent.EventType.GAME_START));
+            }
+        }.start();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        thread.stopThread();
+        //TODO stop GameThread of view is detroyed
     }
 
     private void subscribeToCells(CellObserver... obs) {
