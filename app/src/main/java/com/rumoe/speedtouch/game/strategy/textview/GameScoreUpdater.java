@@ -15,7 +15,6 @@ public abstract class GameScoreUpdater extends TextViewUpdater {
 
     GameScoreUpdater (Activity rootActivity) {
         super(rootActivity, (TextView) rootActivity.findViewById(SCORE_VIEW_ID));
-        updateText(getScoreAsString());
     }
 
     public synchronized void updateScore(CellEvent event) {
@@ -26,4 +25,19 @@ public abstract class GameScoreUpdater extends TextViewUpdater {
     abstract void calculateNewScore(CellEvent event);
 
     abstract String getScoreAsString();
+
+    @Override
+    public void notifyOnTimeout(CellEvent event) {
+        updateScore(event);
+    }
+
+    @Override
+    public void notifyOnTouch(CellEvent event) {
+        updateScore(event);
+    }
+
+    @Override
+    public void notifyOnMissedTouch(CellEvent event) {
+        updateScore(event);
+    }
 }

@@ -30,6 +30,8 @@ public class SurvivalScoreUpdater extends GameScoreUpdater {
             // The game starts with a score of 0.
         score = 0;
         currentMultiplier = baseMultiplier;
+
+        updateText(getScoreAsString());
     }
 
     @Override
@@ -60,6 +62,11 @@ public class SurvivalScoreUpdater extends GameScoreUpdater {
         }
     }
 
+    @Override
+    String getScoreAsString() {
+        return String.format("%07d (x%.1f)",score, getEffectiveMultiplier());
+    }
+
     private boolean checkForMultiplierReset(CellEvent event) {
         switch (event.getEventType()) {
             case TOUCHED:
@@ -74,11 +81,6 @@ public class SurvivalScoreUpdater extends GameScoreUpdater {
                 break;
         }
         return false;
-    }
-
-    @Override
-    String getScoreAsString() {
-        return String.format("%07d (x%.1f)",score, getEffectiveMultiplier());
     }
 
     /**

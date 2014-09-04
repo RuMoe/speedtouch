@@ -9,6 +9,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 
 import com.rumoe.speedtouch.R;
+import com.rumoe.speedtouch.game.event.CellObserver;
 import com.rumoe.speedtouch.game.gameboard.Cell;
 import com.rumoe.speedtouch.game.strategy.textview.GameLifeUpdater;
 import com.rumoe.speedtouch.game.strategy.textview.GameScoreUpdater;
@@ -58,16 +59,25 @@ public class GameBoardFragment extends Fragment{
         //TODO for now scoreUpdater and lifeUpdater will be hardcoded.. change that at some point
         GameScoreUpdater scoreUpdater = new SurvivalScoreUpdater(getActivity());
         GameLifeUpdater lifeUpdater = new SurvivalLifeUpdater(getActivity());
+        thread = new GameThread(cells);
 
-        thread = new GameThread(cells, scoreUpdater, lifeUpdater);
-
+        subscribeToCells(scoreUpdater, lifeUpdater, thread);
         thread.startThread();
-
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         thread.stopThread();
+    }
+
+    private void subscribeToCells(CellObserver... obs) {
+        for (int i = 0; i < ROW_COUNT; i++) {
+            for (int j = 0; j < COLUMN_COUNT; j++) {
+                for (CellObserver o : obs) {
+                    cells[i][j].registerObserver(o);
+                }
+            }
+        }
     }
 }

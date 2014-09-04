@@ -15,6 +15,7 @@ public abstract class GameLifeUpdater extends TextViewUpdater {
 
     GameLifeUpdater(Activity activity) {
         super(activity, (TextView) activity.findViewById(LIFE_VIEW_ID));
+        updateText(getLifeAsString());
     }
 
     public synchronized void updateLife(CellEvent event) {
@@ -26,5 +27,13 @@ public abstract class GameLifeUpdater extends TextViewUpdater {
 
     abstract String getLifeAsString();
 
-    public abstract boolean isGameOver();
+    @Override
+    public void notifyOnTimeout(CellEvent event) {
+        updateLife(event);
+    }
+
+    @Override
+    public void notifyOnTouch(CellEvent event) {
+        updateLife(event);
+    }
 }

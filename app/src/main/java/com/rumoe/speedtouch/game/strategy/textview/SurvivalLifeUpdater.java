@@ -15,8 +15,9 @@ public class SurvivalLifeUpdater extends GameLifeUpdater {
 
     public SurvivalLifeUpdater(Activity activity) {
         super(activity);
-        // start the game with 3 lives;
+
         lifeCount = 3;
+        updateText(getLifeAsString());
     }
 
     @Override
@@ -47,10 +48,5 @@ public class SurvivalLifeUpdater extends GameLifeUpdater {
     String getLifeAsString() {
             // seems a bit like an hack... repeat the life symbol lifeCount times
         return new String(new char[lifeCount]).replace("\0", LIFE_SYMBOL);
-    }
-
-    @Override
-    public boolean isGameOver() {
-        return lifeCount <= 0;
     }
 }
