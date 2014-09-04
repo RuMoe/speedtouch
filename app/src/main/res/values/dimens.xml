@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <dimen name="game_stat_text_size">24sp</dimen>
@@ -8,4 +9,7 @@
     <!-- padding for the cells of the game board -->
     <dimen name="board_cell_padding">7dp</dimen>
     <dimen name="board_border_padding">10dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
 </resources>

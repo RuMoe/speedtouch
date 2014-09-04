@@ -8,4 +8,7 @@
     <!-- Main game activity -->
     <string name="score_label">Score:</string>
     <string name="life_remaining">\u2665</string>
+    <string name="title_activity_temp_start">TempStart</string>
+    <string name="action_settings">Settings</string>
+
 </resources>
