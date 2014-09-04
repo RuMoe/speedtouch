@@ -2,9 +2,9 @@ package com.rumoe.speedtouch.game;
 
 import android.util.Log;
 
+import com.rumoe.speedtouch.game.event.CellEvent;
+import com.rumoe.speedtouch.game.event.CellObserver;
 import com.rumoe.speedtouch.game.gameboard.Cell;
-import com.rumoe.speedtouch.game.gameboard.CellEvent;
-import com.rumoe.speedtouch.game.gameboard.CellObserver;
 import com.rumoe.speedtouch.game.gameboard.CellType;
 import com.rumoe.speedtouch.game.strategy.textview.GameLifeUpdater;
 import com.rumoe.speedtouch.game.strategy.textview.GameScoreUpdater;

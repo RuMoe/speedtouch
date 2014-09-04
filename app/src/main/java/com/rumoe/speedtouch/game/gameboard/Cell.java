@@ -8,6 +8,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.rumoe.speedtouch.R;
+import com.rumoe.speedtouch.game.event.CellEvent;
+import com.rumoe.speedtouch.game.event.CellObserver;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.game.gameboard;
+package com.rumoe.speedtouch.game.event;
 
 public interface CellObserver {
 

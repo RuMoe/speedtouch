@@ -3,7 +3,7 @@ package com.rumoe.speedtouch.game.strategy.textview;
 import android.app.Activity;
 import android.util.Log;
 
-import com.rumoe.speedtouch.game.gameboard.CellEvent;
+import com.rumoe.speedtouch.game.event.CellEvent;
 import com.rumoe.speedtouch.game.gameboard.CellType;
 
 /**

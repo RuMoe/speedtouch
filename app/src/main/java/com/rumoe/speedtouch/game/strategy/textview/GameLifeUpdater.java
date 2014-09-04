@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.widget.TextView;
 
 import com.rumoe.speedtouch.R;
-import com.rumoe.speedtouch.game.gameboard.CellEvent;
+import com.rumoe.speedtouch.game.event.CellEvent;
 
 /**
  * Created by jan on 31.08.2014.
