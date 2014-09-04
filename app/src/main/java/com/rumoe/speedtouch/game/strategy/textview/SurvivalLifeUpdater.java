@@ -3,6 +3,11 @@ package com.rumoe.speedtouch.game.strategy.textview;
 import android.app.Activity;
 
 import com.rumoe.speedtouch.game.event.CellEvent;
+import com.rumoe.speedtouch.game.event.GameEvent;
+import com.rumoe.speedtouch.game.event.GameEventManager;
+import com.rumoe.speedtouch.game.event.GameLifecycleEvent;
+import com.rumoe.speedtouch.game.event.GameStatEvent;
+import com.rumoe.speedtouch.game.gameboard.CellPosition;
 import com.rumoe.speedtouch.game.gameboard.CellType;
 
 /**
@@ -11,11 +16,14 @@ import com.rumoe.speedtouch.game.gameboard.CellType;
 public class SurvivalLifeUpdater extends GameLifeUpdater {
 
     private int lifeCount;
+
     private static final String LIFE_SYMBOL = "\u2665";
+    private final GameEventManager gameEventManager;
 
     public SurvivalLifeUpdater(Activity activity) {
         super(activity);
 
+        gameEventManager = GameEventManager.getInstance();
         lifeCount = 3;
         updateText(getLifeAsString());
     }
@@ -25,12 +33,12 @@ public class SurvivalLifeUpdater extends GameLifeUpdater {
         switch (event.getEventType()) {
             case TIMEOUT:
                 if (!event.getCellType().equals(CellType.BAD)) {
-                    decrementLife();
+                    decrementLife(event.getCellPosition());
                 }
                 break;
             case TOUCHED:
                 if (event.getCellType().equals(CellType.BAD)) {
-                  decrementLife();
+                  decrementLife(event.getCellPosition());
                 }
                 break;
             default:
@@ -38,9 +46,13 @@ public class SurvivalLifeUpdater extends GameLifeUpdater {
         }
     }
 
-    private void decrementLife() {
+    private void decrementLife(CellPosition cause) {
        if (lifeCount > 0) {
             lifeCount--;
+            gameEventManager.notifyAll(new GameStatEvent(GameEvent.EventType.LIFE_CHANGE,
+                    cause, -1));
+       } else {
+           gameEventManager.notifyAll(new GameLifecycleEvent(GameEvent.EventType.GAME_OVER));
        }
     }
 
