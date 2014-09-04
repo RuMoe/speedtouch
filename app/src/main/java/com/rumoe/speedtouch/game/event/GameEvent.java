@@ -3,7 +3,7 @@ package com.rumoe.speedtouch.game.event;
 /**
  * Created by jan on 04.09.2014.
  */
-abstract class GameEvent {
+public abstract class GameEvent {
 
     public enum EventType {
 
