@@ -23,8 +23,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
     private Thread lifecycle;
 
     private CellType type;
-    private int xPos;
-    private int yPos;
+    private final CellPosition pos;
 
     private ArrayList<CellObserver> observer;
     private boolean active;
@@ -36,8 +35,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
         super(context);
 
         type = CellType.STANDARD;
-        this.xPos = xPos;
-        this.yPos = yPos;
+        pos = new CellPosition(xPos, yPos);
 
         active = false;
         animation = new CellAnimation(getHolder(), CellType.STANDARD, context);
@@ -244,7 +242,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
      */
     private void notifyAllOnActive() {
         long time = System.currentTimeMillis();
-        CellEvent event = CellEvent.generateActivatedEvent(xPos, yPos, type, time - cellTimeoutTime);
+        CellEvent event = CellEvent.generateActivatedEvent(pos, type, time - cellTimeoutTime);
 
         for (CellObserver obs : observer) {
             obs.notifyOnActive(event);
@@ -255,7 +253,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
      * Notify all observer that the cell is now inactive due to timeout.
      */
     private void notifyAllOnTimeout() {
-        CellEvent event = CellEvent.generateTimeoutEvent(xPos, yPos, type,
+        CellEvent event = CellEvent.generateTimeoutEvent(pos, type,
                 cellTimeoutTime - cellActivatedTime);
 
         for (CellObserver obs : observer) {
@@ -268,7 +266,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
      */
     private void notifyAllOnTouch() {
         long time = System.currentTimeMillis();
-        CellEvent event = CellEvent.generateTouchedEvent(xPos, yPos, type, time - cellActivatedTime,
+        CellEvent event = CellEvent.generateTouchedEvent(pos, type, time - cellActivatedTime,
                 cellTimeoutTime - time);
 
         for (CellObserver obs : observer) {
@@ -282,7 +280,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
      */
     private void notifyAllOnMissedTouch() {
         long time = System.currentTimeMillis();
-        CellEvent event = CellEvent.generateMissedEvent(xPos, yPos, type, time - cellActivatedTime,
+        CellEvent event = CellEvent.generateMissedEvent(pos, type, time - cellActivatedTime,
                 cellTimeoutTime - time);
 
         for (CellObserver obs : observer) {
