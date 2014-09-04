@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.game.gameboard.strategy.textview;
+package com.rumoe.speedtouch.game.strategy.textview;
 
 import android.app.Activity;
 

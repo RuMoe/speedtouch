@@ -10,11 +10,10 @@ import android.widget.TableRow;
 
 import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.game.gameboard.Cell;
-import com.rumoe.speedtouch.game.gameboard.strategy.textview.GameLifeUpdater;
-import com.rumoe.speedtouch.game.gameboard.strategy.textview.GameScoreUpdater;
-import com.rumoe.speedtouch.game.gameboard.strategy.textview.SurvivalLifeUpdater;
-import com.rumoe.speedtouch.game.gameboard.strategy.textview.SurvivalScoreUpdater;
-import com.rumoe.speedtouch.game.gameboard.thread.GameThread;
+import com.rumoe.speedtouch.game.strategy.textview.GameLifeUpdater;
+import com.rumoe.speedtouch.game.strategy.textview.GameScoreUpdater;
+import com.rumoe.speedtouch.game.strategy.textview.SurvivalLifeUpdater;
+import com.rumoe.speedtouch.game.strategy.textview.SurvivalScoreUpdater;
 
 public class GameBoardFragment extends Fragment{
 

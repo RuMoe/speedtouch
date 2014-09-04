@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.game.gameboard.strategy.cellradius;
+package com.rumoe.speedtouch.game.strategy.cellradius;
 
 
 public interface CellRadiusCalcStrategy {

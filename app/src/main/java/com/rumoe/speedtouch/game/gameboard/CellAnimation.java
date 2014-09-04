@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.game.gameboard.thread;
+package com.rumoe.speedtouch.game.gameboard;
 
 
 import android.content.Context;
@@ -8,10 +8,9 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.rumoe.speedtouch.R;
-import com.rumoe.speedtouch.game.gameboard.CellType;
-import com.rumoe.speedtouch.game.gameboard.strategy.cellradius.CellRadiusCalcStrategy;
-import com.rumoe.speedtouch.game.gameboard.strategy.cellradius.ExponentialStrategy;
-import com.rumoe.speedtouch.game.gameboard.strategy.cellradius.LinearStrategy;
+import com.rumoe.speedtouch.game.strategy.cellradius.CellRadiusCalcStrategy;
+import com.rumoe.speedtouch.game.strategy.cellradius.ExponentialStrategy;
+import com.rumoe.speedtouch.game.strategy.cellradius.LinearStrategy;
 
 public class CellAnimation implements Runnable {
 
