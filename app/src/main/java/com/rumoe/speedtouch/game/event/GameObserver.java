@@ -5,5 +5,5 @@ package com.rumoe.speedtouch.game.event;
  */
 public interface GameObserver {
 
-    void notify(GameEvent e);
+    void notifyOnGameEvent(GameEvent e);
 }
