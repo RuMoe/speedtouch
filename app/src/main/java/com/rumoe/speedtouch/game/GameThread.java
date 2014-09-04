@@ -67,12 +67,22 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
         GameEventManager.getInstance().unregister(this);
         stopped = true;
         thread.interrupt();
+        clearAlLCells();
     }
 
     private void gameStart() {
         thread = new Thread(this);
         stopped = false;
         thread.start();
+    }
+
+    private void clearAlLCells() {
+        for (Cell[] row : board) {
+            for (Cell c : row) {
+                c.clearCell();
+                activeCells = 0;
+            }
+        }
     }
 
     @Override
