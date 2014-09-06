@@ -10,7 +10,7 @@ public abstract class GameEvent {
         COUNTDOWN_START(true),
         GAME_START(true),
         SCORE_CHANGE(false),
-        LIFE_CHANGE(false),
+        LIFE_LOST(false),
         GAME_OVER(true);
 
         private boolean lifeCycleEvent;

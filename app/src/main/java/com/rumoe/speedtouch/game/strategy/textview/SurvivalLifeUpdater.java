@@ -49,7 +49,7 @@ public class SurvivalLifeUpdater extends GameLifeUpdater {
     private void decrementLife(CellPosition cause) {
        if (lifeCount > 0) {
             lifeCount--;
-            gameEventManager.notifyAll(new GameStatEvent(GameEvent.EventType.LIFE_CHANGE,
+            gameEventManager.notifyAll(new GameStatEvent(GameEvent.EventType.LIFE_LOST,
                     cause, -1));
        } else {
            gameEventManager.notifyAll(new GameLifecycleEvent(GameEvent.EventType.GAME_OVER));

@@ -119,7 +119,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
             case GAME_START:
                 gameStart();
                 break;
-            case LIFE_CHANGE:
+            case LIFE_LOST:
                 new Thread(){
                     public void run() {
                         clearAndStop();
