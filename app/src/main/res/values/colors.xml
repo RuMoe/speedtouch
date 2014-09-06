@@ -6,4 +6,5 @@
     <color name="cell_standard">#000000</color>
     <color name="cell_bad_shadow">#FF0000</color>
     <color name="cell_bad">#FF0000</color>
+    <color name="transparent">#00000000</color>
 </resources>
