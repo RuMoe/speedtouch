@@ -239,7 +239,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
      * @return true iff the CellObserver was registered and removed, false otherwise
      */
     public boolean removeObserver(CellObserver obs) {
-        for (int i = observer.size() - 1; i >= 0; i++) {
+        for (int i = observer.size() - 1; i >= 0; i--) {
             if (obs.equals(observer.get(i))) {
                 observer.remove(i);
                 return true;
