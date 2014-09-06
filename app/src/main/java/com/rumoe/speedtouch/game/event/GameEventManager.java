@@ -22,19 +22,19 @@ public class GameEventManager {
         return instance;
     }
 
-    public void register(GameObserver obs) {
+    public synchronized void register(GameObserver obs) {
         observer.add(obs);
     }
 
-    public void unregister(GameObserver obs) {
+    public synchronized void unregister(GameObserver obs) {
         observer.remove(obs);
     }
 
-    public void unregisterAll() {
+    public synchronized void unregisterAll() {
         observer.clear();
     }
 
-    public void notifyAll(GameEvent event) {
+    public synchronized void notifyAll(GameEvent event) {
         for (int i = observer.size() - 1; i >= 0; i--) {
             if (observer.get(i) == null) {
                 observer.remove(i);
