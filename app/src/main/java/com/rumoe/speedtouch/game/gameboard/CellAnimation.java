@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.rumoe.speedtouch.R;
+import com.rumoe.speedtouch.game.strategy.cellradius.BlinkStategy;
 import com.rumoe.speedtouch.game.strategy.cellradius.CellRadiusCalcStrategy;
 import com.rumoe.speedtouch.game.strategy.cellradius.ExponentialStrategy;
 import com.rumoe.speedtouch.game.strategy.cellradius.LinearStrategy;
@@ -108,14 +109,22 @@ public class CellAnimation implements Runnable {
         return (drawThread != null && drawThread.isAlive());
     }
 
-    public boolean growAnimation(int duration) {
-        return growAnimation(new LinearStrategy(), duration);
+    public boolean setDefaultGrowAnimation(int duration) {
+        return setAnimation(new LinearStrategy(), duration, currentCellRadius, maxCellRadius);
     }
 
-    public boolean growAnimation(CellRadiusCalcStrategy strategy, int duration) {
+    public boolean setDefaultShrinkAnimation(int duration) {
+        return setAnimation(new ExponentialStrategy(), duration, currentCellRadius, minCellRadius);
+    }
+
+    public boolean setDefaultBlinkAnimation(int duration) {
+        return setAnimation(new BlinkStategy(), duration, maxCellRadius, minCellRadius);
+    }
+
+    public boolean setAnimation(CellRadiusCalcStrategy strategy, int duration, float startSize, float targetSize) {
        if (isAnimationRunning()) return false;
 
-        calculationThread = new CellRadiusCalc(strategy, duration, currentCellRadius, maxCellRadius);
+        calculationThread = new CellRadiusCalc(strategy, duration, startSize, targetSize);
         calculationThread.start();
 
         drawThread = new Thread(this);
@@ -124,21 +133,6 @@ public class CellAnimation implements Runnable {
         return true;
     }
 
-    public boolean shrinkAnimation(int duration) {
-        return shrinkAnimation(new ExponentialStrategy(), duration);
-    }
-
-    public boolean shrinkAnimation(CellRadiusCalcStrategy strategy, int duration) {
-        if (isAnimationRunning()) return false;
-
-        calculationThread = new CellRadiusCalc(strategy, duration, currentCellRadius, minCellRadius);
-        calculationThread.start();
-
-        drawThread = new Thread(this);
-        drawThread.start();
-
-        return true;
-    }
 
     /**
      * Blocks the calling thread until the animation is ended.
