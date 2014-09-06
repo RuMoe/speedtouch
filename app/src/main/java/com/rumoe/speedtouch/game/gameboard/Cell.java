@@ -137,7 +137,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
 
         this.type = type;
         animation.setCellType(type);
-        animation.growAnimation(growDuration);
+        animation.setDefaultGrowAnimation(growDuration);
         active = true;
         notifyAllOnActive();
 
@@ -169,7 +169,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
         lifecycle = new Thread() {
             @Override
             public void run() {
-                animation.growAnimation(growDuration);
+                animation.setDefaultGrowAnimation(growDuration);
                 if (!animation.waitUntilAnimationEnded()) return;
                 try {
                     Thread.sleep(waitDuration);
@@ -177,7 +177,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
                     Log.d("Cell", "Lifecycle-Thread interrupted");
                     return;
                 }
-                animation.shrinkAnimation(shrinkDuration);
+                animation.setDefaultShrinkAnimation(shrinkDuration);
                 if (!animation.waitUntilAnimationEnded()) return;
 
                 // the cell is not visible anymore --> player didn't touch it in time
