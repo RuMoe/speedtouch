@@ -13,7 +13,7 @@ public class GameEventManager {
 
     private GameEventManager() {
         observer = new ArrayList<GameObserver>(10);
-    };
+    }
 
     public static GameEventManager getInstance() {
         if (instance == null) {
