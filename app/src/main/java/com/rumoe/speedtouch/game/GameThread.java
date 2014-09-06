@@ -78,7 +78,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
 
     private void clearAndStop() {
         stopped = true;
-        thread.interrupt();
+        if (thread != null) thread.interrupt();
         clearAlLCells();
     }
 
