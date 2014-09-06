@@ -227,7 +227,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
      * @param obs The CellObserver to be added.
      * @return true
      */
-    public boolean registerObserver(CellObserver obs) {
+    public synchronized boolean registerObserver(CellObserver obs) {
         observer.add(obs);
         return true;
     }
@@ -238,7 +238,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
      * @param obs The CellObserver to be removed
      * @return true iff the CellObserver was registered and removed, false otherwise
      */
-    public boolean removeObserver(CellObserver obs) {
+    public synchronized boolean removeObserver(CellObserver obs) {
         for (int i = observer.size() - 1; i >= 0; i--) {
             if (obs.equals(observer.get(i))) {
                 observer.remove(i);
@@ -251,7 +251,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
     /**
      * Notify all observer that the cell is now active.
      */
-    private void notifyAllOnActive() {
+    private synchronized void notifyAllOnActive() {
         long time = System.currentTimeMillis();
         CellEvent event = CellEvent.generateActivatedEvent(pos, type, time - cellTimeoutTime);
 
@@ -263,7 +263,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
     /**
      * Notify all observer that the cell is now inactive due to timeout.
      */
-    private void notifyAllOnTimeout() {
+    private synchronized void notifyAllOnTimeout() {
         CellEvent event = CellEvent.generateTimeoutEvent(pos, type,
                 cellTimeoutTime - cellActivatedTime);
 
@@ -275,7 +275,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
     /**
      * Notify all observer that the cell is now inactive due to touch event.
      */
-    private void notifyAllOnTouch() {
+    private synchronized void notifyAllOnTouch() {
         long time = System.currentTimeMillis();
         CellEvent event = CellEvent.generateTouchedEvent(pos, type, time - cellActivatedTime,
                 cellTimeoutTime - time);
@@ -289,7 +289,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
      * Notify all observer tht there was a touch event which did not hit a
      * target.
      */
-    private void notifyAllOnMissedTouch() {
+    private synchronized void notifyAllOnMissedTouch() {
         long time = System.currentTimeMillis();
         CellEvent event = CellEvent.generateMissedEvent(pos, type, time - cellActivatedTime,
                 cellTimeoutTime - time);
