@@ -65,10 +65,9 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
         }
     }
 
-    private void gameOver() {
+    public void gameOver() {
         GameEventManager.getInstance().unregister(this);
         clearAndStop();
-        // TODO exit....
     }
 
     private void gameStart() {
@@ -120,6 +119,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
                 gameStart();
                 break;
             case LIFE_LOST:
+                // TODO temporary ... remove when real game threads implemented
                 new Thread(){
                     public void run() {
                         clearAndStop();

@@ -30,6 +30,10 @@ public class GameEventManager {
         observer.remove(obs);
     }
 
+    public void unregisterAll() {
+        observer.clear();
+    }
+
     public void notifyAll(GameEvent event) {
         for (int i = observer.size() - 1; i >= 0; i--) {
             if (observer.get(i) == null) {

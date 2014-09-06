@@ -1,6 +1,7 @@
 package com.rumoe.speedtouch.game;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,19 +14,23 @@ import com.rumoe.speedtouch.game.event.CellObserver;
 import com.rumoe.speedtouch.game.event.GameEvent;
 import com.rumoe.speedtouch.game.event.GameEventManager;
 import com.rumoe.speedtouch.game.event.GameLifecycleEvent;
+import com.rumoe.speedtouch.game.event.GameObserver;
 import com.rumoe.speedtouch.game.gameboard.Cell;
 import com.rumoe.speedtouch.game.strategy.textview.GameLifeUpdater;
 import com.rumoe.speedtouch.game.strategy.textview.GameScoreUpdater;
 import com.rumoe.speedtouch.game.strategy.textview.SurvivalLifeUpdater;
 import com.rumoe.speedtouch.game.strategy.textview.SurvivalScoreUpdater;
+import com.rumoe.speedtouch.menu.TempStart;
 
-public class GameBoardFragment extends Fragment{
+public class GameBoardFragment extends Fragment implements GameObserver {
 
     private static final int ROW_COUNT      = 5;
     private static final int COLUMN_COUNT   = 3;
 
     private Cell[][] cells;
     private GameThread thread;
+    private GameScoreUpdater scoreUpdater;
+    private GameLifeUpdater lifeUpdater;
 
     public GameBoardFragment() {
         cells = new Cell[ROW_COUNT][COLUMN_COUNT];
@@ -59,9 +64,11 @@ public class GameBoardFragment extends Fragment{
     public void onResume() {
         super.onResume();
 
+        GameEventManager.getInstance().register(this);
+
         //TODO for now scoreUpdater and lifeUpdater will be hardcoded.. change that at some point
-        GameScoreUpdater scoreUpdater = new SurvivalScoreUpdater(getActivity());
-        GameLifeUpdater lifeUpdater = new SurvivalLifeUpdater(getActivity());
+        scoreUpdater = new SurvivalScoreUpdater(getActivity());
+        lifeUpdater = new SurvivalLifeUpdater(getActivity());
         thread = new GameThread(cells);
 
         subscribeToCells(scoreUpdater, lifeUpdater, thread);
@@ -82,7 +89,9 @@ public class GameBoardFragment extends Fragment{
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        //TODO stop GameThread of view is detroyed
+        unsubscribeToCells(scoreUpdater, lifeUpdater, thread);
+        GameEventManager.getInstance().unregisterAll();
+        thread.gameOver();
     }
 
     private void subscribeToCells(CellObserver... obs) {
@@ -93,5 +102,27 @@ public class GameBoardFragment extends Fragment{
                 }
             }
         }
+    }
+
+    private void unsubscribeToCells(CellObserver... obs) {
+        for (int i = 0; i < ROW_COUNT; i++) {
+            for (int j = 0; j < COLUMN_COUNT; j++) {
+                for (CellObserver o : obs) {
+                    cells[i][j].removeObserver(o);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void notifyOnGameEvent(GameEvent e) {
+        if (e.getType().equals(GameEvent.EventType.GAME_OVER)) {
+            transitionToMenu();
+        }
+    }
+
+    private void transitionToMenu() {
+        Intent intent = new Intent(this.getActivity(), TempStart.class);
+        startActivity(intent);
     }
 }
