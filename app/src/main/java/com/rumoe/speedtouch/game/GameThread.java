@@ -7,7 +7,9 @@ import com.rumoe.speedtouch.game.event.CellObserver;
 import com.rumoe.speedtouch.game.event.GameEvent;
 import com.rumoe.speedtouch.game.event.GameEventManager;
 import com.rumoe.speedtouch.game.event.GameObserver;
+import com.rumoe.speedtouch.game.event.GameStatEvent;
 import com.rumoe.speedtouch.game.gameboard.Cell;
+import com.rumoe.speedtouch.game.gameboard.CellPosition;
 import com.rumoe.speedtouch.game.gameboard.CellType;
 
 // TODO stop gamethread if application is minimized
@@ -65,9 +67,8 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
 
     private void gameOver() {
         GameEventManager.getInstance().unregister(this);
-        stopped = true;
-        thread.interrupt();
-        clearAlLCells();
+        clearAndStop();
+        // TODO exit....
     }
 
     private void gameStart() {
@@ -76,13 +77,19 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
         thread.start();
     }
 
+    private void clearAndStop() {
+        stopped = true;
+        thread.interrupt();
+        clearAlLCells();
+    }
+
     private void clearAlLCells() {
         for (Cell[] row : board) {
             for (Cell c : row) {
                 c.clearCell();
-                activeCells = 0;
             }
         }
+        activeCells = 0;
     }
 
     @Override
@@ -104,13 +111,31 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
     public void notifyOnMissedTouch(CellEvent event) {}
 
     @Override
-    public void notifyOnGameEvent(GameEvent event) {
+    public void notifyOnGameEvent(final GameEvent event) {
         switch (event.getType()) {
             case GAME_OVER:
                 gameOver();
                 break;
             case GAME_START:
                 gameStart();
+                break;
+            case LIFE_CHANGE:
+                new Thread(){
+                    public void run() {
+                        clearAndStop();
+                        CellPosition cp = ((GameStatEvent) event).getCausingCell();
+                        Cell c = board[cp.getY()][cp.getX()];
+                        c.blink(Cell.DEFAULT_BLINK_ANIMATION_DURATION);
+
+                        try {
+                            Thread.sleep(Cell.DEFAULT_BLINK_ANIMATION_DURATION);
+                        } catch (InterruptedException e) {
+
+                        } finally {
+                            gameStart();
+                        }
+                    }
+                }.start();
                 break;
         }
     }

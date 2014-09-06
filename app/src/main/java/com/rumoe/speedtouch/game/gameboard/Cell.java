@@ -15,9 +15,10 @@ import java.util.ArrayList;
 
 public class Cell extends SurfaceView implements SurfaceHolder.Callback {
 
-    public static final int DEFAULT_WAIT_BEFORE_SHRINK_TIME = 1000;
-    public static final int DEFAULT_GROW_ANIMATION_DURATION    = 100;
-    public static final int DEFAULT_SHRINK_ANIMATION_DURATION  = 2000;
+    public static final int DEFAULT_WAIT_BEFORE_SHRINK_TIME     = 1000;
+    public static final int DEFAULT_GROW_ANIMATION_DURATION     = 100;
+    public static final int DEFAULT_SHRINK_ANIMATION_DURATION   = 2000;
+    public static final int DEFAULT_BLINK_ANIMATION_DURATION    = 1000;
 
     private CellAnimation animation;
     private Thread lifecycle;
@@ -122,6 +123,16 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
             deactivate();
             animation.clearCell();
         }
+        return true;
+    }
+
+    // TODO rename...
+    public boolean blink(int blinkDuration) {
+        if (!checkActivatePossibility()) return false;
+
+        animation.setCellType(type);
+        animation.setDefaultBlinkAnimation(blinkDuration);
+
         return true;
     }
 
