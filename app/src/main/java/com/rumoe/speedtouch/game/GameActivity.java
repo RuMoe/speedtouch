@@ -61,6 +61,11 @@ public class GameActivity extends Activity implements GameObserver {
     }
 
     @Override
+    public void onBackPressed() {
+        // disable the back button during the game
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         gameBoard.unsubscribeToCells(scoreUpdater, lifeUpdater, gameThread);
