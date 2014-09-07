@@ -3,7 +3,6 @@ package com.rumoe.speedtouch.game;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.RelativeLayout;
 
 import com.rumoe.speedtouch.game.event.GameEvent;
@@ -29,6 +28,6 @@ public class EffectOverlay extends RelativeLayout implements GameObserver{
 
     @Override
     public void notifyOnGameEvent(GameEvent e) {
-        Log.e("test", "set");
+
     }
 }
