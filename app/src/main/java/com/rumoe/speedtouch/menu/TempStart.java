@@ -24,7 +24,6 @@ public class TempStart extends Activity {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), GameActivity.class);
                 startActivity(intent);
-                finish();
                 overridePendingTransition(R.anim.to_game_enter, R.anim.to_game_exit);
             }
         });
