@@ -37,7 +37,6 @@ public class GameActivity extends Activity implements GameObserver {
     @Override
     public void onResume() {
         super.onResume();
-
         GameEventManager.getInstance().register(this);
 
         //TODO for now scoreUpdater and lifeUpdater will be hardcoded.. change that at some point
@@ -51,12 +50,13 @@ public class GameActivity extends Activity implements GameObserver {
         new Thread() {
             public void run() {
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(1500);
                 } catch (InterruptedException e) {}
 
                 GameEventManager.getInstance()
-                        .notifyAll(new GameLifecycleEvent(GameEvent.EventType.GAME_START));
-            }
+                        .notifyAll(new GameLifecycleEvent(GameEvent.EventType.COUNTDOWN_START));
+
+           }
         }.start();
     }
 
