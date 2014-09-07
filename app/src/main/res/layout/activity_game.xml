@@ -41,13 +41,9 @@
             tools:ignore="MergeRootFrame" />
     </LinearLayout>
 
-    <!-- Test overlay -->
-    <TextView
+    <com.rumoe.speedtouch.game.EffectOverlay
         android:id="@+id/overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/transparent"
-        android:gravity="center"
-        android:textSize="50sp"
-        android:text="test"/>
+        android:background="@color/transparent"/>
 </FrameLayout>
