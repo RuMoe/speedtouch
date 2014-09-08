@@ -8,31 +8,40 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/game_stat_horizontal_padding"
-            android:paddingRight="@dimen/game_stat_horizontal_padding"
-            android:paddingTop="@dimen/game_stat_top_padding"
-            android:paddingBottom="@dimen/game_stat_bottom_padding">
-
-            <TextView
-                android:id="@+id/gameScoreView"
-                android:layout_width="wrap_content"
+            android:orientation="vertical">
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/score_label"
-                android:textSize="@dimen/game_stat_text_size"/>
-            <TextView
-                android:id="@+id/gameLifeView"
-                android:layout_toEndOf="@id/gameScoreView"
-                android:layout_toRightOf="@id/gameScoreView"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/life_remaining"
-                android:gravity="end"
-                android:textSize="@dimen/game_stat_text_size"/>
-        </RelativeLayout>
+                android:background="@color/stat_bar_background"
+                android:paddingLeft="@dimen/game_stat_horizontal_padding"
+                android:paddingRight="@dimen/game_stat_horizontal_padding"
+                android:paddingTop="@dimen/game_stat_top_padding"
+                android:paddingBottom="@dimen/game_stat_bottom_padding">
 
+                <TextView
+                    android:id="@+id/gameScoreView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/score_label"
+                    android:textSize="@dimen/game_stat_text_size"/>
+                <TextView
+                    android:id="@+id/gameLifeView"
+                    android:layout_toEndOf="@id/gameScoreView"
+                    android:layout_toRightOf="@id/gameScoreView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/life_remaining"
+                    android:gravity="end"
+                    android:textSize="@dimen/game_stat_text_size"/>
+            </RelativeLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="@drawable/drop_shadow"/>
+        </LinearLayout>
         <FrameLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
