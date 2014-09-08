@@ -1,6 +1,5 @@
 package com.rumoe.speedtouch.game;
 
-
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
