@@ -1,10 +1,13 @@
 package com.rumoe.speedtouch.game;
 
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -14,7 +17,7 @@ import com.rumoe.speedtouch.game.event.GameEventManager;
 import com.rumoe.speedtouch.game.event.GameLifecycleEvent;
 import com.rumoe.speedtouch.game.event.GameObserver;
 
-public class EffectOverlay extends RelativeLayout implements GameObserver{
+public class EffectOverlay extends RelativeLayout implements GameObserver {
 
     public EffectOverlay(Context context) {
         super(context);
@@ -78,11 +81,30 @@ public class EffectOverlay extends RelativeLayout implements GameObserver{
         }.start();
     }
 
+    private void executeLifeLostEffect() {
+        final int startColor = getResources().getColor(R.color.life_lost_flash);
+        final int endColor   = getResources().getColor(R.color.life_lost_flash_end);
+
+        ((Activity) getContext()).runOnUiThread(new Runnable() {
+            public void run() {
+                ObjectAnimator bgColorAnimator =
+                        ObjectAnimator.ofObject(EffectOverlay.this, "backgroundColor",
+                                new ArgbEvaluator(), startColor, endColor);
+                bgColorAnimator.setInterpolator(new DecelerateInterpolator());
+                bgColorAnimator.setDuration(600);
+                bgColorAnimator.start();
+            }
+        });
+    }
+
     @Override
     public void notifyOnGameEvent(GameEvent e) {
         switch(e.getType()) {
             case COUNTDOWN_START:
                 executeCountdown();
+                break;
+            case LIFE_LOST:
+                executeLifeLostEffect();
                 break;
         }
     }

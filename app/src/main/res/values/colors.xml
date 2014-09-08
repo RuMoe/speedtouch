@@ -8,5 +8,8 @@
     <color name="cell_bad_shadow">#FF0000</color>
     <color name="cell_bad">#FF0000</color>
 
+    <color name="life_lost_flash">#AAFF0000</color>
+    <color name="life_lost_flash_end">#00FF0000</color>
+
     <color name="transparent">#00000000</color>
 </resources>
