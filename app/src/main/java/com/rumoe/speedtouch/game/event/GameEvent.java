@@ -8,6 +8,7 @@ public abstract class GameEvent {
     public enum EventType {
 
         COUNTDOWN_START(true),
+        COUNTDOWN_END(true),
         GAME_START(true),
         SCORE_CHANGE(false),
         LIFE_LOST(false),
