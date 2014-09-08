@@ -10,5 +10,4 @@
         <!-- Disables the title bar -->
         <item name="android:windowNoTitle"> true </item>
     </style>
-
 </resources>
