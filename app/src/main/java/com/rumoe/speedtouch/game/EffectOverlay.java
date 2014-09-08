@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.game.event.GameEvent;
 import com.rumoe.speedtouch.game.event.GameEventManager;
+import com.rumoe.speedtouch.game.event.GameLifecycleEvent;
 import com.rumoe.speedtouch.game.event.GameObserver;
 
 public class EffectOverlay extends RelativeLayout implements GameObserver{
@@ -70,6 +71,9 @@ public class EffectOverlay extends RelativeLayout implements GameObserver{
                         EffectOverlay.this.removeView(cdText);
                     }
                 });
+
+                // notify the game that the countdown is over
+                GameEventManager.getInstance().notifyAll(new GameLifecycleEvent(GameEvent.EventType.COUNTDOWN_END));
             }
         }.start();
     }

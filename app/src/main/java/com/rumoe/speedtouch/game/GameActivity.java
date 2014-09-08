@@ -76,9 +76,28 @@ public class GameActivity extends Activity implements GameObserver {
 
     @Override
     public void notifyOnGameEvent(GameEvent e) {
-        if (e.getType().equals(GameEvent.EventType.GAME_OVER)) {
-            transitionToMenu();
+        switch (e.getType()) {
+            case COUNTDOWN_END:
+                startGame();
+                break;
+            case GAME_OVER:
+                transitionToMenu();
+                break;
         }
+    }
+
+    private void startGame() {
+        new Thread() {
+            public void run() {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    // does not matter if it is interrupted here
+                }
+                GameEventManager.getInstance().notifyAll(new GameLifecycleEvent(GameEvent.EventType.GAME_START));
+            }
+        }.start();
+
     }
 
     private void transitionToMenu() {
