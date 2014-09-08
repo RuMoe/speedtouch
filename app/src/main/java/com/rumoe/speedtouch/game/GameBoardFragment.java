@@ -27,21 +27,23 @@ public class GameBoardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView           = inflater.inflate(R.layout.fragment_game, container, false);
-        TableLayout gameBoard   = (TableLayout) rootView.findViewById(R.id.gameBoard);
-
-        float cellHeight    = 1.0f / ROW_COUNT;
-        float cellWidth     = 1.0f / COLUMN_COUNT;
+        final TableLayout gameBoard   = (TableLayout) rootView.findViewById(R.id.gameBoard);
 
         for (int i = 0; i < ROW_COUNT; i++) {
-            TableRow tr = new TableRow(gameBoard.getContext());
-            gameBoard.addView(tr, new TableLayout.LayoutParams(0,0, cellHeight));
-
             for (int j = 0; j < COLUMN_COUNT; j++) {
-                Cell cell = new Cell(tr.getContext(), j, i);
-                tr.addView(cell, new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, cellWidth));
-
-                cells[i][j] = cell;
+                cells[i][j] = new Cell(getActivity(), j, i);
             }
+        }
+
+        final float cellHeight = 1.0f / ROW_COUNT;
+        final float cellWidth = 1.0f / COLUMN_COUNT;
+
+        for (int i = 0; i < ROW_COUNT; i++) {
+            final TableRow tr = new TableRow(gameBoard.getContext());
+            for (int j = 0; j < COLUMN_COUNT; j++) {
+                tr.addView(cells[i][j], new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, cellWidth));
+            }
+            gameBoard.addView(tr, new TableLayout.LayoutParams(0, 0, cellHeight));
         }
 
         return rootView;

@@ -44,13 +44,11 @@ public class GameActivity extends Activity implements GameObserver {
         lifeUpdater = new SurvivalLifeUpdater(this);
         gameThread = new GameThread(gameBoard.getCells());
 
-        gameBoard.subscribeToCells(scoreUpdater, lifeUpdater, gameThread);
-
         //TODO temporary clusterfuck
         new Thread() {
             public void run() {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(1500);
                 } catch (InterruptedException e) {}
 
                 GameEventManager.getInstance()
@@ -87,6 +85,8 @@ public class GameActivity extends Activity implements GameObserver {
     }
 
     private void startGame() {
+        gameBoard.subscribeToCells(scoreUpdater, lifeUpdater, gameThread);
+
         new Thread() {
             public void run() {
                 try {
