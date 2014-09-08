@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.game.event.GameEvent;
 import com.rumoe.speedtouch.game.event.GameEventManager;
 import com.rumoe.speedtouch.game.event.GameObserver;
@@ -30,35 +31,43 @@ public class EffectOverlay extends RelativeLayout implements GameObserver{
     }
 
     private void executeCountdown() {
-        final TextView textView = new TextView(this.getContext());
         final Activity rootActivity = (Activity) getContext();
+        final TextView cdText = new TextView(rootActivity);
 
         new Thread() {
             public void run() {
+                // add to overlay and apply styling
                 rootActivity.runOnUiThread(new Runnable() {
                     public void run() {
-                        EffectOverlay.this.addView(textView);
+                        EffectOverlay.this.addView(cdText);
+                        RelativeLayout.LayoutParams countdownLayout =
+                                (RelativeLayout.LayoutParams) cdText.getLayoutParams();
+                        countdownLayout.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+
+                        cdText.setTextAppearance(rootActivity, R.style.countDownLook);
                     }
                 });
 
+                // count down the numbers
                 for (int countDown = 3; countDown > 0; countDown--) {
-                    final int current = countDown;      // really?
+                    final int currentDigit = countDown;
                     rootActivity.runOnUiThread(new Runnable() {
                         public void run() {
-                            textView.setText("" + current);
+                            cdText.setText("" + currentDigit);
                         }
-                     });
+                    });
                     try {
                         Thread.sleep(1000);
-                    } catch (InterruptedException e){
-                        Log.w("EffectOverlay", "Countdown interrupted");
-                        break;
+                    } catch (InterruptedException e) {
+                        Log.w("EffectOverlay", "Count down unexpectedly interrupted");
                     }
                 }
 
+                // remove from overlay
                 rootActivity.runOnUiThread(new Runnable() {
                     public void run() {
-                        EffectOverlay.this.removeView(textView);
+                        cdText.setText("");
+                        EffectOverlay.this.removeView(cdText);
                     }
                 });
             }
