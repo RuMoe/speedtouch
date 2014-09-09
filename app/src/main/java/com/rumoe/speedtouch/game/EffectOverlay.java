@@ -38,7 +38,7 @@ public class EffectOverlay extends RelativeLayout implements GameObserver {
     }
 
     private void checkValidContext(Context context) {
-        if ((context instanceof GameActivity)) {
+        if (!(context instanceof GameActivity)) {
             throw new ActivityNotFoundException("EffectOverlay needs instance of " +
                     "GameActivity as context");
         }
