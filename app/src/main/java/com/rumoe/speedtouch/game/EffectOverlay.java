@@ -3,6 +3,7 @@ package com.rumoe.speedtouch.game;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -20,17 +21,27 @@ public class EffectOverlay extends RelativeLayout implements GameObserver {
 
     public EffectOverlay(Context context) {
         super(context);
+        checkValidContext(context);
         GameEventManager.getInstance().register(this);
     }
 
     public EffectOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
+        checkValidContext(context);
         GameEventManager.getInstance().register(this);
     }
 
     public EffectOverlay(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        checkValidContext(context);
         GameEventManager.getInstance().register(this);
+    }
+
+    private void checkValidContext(Context context) {
+        if ((context instanceof GameActivity)) {
+            throw new ActivityNotFoundException("EffectOverlay needs instance of " +
+                    "GameActivity as context");
+        }
     }
 
     private void executeCountdown() {
