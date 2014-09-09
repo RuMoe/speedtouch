@@ -7,7 +7,9 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Transformation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -119,37 +121,44 @@ public class EffectOverlay extends RelativeLayout implements GameObserver {
             scoreView.setTextAppearance(getContext(), R.style.scoreAnimationTextNegative);
         }
 
-        new Thread() {
+        // positioning
+        ((Activity) getContext()).runOnUiThread(new Runnable() {
+            @Override
             public void run() {
-                // positioning
-                ((Activity) getContext()).runOnUiThread(new Runnable() {
+                RelativeLayout.LayoutParams layoutParams =
+                        (LayoutParams) generateDefaultLayoutParams();
+
+                int widthMeasureSpec = MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.AT_MOST);
+                int heightMeasureSpec = MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.AT_MOST);
+                scoreView.measure(widthMeasureSpec, heightMeasureSpec);
+                layoutParams.leftMargin = pos[0] - scoreView.getMeasuredWidth()  / 2;
+                    // not divided by two because of padding
+                layoutParams.topMargin  = pos[1] - scoreView.getMeasuredHeight();
+
+                EffectOverlay.this.addView(scoreView, layoutParams);
+
+                final int marginDiff    = 50;
+                final int startMargin   = layoutParams.topMargin;
+                Animation fadeAnim = new Animation() {
                     @Override
-                    public void run() {
-                        RelativeLayout.LayoutParams layoutParams =
-                                (LayoutParams) generateDefaultLayoutParams();
-
-                        int widthMeasureSpec = MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.AT_MOST);
-                        int heightMeasureSpec = MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.AT_MOST);
-                        scoreView.measure(widthMeasureSpec, heightMeasureSpec);
-                        layoutParams.leftMargin = pos[0] - scoreView.getMeasuredWidth()  / 2;
-                        layoutParams.topMargin  = pos[1] - scoreView.getMeasuredHeight();
-
-                        EffectOverlay.this.addView(scoreView, layoutParams);
+                    protected  void applyTransformation(float interpolatedTime, Transformation t) {
+                        LayoutParams lp = (LayoutParams) scoreView.getLayoutParams();
+                        scoreView.setAlpha(1.0f - interpolatedTime);
+                        lp.topMargin = startMargin - (int) (interpolatedTime * marginDiff);
+                        scoreView.setLayoutParams(lp);
                     }
+                };
+                fadeAnim.setDuration(600);
+                fadeAnim.setAnimationListener(new Animation.AnimationListener() {
+                    public void onAnimationEnd(Animation animation) {
+                        EffectOverlay.this.removeView(scoreView);
+                    }
+                    public void onAnimationStart(Animation animation) {}
+                    public void onAnimationRepeat(Animation animation) {}
                 });
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {}
-
-                ((Activity)getContext()).runOnUiThread(new Runnable() {
-                  public void run() {
-                      EffectOverlay.this.removeView(scoreView);
-                  }
-                });
+                scoreView.startAnimation(fadeAnim);
             }
-        }.start();
-
+        });
     }
 
     @Override
