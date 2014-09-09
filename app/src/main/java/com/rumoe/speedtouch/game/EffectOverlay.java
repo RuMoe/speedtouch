@@ -16,6 +16,7 @@ import com.rumoe.speedtouch.game.event.GameEvent;
 import com.rumoe.speedtouch.game.event.GameEventManager;
 import com.rumoe.speedtouch.game.event.GameLifecycleEvent;
 import com.rumoe.speedtouch.game.event.GameObserver;
+import com.rumoe.speedtouch.game.event.GameStatEvent;
 
 public class EffectOverlay extends RelativeLayout implements GameObserver {
 
@@ -107,6 +108,50 @@ public class EffectOverlay extends RelativeLayout implements GameObserver {
         });
     }
 
+    private void executeScoreAnimation(final int[] pos, int displayNumber) {
+        final TextView scoreView = new TextView(getContext());
+
+        // set look of animation
+        scoreView.setText("" + displayNumber);
+        if (displayNumber >= 0) {
+            scoreView.setTextAppearance(getContext(), R.style.scoreAnimationText);
+        } else {
+            scoreView.setTextAppearance(getContext(), R.style.scoreAnimationTextNegative);
+        }
+
+        new Thread() {
+            public void run() {
+                // positioning
+                ((Activity) getContext()).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        RelativeLayout.LayoutParams layoutParams =
+                                (LayoutParams) generateDefaultLayoutParams();
+
+                        int widthMeasureSpec = MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.AT_MOST);
+                        int heightMeasureSpec = MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.AT_MOST);
+                        scoreView.measure(widthMeasureSpec, heightMeasureSpec);
+                        layoutParams.leftMargin = pos[0] - scoreView.getMeasuredWidth()  / 2;
+                        layoutParams.topMargin  = pos[1] - scoreView.getMeasuredHeight();
+
+                        EffectOverlay.this.addView(scoreView, layoutParams);
+                    }
+                });
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {}
+
+                ((Activity)getContext()).runOnUiThread(new Runnable() {
+                  public void run() {
+                      EffectOverlay.this.removeView(scoreView);
+                  }
+                });
+            }
+        }.start();
+
+    }
+
     @Override
     public void notifyOnGameEvent(GameEvent e) {
         switch(e.getType()) {
@@ -115,6 +160,11 @@ public class EffectOverlay extends RelativeLayout implements GameObserver {
                 break;
             case LIFE_LOST:
                 executeLifeLostEffect();
+                break;
+            case SCORE_CHANGE:
+                GameStatEvent gse = (GameStatEvent) e;
+                int[] pos = ((GameActivity) getContext()).getCellCenterScreenPosition(gse.getCausingCell());
+                executeScoreAnimation(pos, (int) gse.getQuantity());
                 break;
         }
     }

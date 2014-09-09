@@ -15,4 +15,12 @@
         <item name="android:textSize"> 150sp </item>
         <item name="android:textStyle"> bold </item>
     </style>
+
+    <style name="scoreAnimationText">
+        <item name="android:textSize"> 25sp </item>
+        <item name="android:textColor">@color/score_anim_text</item>
+    </style>
+    <style name="scoreAnimationTextNegative" parent="scoreAnimationText">
+        <item name="android:textColor">@color/score_anim_text_negative</item>
+    </style>
 </resources>

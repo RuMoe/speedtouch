@@ -11,5 +11,8 @@
     <color name="life_lost_flash">#AAFF0000</color>
     <color name="life_lost_flash_end">#00FF0000</color>
 
+    <color name="score_anim_text">#AA000000</color>
+    <color name="score_anim_text_negative">#AAFF0000</color>
+
     <color name="transparent">#00000000</color>
 </resources>

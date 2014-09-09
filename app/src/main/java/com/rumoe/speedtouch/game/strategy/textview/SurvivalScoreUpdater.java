@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.rumoe.speedtouch.game.event.CellEvent;
+import com.rumoe.speedtouch.game.event.GameEvent;
+import com.rumoe.speedtouch.game.event.GameEventManager;
+import com.rumoe.speedtouch.game.event.GameStatEvent;
 import com.rumoe.speedtouch.game.gameboard.CellType;
 
 /**
@@ -23,7 +26,7 @@ public class SurvivalScoreUpdater extends GameScoreUpdater {
         // reset multiplier to this value whenever an error is made
     private double  baseMultiplier      = 1.0;
         // percentage of popping a cell which will be used as punishment when popping a bad cell
-    private double  badPenalty          = 0.5;
+    private double  badPenalty          = -0.5;
 
     public SurvivalScoreUpdater (Activity rootActivity) {
         super(rootActivity);
@@ -47,7 +50,8 @@ public class SurvivalScoreUpdater extends GameScoreUpdater {
 
             switch (event.getCellType()) {
                 case BAD:
-                    score -= scoreGain * badPenalty;
+                    scoreGain *= badPenalty;
+                    score += scoreGain;
                     break;
                 case STANDARD:
                     score += scoreGain;
@@ -56,6 +60,11 @@ public class SurvivalScoreUpdater extends GameScoreUpdater {
                 default:
                     Log.d("SurvivalScoreUpdater", "Unknown CellType touched");
             }
+            GameEventManager.getInstance().notifyAll(
+                    new GameStatEvent(
+                            GameEvent.EventType.SCORE_CHANGE,
+                            event.getCellPosition(),
+                            scoreGain));
         }
         if (checkForMultiplierReset(event)) {
             currentMultiplier = baseMultiplier;

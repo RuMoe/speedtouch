@@ -9,6 +9,8 @@ import com.rumoe.speedtouch.game.event.GameEvent;
 import com.rumoe.speedtouch.game.event.GameEventManager;
 import com.rumoe.speedtouch.game.event.GameLifecycleEvent;
 import com.rumoe.speedtouch.game.event.GameObserver;
+import com.rumoe.speedtouch.game.gameboard.Cell;
+import com.rumoe.speedtouch.game.gameboard.CellPosition;
 import com.rumoe.speedtouch.game.strategy.textview.GameLifeUpdater;
 import com.rumoe.speedtouch.game.strategy.textview.GameScoreUpdater;
 import com.rumoe.speedtouch.game.strategy.textview.SurvivalLifeUpdater;
@@ -98,6 +100,24 @@ public class GameActivity extends Activity implements GameObserver {
             }
         }.start();
 
+    }
+
+    /**
+     * Returns the position of the center a cell on the screen.
+     *
+     * @param pos CellPosition of the cell the coordinates are returned
+     * @return A int array of length 2 containing the coordinates from top left corner
+     *      int[0] -> x coordinate
+     *      int[1] -> y coordinate
+     */
+    public int[] getCellCenterScreenPosition(CellPosition pos) {
+        Cell c = gameBoard.getCell(pos);
+
+        int[] posHolder = new int[2];
+        c.getLocationOnScreen(posHolder);
+        posHolder[0] += c.getWidth() / 2;
+        posHolder[1] += c.getHeight() / 2;
+        return posHolder;
     }
 
     private void transitionToMenu() {
