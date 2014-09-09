@@ -22,6 +22,11 @@ import com.rumoe.speedtouch.game.event.GameStatEvent;
 
 public class EffectOverlay extends RelativeLayout implements GameObserver {
 
+    private static final int LIFE_LOST_FLASH_DURATION = 600;
+
+    private static final int SCORE_ANIM_DURATION = 600;
+    private static final int SCORE_ANIM_DISTANCE = 50;
+
     public EffectOverlay(Context context) {
         super(context);
         checkValidContext(context);
@@ -104,7 +109,7 @@ public class EffectOverlay extends RelativeLayout implements GameObserver {
                         ObjectAnimator.ofObject(EffectOverlay.this, "backgroundColor",
                                 new ArgbEvaluator(), startColor, endColor);
                 bgColorAnimator.setInterpolator(new DecelerateInterpolator());
-                bgColorAnimator.setDuration(600);
+                bgColorAnimator.setDuration(LIFE_LOST_FLASH_DURATION);
                 bgColorAnimator.start();
             }
         });
@@ -121,10 +126,10 @@ public class EffectOverlay extends RelativeLayout implements GameObserver {
             scoreView.setTextAppearance(getContext(), R.style.scoreAnimationTextNegative);
         }
 
-        // positioning
         ((Activity) getContext()).runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                // positioning
                 RelativeLayout.LayoutParams layoutParams =
                         (LayoutParams) generateDefaultLayoutParams();
 
@@ -137,18 +142,20 @@ public class EffectOverlay extends RelativeLayout implements GameObserver {
 
                 EffectOverlay.this.addView(scoreView, layoutParams);
 
-                final int marginDiff    = 50;
+                // animation
                 final int startMargin   = layoutParams.topMargin;
                 Animation fadeAnim = new Animation() {
                     @Override
                     protected  void applyTransformation(float interpolatedTime, Transformation t) {
                         LayoutParams lp = (LayoutParams) scoreView.getLayoutParams();
                         scoreView.setAlpha(1.0f - interpolatedTime);
-                        lp.topMargin = startMargin - (int) (interpolatedTime * marginDiff);
+                        lp.topMargin = startMargin - (int) (interpolatedTime * SCORE_ANIM_DISTANCE);
                         scoreView.setLayoutParams(lp);
                     }
                 };
-                fadeAnim.setDuration(600);
+                fadeAnim.setDuration(SCORE_ANIM_DURATION);
+
+                // remove view when finished
                 fadeAnim.setAnimationListener(new Animation.AnimationListener() {
                     public void onAnimationEnd(Animation animation) {
                         EffectOverlay.this.removeView(scoreView);
