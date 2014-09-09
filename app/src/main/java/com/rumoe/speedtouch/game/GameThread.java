@@ -12,7 +12,6 @@ import com.rumoe.speedtouch.game.gameboard.Cell;
 import com.rumoe.speedtouch.game.gameboard.CellPosition;
 import com.rumoe.speedtouch.game.gameboard.CellType;
 
-// TODO stop gamethread if application is minimized
 public class GameThread implements Runnable, CellObserver, GameObserver {
 
     private Thread thread;
@@ -21,19 +20,19 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
     private static final long CLOCK_RATE = 1000;
     private boolean stopped;
 
-    private final Cell[][] board;
+    private final GameBoardFragment board;
 
     private final int rows;
     private final int columns;
 
     private int activeCells;
 
-    public GameThread(final Cell[][] board) {
+    public GameThread(final GameBoardFragment board) {
         GameEventManager.getInstance().register(this);
         this.board = board;
 
-        rows = board.length;
-        columns = board[0].length;
+        rows = board.getRowCount();
+        columns = board.getColumnCount();
 
         activeCells = 0;
     }
@@ -49,7 +48,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
                     int row = randomCellNr / columns;
                     int column = randomCellNr % columns;
 
-                    randomCell = board[row][column];
+                    randomCell = board.getCell(row, column);
                 }while(randomCell.isActive());
 
                 CellType nextType = CellType.STANDARD;
@@ -83,9 +82,9 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
     }
 
     private void clearAlLCells() {
-        for (Cell[] row : board) {
-            for (Cell c : row) {
-                c.clearCell();
+        for (int row = 0; row < board.getRowCount(); row++) {
+            for (int column = 0; column < board.getColumnCount(); column++) {
+                board.getCell(row, column).clearCell();
             }
         }
         activeCells = 0;
@@ -124,7 +123,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
                     public void run() {
                         clearAndStop();
                         CellPosition cp = ((GameStatEvent) event).getCausingCell();
-                        Cell c = board[cp.getY()][cp.getX()];
+                        Cell c = board.getCell(cp);
                         c.blink(Cell.DEFAULT_BLINK_ANIMATION_DURATION);
 
                         try {

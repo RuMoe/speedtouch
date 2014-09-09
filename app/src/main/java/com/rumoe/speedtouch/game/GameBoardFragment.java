@@ -11,6 +11,7 @@ import android.widget.TableRow;
 import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.game.event.CellObserver;
 import com.rumoe.speedtouch.game.gameboard.Cell;
+import com.rumoe.speedtouch.game.gameboard.CellPosition;
 
 public class GameBoardFragment extends Fragment {
 
@@ -69,7 +70,19 @@ public class GameBoardFragment extends Fragment {
         }
     }
 
-    public Cell[][] getCells() {
-        return cells;
+    public Cell getCell(CellPosition pos) {
+        return getCell(pos.getY(), pos.getX());
+    }
+
+    public Cell getCell(int row, int column) {
+        return cells[row][column];
+    }
+
+    public int getRowCount() {
+        return ROW_COUNT;
+    }
+
+    public int getColumnCount() {
+        return COLUMN_COUNT;
     }
 }
