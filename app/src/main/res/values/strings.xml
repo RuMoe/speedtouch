@@ -11,4 +11,9 @@
     <string name="title_activity_temp_start">TempStart</string>
     <string name="action_settings">Settings</string>
 
+    <!-- High score activity-->
+    <string name="game_over_label">Game Over</string>
+    <string name="high_score_label">Best</string>
+    <string name="current_score_label">Current</string>
+    <string name="score_placeholder">00000000</string>
 </resources>
