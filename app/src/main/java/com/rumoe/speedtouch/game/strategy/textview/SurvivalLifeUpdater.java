@@ -59,6 +59,11 @@ public class SurvivalLifeUpdater extends GameLifeUpdater {
     }
 
     @Override
+    public int getLifeCount() {
+        return lifeCount;
+    }
+
+    @Override
     String getLifeAsString() {
             // seems a bit like an hack... repeat the life symbol lifeCount times
         return new String(new char[lifeCount]).replace("\0", LIFE_SYMBOL);

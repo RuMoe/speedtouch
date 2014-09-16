@@ -23,6 +23,8 @@ public abstract class GameLifeUpdater extends TextViewUpdater {
         updateText(getLifeAsString());
     }
 
+    public abstract int getLifeCount();
+
     abstract void calculateNewLife(CellEvent event);
 
     abstract String getLifeAsString();
