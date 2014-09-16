@@ -86,7 +86,14 @@ public class GameActivity extends Activity implements GameObserver {
                 break;
             case GAME_OVER:
                 gameOverTriggered = true;
-                transitionToHighscore();
+                new Thread() {
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e1) {}
+                        transitionToHighscore();
+                    }
+                }.start();
                 break;
         }
     }
