@@ -83,6 +83,7 @@
         android:layout_marginRight="20dp">
 
         <Button
+            android:id="@+id/btn_back_to_menu"
             android:layout_weight="7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -96,6 +97,7 @@
             android:layout_height="match_parent"/>
 
         <Button
+            android:id="@+id/btn_try_again"
             android:layout_weight="7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

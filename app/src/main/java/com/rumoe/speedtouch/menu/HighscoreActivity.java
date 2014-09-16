@@ -1,11 +1,15 @@
 package com.rumoe.speedtouch.menu;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.rumoe.speedtouch.R;
+import com.rumoe.speedtouch.game.GameActivity;
 
 
 public class HighscoreActivity extends Activity {
@@ -27,6 +31,22 @@ public class HighscoreActivity extends Activity {
             Bundle extras = getIntent().getExtras();
             currentScore = extras.getInt(INTENT_CURRENT_SCORE);
         }
+
+        // wire the buttons
+        Button btnMenu = (Button) findViewById(R.id.btn_back_to_menu);
+        btnMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                transitionToMenu();
+            }
+        });
+        Button btnRetry = (Button) findViewById(R.id.btn_try_again);
+        btnRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                transitionToGame();
+            }
+        });
     }
 
     @Override
@@ -70,5 +90,17 @@ public class HighscoreActivity extends Activity {
     //TODO do this based on game mode etc.
     private String buildScoreId() {
         return "survival";
+    }
+
+    private void transitionToGame() {
+        Intent intent = new Intent(this, GameActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.to_game_enter, R.anim.to_game_exit);
+    }
+
+    private void transitionToMenu() {
+        Intent intent = new Intent(this, TempStart.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.to_game_enter, R.anim.to_game_exit);
     }
 }
