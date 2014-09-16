@@ -16,4 +16,6 @@
     <string name="high_score_label">Best</string>
     <string name="current_score_label">Current</string>
     <string name="score_placeholder">00000000</string>
+    <string name="btn_back">Back</string>
+    <string name="btn_retry">Again</string>
 </resources>

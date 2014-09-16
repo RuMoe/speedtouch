@@ -86,8 +86,8 @@
             android:layout_weight="7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Back"
-            android:gravity="left"
+            android:text="@string/btn_back"
+            android:gravity="start"
             style="@style/menuButton"/>
 
         <Space
@@ -99,8 +99,8 @@
             android:layout_weight="7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Again"
-            android:gravity="right"
+            android:text="@string/btn_retry"
+            android:gravity="end"
             style="@style/menuButton"/>
     </LinearLayout>
 
