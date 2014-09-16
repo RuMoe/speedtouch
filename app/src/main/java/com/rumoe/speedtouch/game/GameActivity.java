@@ -133,5 +133,6 @@ public class GameActivity extends Activity implements GameObserver {
     private void transitionToHighscore() {
         Intent intent = new Intent(this, HighscoreActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.to_game_enter, R.anim.to_game_exit);
     }
 }
