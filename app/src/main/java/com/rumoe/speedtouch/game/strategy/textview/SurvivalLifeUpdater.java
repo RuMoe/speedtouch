@@ -52,6 +52,8 @@ public class SurvivalLifeUpdater extends GameLifeUpdater {
             gameEventManager.notifyAll(new GameStatEvent(GameEvent.EventType.LIFE_LOST,
                     cause, -1));
        } else {
+           gameEventManager.notifyAll(new GameStatEvent(GameEvent.EventType.LIFE_LOST,
+                   cause, -1));
            gameEventManager.notifyAll(new GameLifecycleEvent(GameEvent.EventType.GAME_OVER));
        }
     }
