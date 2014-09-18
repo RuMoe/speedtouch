@@ -7,14 +7,14 @@ import android.graphics.Paint;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.view.animation.Transformation;
 
 import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.game.strategy.cellradius.BlinkInterpolator;
-import com.rumoe.speedtouch.game.strategy.cellradius.ExponentialStrategy;
-import com.rumoe.speedtouch.game.strategy.cellradius.LinearStrategy;
 
 public class CellAnimation{
 
@@ -87,11 +87,11 @@ public class CellAnimation{
     }
 
     public boolean setDefaultGrowAnimation(int duration) {
-        return setAnimation(new LinearStrategy(), duration, currentCellRadius, maxCellRadius);
+        return setAnimation(new LinearInterpolator(), duration, currentCellRadius, maxCellRadius);
     }
 
     public boolean setDefaultShrinkAnimation(int duration) {
-        return setAnimation(new ExponentialStrategy(), duration, currentCellRadius, minCellRadius);
+        return setAnimation(new AccelerateInterpolator(3.5f), duration, currentCellRadius, minCellRadius);
     }
 
     public boolean setDefaultBlinkAnimation(int duration) {
