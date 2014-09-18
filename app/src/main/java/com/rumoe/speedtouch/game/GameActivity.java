@@ -15,9 +15,12 @@ import com.rumoe.speedtouch.game.strategy.textview.GameLifeUpdater;
 import com.rumoe.speedtouch.game.strategy.textview.GameScoreUpdater;
 import com.rumoe.speedtouch.game.strategy.textview.SurvivalLifeUpdater;
 import com.rumoe.speedtouch.game.strategy.textview.SurvivalScoreUpdater;
+import com.rumoe.speedtouch.menu.HighscoreActivity;
 import com.rumoe.speedtouch.menu.TempStart;
 
 public class GameActivity extends Activity implements GameObserver {
+
+    private boolean gameOverTriggered = false;
 
     private GameThread          gameThread;
     private GameBoardFragment   gameBoard;
@@ -71,7 +74,8 @@ public class GameActivity extends Activity implements GameObserver {
         gameBoard.unsubscribeToCells(scoreUpdater, lifeUpdater, gameThread);
         GameEventManager.getInstance().unregisterAll();
         gameThread.gameOver();
-        transitionToMenu();
+        if (!gameOverTriggered)
+            transitionToMenu();
     }
 
     @Override
@@ -81,7 +85,15 @@ public class GameActivity extends Activity implements GameObserver {
                 startGame();
                 break;
             case GAME_OVER:
-                transitionToMenu();
+                gameOverTriggered = true;
+                new Thread() {
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e1) {}
+                        transitionToHighscore();
+                    }
+                }.start();
                 break;
         }
     }
@@ -123,5 +135,13 @@ public class GameActivity extends Activity implements GameObserver {
     private void transitionToMenu() {
         Intent intent = new Intent(this, TempStart.class);
         startActivity(intent);
+    }
+
+    private void transitionToHighscore() {
+        Intent intent = new Intent(this, HighscoreActivity.class);
+        intent.putExtra(HighscoreActivity.INTENT_CURRENT_SCORE, scoreUpdater.getScore());
+
+        startActivity(intent);
+        overridePendingTransition(R.anim.to_game_enter, R.anim.to_game_exit);
     }
 }

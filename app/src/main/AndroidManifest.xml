@@ -24,6 +24,10 @@
             android:label="@string/title_activity_game"
             android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name=".menu.HighscoreActivity"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

@@ -11,6 +11,17 @@
         <item name="android:windowNoTitle"> true </item>
     </style>
 
+    <style name= "genericMenu">
+        <item name="android:paddingLeft"> 16dp </item>
+        <item name="android:paddingRight"> 16dp </item>
+    </style>
+
+    <style name="menuButton">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textSize">35sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="countDownLook">
         <item name="android:textSize"> 150sp </item>
         <item name="android:textStyle"> bold </item>

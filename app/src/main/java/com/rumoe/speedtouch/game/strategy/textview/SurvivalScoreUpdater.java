@@ -37,6 +37,10 @@ public class SurvivalScoreUpdater extends GameScoreUpdater {
         updateText(getScoreAsString());
     }
 
+    public int getScore() {
+        return score;
+    }
+
     @Override
     void calculateNewScore(CellEvent event) {
         if (event.getEventType().equals(CellEvent.EventType.TOUCHED)) {
