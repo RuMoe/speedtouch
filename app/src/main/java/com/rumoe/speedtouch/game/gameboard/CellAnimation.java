@@ -1,6 +1,5 @@
 package com.rumoe.speedtouch.game.gameboard;
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -9,11 +8,11 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.animation.Animation;
+import android.view.animation.Interpolator;
 import android.view.animation.Transformation;
 
 import com.rumoe.speedtouch.R;
-import com.rumoe.speedtouch.game.strategy.cellradius.BlinkStategy;
-import com.rumoe.speedtouch.game.strategy.cellradius.CellRadiusCalcStrategy;
+import com.rumoe.speedtouch.game.strategy.cellradius.BlinkInterpolator;
 import com.rumoe.speedtouch.game.strategy.cellradius.ExponentialStrategy;
 import com.rumoe.speedtouch.game.strategy.cellradius.LinearStrategy;
 
@@ -96,10 +95,10 @@ public class CellAnimation{
     }
 
     public boolean setDefaultBlinkAnimation(int duration) {
-        return setAnimation(new BlinkStategy(), duration, maxCellRadius, minCellRadius);
+        return setAnimation(new BlinkInterpolator(), duration, maxCellRadius, minCellRadius);
     }
 
-    public boolean setAnimation(CellRadiusCalcStrategy strategy, int duration,
+    public boolean setAnimation(Interpolator animInterpolator, int duration,
                                 final float startSize, final float targetSize) {
         isAnimationRunning = true;
 
@@ -112,6 +111,7 @@ public class CellAnimation{
             }
         };
         cellAnim.setDuration(duration);
+        cellAnim.setInterpolator(animInterpolator);
 
         cellAnim.setAnimationListener(new Animation.AnimationListener() {
             public void onAnimationEnd(Animation animation) {
