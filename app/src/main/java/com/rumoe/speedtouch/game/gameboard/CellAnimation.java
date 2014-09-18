@@ -127,6 +127,7 @@ public class CellAnimation{
 
             }
         });
+        cellAnim.start();
 
         return true;
     }
