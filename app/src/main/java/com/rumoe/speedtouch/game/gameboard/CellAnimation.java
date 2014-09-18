@@ -176,7 +176,9 @@ public class CellAnimation{
      * Prematurely ends the animation of the cell.
      */
     public void stopAnimation() {
-        cellAnim.cancel();
+        if (cellAnim != null) {
+            cellAnim.cancel();
+        }
     }
 
     /**
