@@ -11,7 +11,7 @@ public class BlinkInterpolator implements Interpolator {
 
     @Override
     public float getInterpolation(float input) {
-        int numberOfSteps = NUMBER_OF_BLINKS * 2 - 1;
+        int numberOfSteps = NUMBER_OF_BLINKS * 2;
             // the first step is 1
         int currentStep = (int) (input * numberOfSteps) + 1;
 
