@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.SurfaceHolder;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 
 import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.game.strategy.cellradius.BlinkStategy;
@@ -26,6 +28,8 @@ public class CellAnimation{
     private float maxCellRadius;
     private float cellXCenter;
     private float cellYCenter;
+
+    private boolean isAnimationRunning = false;
 
     public CellAnimation(SurfaceHolder surface, CellType cellType, Context context) {
         this.context = context;
@@ -90,9 +94,50 @@ public class CellAnimation{
         return setAnimation(new BlinkStategy(), duration, maxCellRadius, minCellRadius);
     }
 
-    public boolean setAnimation(CellRadiusCalcStrategy strategy, int duration, float startSize, float targetSize) {
+    public boolean setAnimation(CellRadiusCalcStrategy strategy, int duration,
+                                final float startSize, final float targetSize) {
+        isAnimationRunning = true;
+
+        Animation cellAnim = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                // calculate new circle size
+                currentCellRadius = startSize + interpolatedTime * (targetSize - startSize);
+                drawCurrentCellState();
+            }
+        };
+        cellAnim.setDuration(duration);
+        cellAnim.setInterpolator(strategy);
+
+        cellAnim.setAnimationListener(new Animation.AnimationListener() {
+            public void onAnimationEnd(Animation animation) {
+                isAnimationRunning = false;
+            }
+
+            // Do not need these
+            public void onAnimationStart(Animation animation) {
+
+            }
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
 
         return true;
+    }
+
+    private void drawCurrentCellState() {
+        if (cellSurface != null && cellSurface.getSurface().isValid()) {
+            Canvas canvas = cellSurface.lockCanvas();
+
+            // over-paint everything from previous frame
+            canvas.drawColor(context.getResources().getColor(R.color.game_board_background));
+            canvas.drawCircle(cellXCenter, cellYCenter, currentCellRadius, cellPaint);
+
+            cellSurface.unlockCanvasAndPost(canvas);
+        } else {
+            Log.e("CellAnimation", "Cell surface invalid while attempting to draw");
+        }
     }
 
     /**
