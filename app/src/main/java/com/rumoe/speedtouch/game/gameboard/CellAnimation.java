@@ -108,12 +108,15 @@ public class CellAnimation{
             }
         };
         cellAnim.setDuration(duration);
-        cellAnim.setInterpolator(strategy);
+     //   cellAnim.setInterpolator(strategy);
 
         cellAnim.setAnimationListener(new Animation.AnimationListener() {
             public void onAnimationEnd(Animation animation) {
-                    isAnimationRunning = false;
+                isAnimationRunning = false;
+
+                synchronized (cellAnim) {
                     cellAnim.notifyAll();
+                }
             }
 
             // Do not need these
@@ -176,7 +179,12 @@ public class CellAnimation{
         if (!isAnimationRunning) return false;
 
         try {
-            cellAnim.wait();
+            synchronized (cellAnim) {
+                // as per java doc, there is an possibility of an spurious wakeup which wakes
+                // up the thread without notify been called. I don't want hard to detect bugs.
+                while (isAnimationRunning)
+                    cellAnim.wait();
+            }
         } catch (InterruptedException e) {
             return false;
         }
