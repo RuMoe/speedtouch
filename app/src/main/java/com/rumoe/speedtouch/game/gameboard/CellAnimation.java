@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
@@ -20,6 +21,7 @@ public class CellAnimation{
     private Context context;
     private CellType cellType;
 
+    private SurfaceView   cellView;
     private SurfaceHolder cellSurface;
     private Paint cellPaint;
 
@@ -32,11 +34,12 @@ public class CellAnimation{
     private Animation cellAnim;
     private boolean isAnimationRunning = false;
 
-    public CellAnimation(SurfaceHolder surface, CellType cellType, Context context) {
+    public CellAnimation(SurfaceView surface, CellType cellType, Context context) {
         this.context = context;
         this.cellType = cellType;
 
-        cellSurface = surface;
+        cellView    = surface;
+        cellSurface = surface.getHolder();
 
         updatePaint();
     }
@@ -108,7 +111,6 @@ public class CellAnimation{
             }
         };
         cellAnim.setDuration(duration);
-     //   cellAnim.setInterpolator(strategy);
 
         cellAnim.setAnimationListener(new Animation.AnimationListener() {
             public void onAnimationEnd(Animation animation) {
@@ -124,10 +126,9 @@ public class CellAnimation{
 
             }
             public void onAnimationRepeat(Animation animation) {
-
             }
         });
-        cellAnim.start();
+        cellView.startAnimation(cellAnim);
 
         return true;
     }

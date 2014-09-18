@@ -39,7 +39,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
         pos = new CellPosition(xPos, yPos);
 
         active = false;
-        animation = new CellAnimation(getHolder(), CellType.STANDARD, context);
+        animation = new CellAnimation(this, CellType.STANDARD, context);
 
         // a cell is part of one game board -> in most cases there is exactly one observer
         // (except multiplayer)
