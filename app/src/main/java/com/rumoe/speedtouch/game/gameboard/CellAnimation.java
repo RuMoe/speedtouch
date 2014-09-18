@@ -159,8 +159,10 @@ public class CellAnimation{
      * @return true
      */
     public boolean clearCell() {
+        stopAnimation();
         currentCellRadius = 0;
         clearBackground();
+
         return true;
     }
 
@@ -177,7 +179,7 @@ public class CellAnimation{
      */
     public void stopAnimation() {
         if (cellAnim != null) {
-            cellAnim.cancel();
+            cellView.clearAnimation();
         }
     }
 
