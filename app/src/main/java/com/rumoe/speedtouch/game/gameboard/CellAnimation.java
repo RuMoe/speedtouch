@@ -1,6 +1,7 @@
 package com.rumoe.speedtouch.game.gameboard;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -128,8 +129,14 @@ public class CellAnimation{
             public void onAnimationRepeat(Animation animation) {
             }
         });
-        cellView.startAnimation(cellAnim);
 
+        ((Activity) cellView.getContext()).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                cellView.startAnimation(cellAnim);
+
+            }
+        });
         return true;
     }
 
