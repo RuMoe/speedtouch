@@ -29,6 +29,7 @@ public class CellAnimation{
     private float cellXCenter;
     private float cellYCenter;
 
+    private Animation cellAnim;
     private boolean isAnimationRunning = false;
 
     public CellAnimation(SurfaceHolder surface, CellType cellType, Context context) {
@@ -98,7 +99,7 @@ public class CellAnimation{
                                 final float startSize, final float targetSize) {
         isAnimationRunning = true;
 
-        Animation cellAnim = new Animation() {
+        cellAnim = new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 // calculate new circle size
@@ -111,7 +112,8 @@ public class CellAnimation{
 
         cellAnim.setAnimationListener(new Animation.AnimationListener() {
             public void onAnimationEnd(Animation animation) {
-                isAnimationRunning = false;
+                    isAnimationRunning = false;
+                    cellAnim.notifyAll();
             }
 
             // Do not need these
@@ -150,7 +152,36 @@ public class CellAnimation{
         return true;
     }
 
-    // TODO stopanimation isAnimationRunning waituntilanimationended
+    /**
+     * Returns if the cell animation is currently running.
+     * @return true iff animation is running, false otherwise.
+     */
+    public boolean isAnimationRunning() {
+        return isAnimationRunning;
+    }
+
+    /**
+     * Prematurely ends the animation of the cell.
+     */
+    public void stopAnimation() {
+        cellAnim.cancel();
+    }
+
+    /**
+     * Locks the calling thread until the current animation has ended.
+     * @return false if isAnimationRunning() returns false or an exception has
+     *      occurred while locking, true otherwise.
+     */
+    public boolean waitUntilAnimationEnded() {
+        if (!isAnimationRunning) return false;
+
+        try {
+            cellAnim.wait();
+        } catch (InterruptedException e) {
+            return false;
+        }
+        return true;
+    }
 
     /**
      * Fills the cell with its background color.
