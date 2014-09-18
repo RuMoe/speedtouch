@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -20,7 +23,7 @@ public class HighscoreActivity extends Activity {
     private static final int SCORE_LENGTH               = 8;
 
     private int currentScore = 0;
-    private int bestScore    = 0;
+    private int bestScore = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,15 +63,25 @@ public class HighscoreActivity extends Activity {
 
         bestScore = retrieveBestScore();
 
-        TextView bestScoreTV = (TextView) findViewById(R.id.high_score_value);
+        final TextView bestScoreTV = (TextView) findViewById(R.id.high_score_value);
         bestScoreTV.setText(getScoreString(bestScore));
-        TextView currentScoreTV = (TextView) findViewById(R.id.current_score_value);
-        currentScoreTV.setText(getScoreString(currentScore));
+        final TextView currentScoreTV = (TextView) findViewById(R.id.current_score_value);
 
-        if (bestScore < currentScore) {
-            bestScoreTV.setText(getScoreString(currentScore));
-            saveBestScore(currentScore);
-        }
+        Animation scoreCountAnim = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                int score = (int) (interpolatedTime * currentScore);
+                currentScoreTV.setText(getScoreString(score));
+                if (score > bestScore) {
+                    bestScoreTV.setText(getScoreString(score));
+                }
+            }
+        };
+
+        scoreCountAnim.setStartOffset(1500);
+        scoreCountAnim.setDuration(1500);
+        scoreCountAnim.setInterpolator(new AccelerateDecelerateInterpolator());
+        currentScoreTV.startAnimation(scoreCountAnim);
     }
 
     private String getScoreString(int score) {
