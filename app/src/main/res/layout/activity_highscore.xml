@@ -28,7 +28,12 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
+        android:layout_marginEnd="7dp">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,7 +53,8 @@
             android:textSize="35sp"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
+            android:gravity="right"
             android:layout_height="wrap_content"
             android:id="@+id/high_score_value"
             android:layout_marginBottom="7dp"
@@ -58,7 +64,8 @@
             android:textSize="35sp"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
+            android:gravity="right"
             android:layout_height="wrap_content"
             android:id="@+id/current_score_value"
             android:text="@string/score_placeholder"
