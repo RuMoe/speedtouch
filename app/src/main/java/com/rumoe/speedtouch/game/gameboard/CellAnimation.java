@@ -221,7 +221,7 @@ public class CellAnimation{
             }
         } catch (NullPointerException e) {
             // we need this in case the surface is destroyed during drawing
-            Log.e("CellAnimation", "Surface destroyed while trying to clear background");
+            Log.d("CellAnimation", "Surface destroyed while trying to clear background");
             return false;
         }
     }

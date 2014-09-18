@@ -56,7 +56,7 @@ public class Cell extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.i("Cell", "surface destroyed");
+        Log.d("Cell", "surface destroyed");
         clearCell();
     }
 
