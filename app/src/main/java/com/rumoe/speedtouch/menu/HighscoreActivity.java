@@ -82,6 +82,10 @@ public class HighscoreActivity extends Activity {
         scoreCountAnim.setDuration(1500);
         scoreCountAnim.setInterpolator(new AccelerateDecelerateInterpolator());
         currentScoreTV.startAnimation(scoreCountAnim);
+
+        if (currentScore > bestScore) {
+            saveBestScore(currentScore);
+        }
     }
 
     private String getScoreString(int score) {
