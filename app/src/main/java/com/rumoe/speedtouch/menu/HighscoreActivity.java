@@ -22,6 +22,8 @@ public class HighscoreActivity extends Activity {
     public static final String INTENT_CURRENT_SCORE     = "CURRENT_SCORE";
     private static final int SCORE_LENGTH               = 8;
 
+    private boolean wasPaused = false;
+
     private int currentScore = 0;
     private int bestScore = 0;
 
@@ -61,6 +63,9 @@ public class HighscoreActivity extends Activity {
     public void onResume() {
         super.onResume();
 
+            // we don't need to animate the score again
+        if (wasPaused) return;
+
         bestScore = retrieveBestScore();
 
         final TextView bestScoreTV = (TextView) findViewById(R.id.high_score_value);
@@ -86,6 +91,12 @@ public class HighscoreActivity extends Activity {
         if (currentScore > bestScore) {
             saveBestScore(currentScore);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        wasPaused = true;
     }
 
     private String getScoreString(int score) {
