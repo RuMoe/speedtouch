@@ -20,7 +20,7 @@
         </activity>
 
         <activity
-            android:name=".game.GameActivity"
+            android:name=".game.ui.GameActivity"
             android:label="@string/title_activity_game"
             android:screenOrientation="portrait" >
         </activity>

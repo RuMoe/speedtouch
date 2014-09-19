@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.game.strategy.textview;
+package com.rumoe.speedtouch.game.mode.survival;
 
 import android.app.Activity;
 import android.util.Log;
@@ -7,7 +7,8 @@ import com.rumoe.speedtouch.game.event.CellEvent;
 import com.rumoe.speedtouch.game.event.GameEvent;
 import com.rumoe.speedtouch.game.event.GameEventManager;
 import com.rumoe.speedtouch.game.event.GameStatEvent;
-import com.rumoe.speedtouch.game.gameboard.CellType;
+import com.rumoe.speedtouch.game.mode.generic.GameScoreUpdater;
+import com.rumoe.speedtouch.game.ui.gameboard.CellType;
 
 /**
  * Created by jan on 30.08.2014.

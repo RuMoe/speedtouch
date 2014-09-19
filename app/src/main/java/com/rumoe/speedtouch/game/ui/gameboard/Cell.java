@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.game.gameboard;
+package com.rumoe.speedtouch.game.ui.gameboard;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,6 +10,7 @@ import android.view.SurfaceView;
 import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.game.event.CellEvent;
 import com.rumoe.speedtouch.game.event.CellObserver;
+import com.rumoe.speedtouch.game.ui.gameboard.anim.CellAnimation;
 
 import java.util.ArrayList;
 

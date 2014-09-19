@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.game.strategy.textview;
+package com.rumoe.speedtouch.game.mode.generic;
 
 import android.app.Activity;
 import android.widget.TextView;

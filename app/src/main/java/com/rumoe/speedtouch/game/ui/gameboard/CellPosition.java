@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.game.gameboard;
+package com.rumoe.speedtouch.game.ui.gameboard;
 
 /**
  * Created by jan on 04.09.2014.

@@ -1,6 +1,6 @@
 package com.rumoe.speedtouch.game.event;
 
-import com.rumoe.speedtouch.game.gameboard.CellPosition;
+import com.rumoe.speedtouch.game.ui.gameboard.CellPosition;
 
 /**
  * Created by jan on 05.09.2014.

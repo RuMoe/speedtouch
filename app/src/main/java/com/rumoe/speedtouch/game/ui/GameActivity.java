@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.game;
+package com.rumoe.speedtouch.game.ui;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,12 +9,13 @@ import com.rumoe.speedtouch.game.event.GameEvent;
 import com.rumoe.speedtouch.game.event.GameEventManager;
 import com.rumoe.speedtouch.game.event.GameLifecycleEvent;
 import com.rumoe.speedtouch.game.event.GameObserver;
-import com.rumoe.speedtouch.game.gameboard.Cell;
-import com.rumoe.speedtouch.game.gameboard.CellPosition;
-import com.rumoe.speedtouch.game.strategy.textview.GameLifeUpdater;
-import com.rumoe.speedtouch.game.strategy.textview.GameScoreUpdater;
-import com.rumoe.speedtouch.game.strategy.textview.SurvivalLifeUpdater;
-import com.rumoe.speedtouch.game.strategy.textview.SurvivalScoreUpdater;
+import com.rumoe.speedtouch.game.mode.generic.GameLifeUpdater;
+import com.rumoe.speedtouch.game.mode.generic.GameScoreUpdater;
+import com.rumoe.speedtouch.game.mode.generic.GameThread;
+import com.rumoe.speedtouch.game.mode.survival.SurvivalLifeUpdater;
+import com.rumoe.speedtouch.game.mode.survival.SurvivalScoreUpdater;
+import com.rumoe.speedtouch.game.ui.gameboard.Cell;
+import com.rumoe.speedtouch.game.ui.gameboard.CellPosition;
 import com.rumoe.speedtouch.menu.HighscoreActivity;
 import com.rumoe.speedtouch.menu.TempStart;
 

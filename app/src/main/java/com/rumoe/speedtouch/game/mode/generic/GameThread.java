@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.game;
+package com.rumoe.speedtouch.game.mode.generic;
 
 import android.util.Log;
 
@@ -8,9 +8,10 @@ import com.rumoe.speedtouch.game.event.GameEvent;
 import com.rumoe.speedtouch.game.event.GameEventManager;
 import com.rumoe.speedtouch.game.event.GameObserver;
 import com.rumoe.speedtouch.game.event.GameStatEvent;
-import com.rumoe.speedtouch.game.gameboard.Cell;
-import com.rumoe.speedtouch.game.gameboard.CellPosition;
-import com.rumoe.speedtouch.game.gameboard.CellType;
+import com.rumoe.speedtouch.game.ui.GameBoardFragment;
+import com.rumoe.speedtouch.game.ui.gameboard.Cell;
+import com.rumoe.speedtouch.game.ui.gameboard.CellPosition;
+import com.rumoe.speedtouch.game.ui.gameboard.CellType;
 
 public class GameThread implements Runnable, CellObserver, GameObserver {
 
