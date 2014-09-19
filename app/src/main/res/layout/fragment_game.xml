@@ -6,6 +6,6 @@
     android:layout_height="match_parent"
     android:padding="@dimen/board_border_padding"
     android:background="@color/game_board_background"
-    tools:context="com.rumoe.speedtouch.game.GameBoardFragment">
+    tools:context="com.rumoe.speedtouch.game.ui.GameBoardFragment">
 
 </TableLayout>

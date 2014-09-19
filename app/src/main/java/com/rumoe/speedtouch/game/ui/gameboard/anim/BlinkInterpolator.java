@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.game.strategy.cellradius;
+package com.rumoe.speedtouch.game.ui.gameboard.anim;
 
 import android.view.animation.Interpolator;
 

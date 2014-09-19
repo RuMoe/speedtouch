@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.game;
+package com.rumoe.speedtouch.game.ui;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -10,8 +10,8 @@ import android.widget.TableRow;
 
 import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.game.event.CellObserver;
-import com.rumoe.speedtouch.game.gameboard.Cell;
-import com.rumoe.speedtouch.game.gameboard.CellPosition;
+import com.rumoe.speedtouch.game.ui.gameboard.Cell;
+import com.rumoe.speedtouch.game.ui.gameboard.CellPosition;
 
 public class GameBoardFragment extends Fragment {
 

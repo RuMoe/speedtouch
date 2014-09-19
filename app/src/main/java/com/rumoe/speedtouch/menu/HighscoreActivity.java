@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.rumoe.speedtouch.R;
-import com.rumoe.speedtouch.game.GameActivity;
+import com.rumoe.speedtouch.game.ui.GameActivity;
 
 
 public class HighscoreActivity extends Activity {

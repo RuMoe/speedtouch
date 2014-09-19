@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.game.strategy.textview;
+package com.rumoe.speedtouch.game.mode.generic;
 
 import android.app.Activity;
 import android.widget.TextView;
@@ -13,7 +13,7 @@ public abstract class GameScoreUpdater extends TextViewUpdater {
 
     private static final int SCORE_VIEW_ID = R.id.gameScoreView;
 
-    GameScoreUpdater (Activity rootActivity) {
+    protected GameScoreUpdater (Activity rootActivity) {
         super(rootActivity, (TextView) rootActivity.findViewById(SCORE_VIEW_ID));
     }
 
@@ -24,9 +24,9 @@ public abstract class GameScoreUpdater extends TextViewUpdater {
 
     public abstract int getScore();
 
-    abstract void calculateNewScore(CellEvent event);
+    protected abstract void calculateNewScore(CellEvent event);
 
-    abstract String getScoreAsString();
+    protected abstract String getScoreAsString();
 
     @Override
     public void notifyOnTimeout(CellEvent event) {

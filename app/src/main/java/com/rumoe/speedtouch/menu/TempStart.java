@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.rumoe.speedtouch.R;
-import com.rumoe.speedtouch.game.GameActivity;
+import com.rumoe.speedtouch.game.ui.GameActivity;
 
 
 public class TempStart extends Activity {

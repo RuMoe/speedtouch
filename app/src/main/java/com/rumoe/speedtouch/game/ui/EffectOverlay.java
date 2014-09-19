@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.game;
+package com.rumoe.speedtouch.game.ui;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;

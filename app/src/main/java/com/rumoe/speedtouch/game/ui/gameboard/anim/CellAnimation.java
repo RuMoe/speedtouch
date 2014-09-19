@@ -1,4 +1,4 @@
-package com.rumoe.speedtouch.game.gameboard;
+package com.rumoe.speedtouch.game.ui.gameboard.anim;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,7 +14,7 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.Transformation;
 
 import com.rumoe.speedtouch.R;
-import com.rumoe.speedtouch.game.strategy.cellradius.BlinkInterpolator;
+import com.rumoe.speedtouch.game.ui.gameboard.CellType;
 
 public class CellAnimation{
 
