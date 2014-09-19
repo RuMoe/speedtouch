@@ -55,7 +55,8 @@ public class SurvivalScoreUpdater extends GameScoreUpdater {
             switch (event.getCellType()) {
                 case BAD:
                     scoreGain *= badPenalty;
-                    score += scoreGain;
+                        // don't go under 0
+                    score = Math.max(scoreGain + score, 0);
                     break;
                 case STANDARD:
                     score += scoreGain;
