@@ -43,7 +43,7 @@ public class SurvivalScoreUpdater extends GameScoreUpdater {
     }
 
     @Override
-    void calculateNewScore(CellEvent event) {
+    protected void calculateNewScore(CellEvent event) {
         if (event.getEventType().equals(CellEvent.EventType.TOUCHED)) {
             /**
              * How fast the player touches the cell is important..
@@ -78,7 +78,7 @@ public class SurvivalScoreUpdater extends GameScoreUpdater {
     }
 
     @Override
-    String getScoreAsString() {
+    protected String getScoreAsString() {
         return String.format("%07d (x%.1f)",score, getEffectiveMultiplier());
     }
 

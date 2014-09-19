@@ -13,7 +13,7 @@ public abstract class GameLifeUpdater extends TextViewUpdater {
 
     private static final int LIFE_VIEW_ID = R.id.gameLifeView;
 
-    GameLifeUpdater(Activity activity) {
+    protected GameLifeUpdater(Activity activity) {
         super(activity, (TextView) activity.findViewById(LIFE_VIEW_ID));
         updateText(getLifeAsString());
     }
@@ -25,9 +25,9 @@ public abstract class GameLifeUpdater extends TextViewUpdater {
 
     public abstract int getLifeCount();
 
-    abstract void calculateNewLife(CellEvent event);
+    protected abstract void calculateNewLife(CellEvent event);
 
-    abstract String getLifeAsString();
+    protected abstract String getLifeAsString();
 
     @Override
     public void notifyOnTimeout(CellEvent event) {

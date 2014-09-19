@@ -14,12 +14,12 @@ abstract class TextViewUpdater implements CellObserver {
     private TextView textView;
     private Activity rootActivity;
 
-    TextViewUpdater(Activity rootActivity, TextView textView) {
+    protected TextViewUpdater(Activity rootActivity, TextView textView) {
         this.rootActivity = rootActivity;
         this.textView = textView;
     }
 
-    void updateText(final String text) {
+    protected void updateText(final String text) {
         // Only the original thread that created a view hierarchy can touch its views.
         rootActivity.runOnUiThread(new Runnable() {
             @Override
