@@ -52,7 +52,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
                 }while(randomCell.isActive());
 
                 CellType nextType = CellType.STANDARD;
-                if (Math.random() < 0.05) nextType = CellType.BAD;
+                if (Math.random() < 0.95) nextType = CellType.BAD;
                 randomCell.activateLifecycle(nextType);
             }
 
