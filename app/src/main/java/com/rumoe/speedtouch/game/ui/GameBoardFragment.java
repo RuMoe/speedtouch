@@ -239,13 +239,13 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
 
         @Override
         public void run() {
-            long lastRefresh = System.currentTimeMillis();
             while(!isInterrupted()) {
+                long refreshStart = System.currentTimeMillis();
 
 
                 try {
-                    long frameDelay = System.currentTimeMillis() - lastRefresh;
-                    Thread.sleep(MS_WAIT_PER_FRAME - frameDelay);
+                    long frameDelay = System.currentTimeMillis() - refreshStart;
+                    Thread.sleep(Math.max(MS_WAIT_PER_FRAME - frameDelay, 0));
                 } catch (InterruptedException e) {
                     Log.e("GameBoardFragment", "Draw thread interrupted");
                     break;
