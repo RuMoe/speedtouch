@@ -173,18 +173,6 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     /**
-     * Clears the whole game board and deactivates all cells.
-     */
-    private void clearAllCells() {
-        for (int i = 0; i < ROW_COUNT; i++) {
-            for (int j = 0; j < COLUMN_COUNT; j++) {
-                CellPosition pos = new CellPosition(i, j);
-                clearCell(pos);
-            }
-        }
-    }
-
-    /**
      * Returns the position of the center a cell on the board (which is its position on the
      * surface of its SurfaceView)
      *
@@ -204,6 +192,33 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
      */
     public int getColumnCount() {
         return COLUMN_COUNT;
+    }
+
+    /**
+     * Clears the whole game board and deactivates all cells.
+     */
+    private void clearAllCells() {
+        for (int i = 0; i < ROW_COUNT; i++) {
+            for (int j = 0; j < COLUMN_COUNT; j++) {
+                CellPosition pos = new CellPosition(i, j);
+                clearCell(pos);
+            }
+        }
+    }
+
+    /**
+     * Internal wrapper to make sure not to mess up rows and columns when retrieving a cell.
+     * @param pos Position of the cell which will be retrieved.
+     * @return The cell object at the requested position or null if the position does not exist.
+     */
+    private Cell getCell(CellPosition pos) {
+        if (pos.getRow() < 0 || pos.getRow() >= getRowCount() ||
+                pos.getColumn() < 0 || pos.getColumn() >= getColumnCount()) {
+            Log.e("GameBoardFragment" , String.format("Requested cell position is out of bounds. " +
+                    "The board has dimension %d,%d. Requested cell was %d, %d",
+                    getRowCount(), getColumnCount(), pos.getRow(), pos.getColumn()));
+        }
+        return cells[pos.getRow()][pos.getColumn()];
     }
 
     class BoardDrawThread extends Thread {
