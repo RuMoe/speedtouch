@@ -14,7 +14,6 @@ import com.rumoe.speedtouch.game.mode.generic.GameScoreUpdater;
 import com.rumoe.speedtouch.game.mode.generic.GameThread;
 import com.rumoe.speedtouch.game.mode.survival.SurvivalLifeUpdater;
 import com.rumoe.speedtouch.game.mode.survival.SurvivalScoreUpdater;
-import com.rumoe.speedtouch.game.ui.gameboard.Cell;
 import com.rumoe.speedtouch.game.ui.gameboard.CellPosition;
 import com.rumoe.speedtouch.menu.HighscoreActivity;
 import com.rumoe.speedtouch.menu.TempStart;
@@ -124,12 +123,11 @@ public class GameActivity extends Activity implements GameObserver {
      *      int[1] -> y coordinate
      */
     public int[] getCellCenterScreenPosition(CellPosition pos) {
-        Cell c = gameBoard.getCell(pos);
+        int[] cellBoardPos = gameBoard.getCellCenterBoardPosition(pos);
+
+        // TODO
 
         int[] posHolder = new int[2];
-        c.getLocationOnScreen(posHolder);
-        posHolder[0] += c.getWidth() / 2;
-        posHolder[1] += c.getHeight() / 2;
         return posHolder;
     }
 

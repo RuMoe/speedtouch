@@ -162,6 +162,21 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     /**
+     * Returns the position of the center a cell on the board (which is its position on the
+     * surface of its SurfaceView)
+     *
+     * @param pos CellPosition of the cell the coordinates are returned
+     * @return A int array of length 2 containing the coordinates from top left corner
+     *      int[0] -> x coordinate
+     *      int[1] -> y coordinate
+     */
+    public int[] getCellCenterBoardPosition(CellPosition pos) {
+        // TODO
+        return new int[]{0, 0};
+    }
+
+
+    /**
      * Gets the total amount of rows of the game board.
      * @return rows of the game board.
      */
