@@ -11,6 +11,7 @@ import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.game.event.CellObserver;
 import com.rumoe.speedtouch.game.ui.gameboard.Cell;
 import com.rumoe.speedtouch.game.ui.gameboard.CellPosition;
+import com.rumoe.speedtouch.game.ui.gameboard.CellType;
 
 public class GameBoardFragment extends Fragment {
 
@@ -53,12 +54,39 @@ public class GameBoardFragment extends Fragment {
         }
     }
 
-    public Cell getCell(CellPosition pos) {
-        return getCell(pos.getY(), pos.getX());
+    public boolean isCellActive(CellPosition pos) {
+        // TODO
+        return true;
     }
 
-    public Cell getCell(int row, int column) {
-        return cells[row][column];
+    public boolean activateCell(CellPosition pos, CellType type) {
+        if (isCellActive(pos)) return false;
+        // TODO
+        return true;
+    }
+
+    public boolean activateCellLifeCycle(CellPosition pos, CellType type) {
+        if (isCellActive(pos)) return false;
+        // TODO
+        return true;
+    }
+
+    public boolean activateCellLifeCycle(CellPosition pos, CellType type,
+                                         int growTime, int stayTime, int shrinkTime) {
+        if (isCellActive(pos)) return false;
+        // TODO
+        return true;
+    }
+
+    public boolean blinkCell(CellPosition pos) {
+        if (isCellActive(pos)) return false;
+        // TODO
+        return true;
+    }
+
+    public boolean clearCell(CellPosition pos) {
+        // TODO
+        return true;
     }
 
     public int getRowCount() {

@@ -43,18 +43,18 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
         while (!stopped) {
 
             if (activeCells < 5) {
-                Cell randomCell;
+                CellPosition randomCell;
                 do {
                     int randomCellNr = (int) (Math.random() * rows * columns);
                     int row = randomCellNr / columns;
                     int column = randomCellNr % columns;
 
-                    randomCell = board.getCell(row, column);
-                }while(randomCell.isActive());
+                        randomCell = new CellPosition(row, column);
+                }while(board.isCellActive(randomCell));
 
                 CellType nextType = CellType.STANDARD;
                 if (Math.random() < 0.05) nextType = CellType.BAD;
-                randomCell.activateLifecycle(nextType);
+                board.activateCellLifeCycle(randomCell, nextType);
             }
 
             try {
@@ -85,7 +85,8 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
     private void clearAlLCells() {
         for (int row = 0; row < board.getRowCount(); row++) {
             for (int column = 0; column < board.getColumnCount(); column++) {
-                board.getCell(row, column).clearCell();
+                CellPosition pos = new CellPosition(row, column);
+                board.clearCell(pos);
             }
         }
         activeCells = 0;
@@ -124,8 +125,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
                     public void run() {
                         clearAndStop();
                         CellPosition cp = ((GameStatEvent) event).getCausingCell();
-                        Cell c = board.getCell(cp);
-                        c.blink(Cell.DEFAULT_BLINK_ANIMATION_DURATION);
+                        board.blinkCell(cp);
 
                         try {
                             Thread.sleep(Cell.DEFAULT_BLINK_ANIMATION_DURATION + 500);
