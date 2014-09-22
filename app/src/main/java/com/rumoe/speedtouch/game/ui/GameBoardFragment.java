@@ -3,6 +3,7 @@ package com.rumoe.speedtouch.game.ui;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,7 @@ import com.rumoe.speedtouch.game.ui.gameboard.Cell;
 import com.rumoe.speedtouch.game.ui.gameboard.CellPosition;
 import com.rumoe.speedtouch.game.ui.gameboard.CellType;
 
-public class GameBoardFragment extends Fragment {
+public class GameBoardFragment extends Fragment implements SurfaceHolder.Callback {
 
     private static final int ROW_COUNT      = 5;
     private static final int COLUMN_COUNT   = 3;
@@ -30,8 +31,23 @@ public class GameBoardFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView   = inflater.inflate(R.layout.fragment_game, container, false);
         gameBoard       = (SurfaceView) rootView.findViewById(R.id.gameBoard);
+        gameBoard.getHolder().addCallback(this);
 
         return rootView;
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        gameBoard.getHolder().removeCallback(this);
+        clearAllCells();
     }
 
     public void subscribeToCells(CellObserver... obs) {
@@ -131,6 +147,18 @@ public class GameBoardFragment extends Fragment {
     public boolean clearCell(CellPosition pos) {
         // TODO
         return true;
+    }
+
+    /**
+     * Clears the whole game board and deactivates all cells.
+     */
+    private void clearAllCells() {
+        for (int i = 0; i < ROW_COUNT; i++) {
+            for (int j = 0; j < COLUMN_COUNT; j++) {
+                CellPosition pos = new CellPosition(i, j);
+                clearCell(pos);
+            }
+        }
     }
 
     /**
