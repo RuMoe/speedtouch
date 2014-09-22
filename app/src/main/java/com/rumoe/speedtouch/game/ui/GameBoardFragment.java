@@ -24,8 +24,9 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
 
     private static final int ROW_COUNT      = 5;
     private static final int COLUMN_COUNT   = 3;
-
+    // contains the cells of the board. Should never be accessed directly. Use getCell() instead.
     private final Cell[][] cells;
+
     private SurfaceView gameBoard;
 
     public GameBoardFragment() {
@@ -212,13 +213,23 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
      * @return The cell object at the requested position or null if the position does not exist.
      */
     private Cell getCell(CellPosition pos) {
-        if (pos.getRow() < 0 || pos.getRow() >= getRowCount() ||
-                pos.getColumn() < 0 || pos.getColumn() >= getColumnCount()) {
+        return getCell(pos.getRow(), pos.getColumn());
+    }
+
+    /**
+     * Internal wrapper to make sure not to mess up rows and columns when retrieving a cell.
+     * @param row Row of the cell which will be retrieved.
+     * @param column Column of the cell which will be retrieved.
+     * @return The cell object at the requested position or null if the position does not exist.
+     */
+    private Cell getCell(int row, int column) {
+        if (row < 0 || row >= getRowCount() ||
+                column < 0 || column >= getColumnCount()) {
             Log.e("GameBoardFragment" , String.format("Requested cell position is out of bounds. " +
-                    "The board has dimension %d,%d. Requested cell was %d, %d",
-                    getRowCount(), getColumnCount(), pos.getRow(), pos.getColumn()));
+                            "The board has dimension %d,%d. Requested cell was %d, %d",
+                    getRowCount(), getColumnCount(), row,column));
         }
-        return cells[pos.getRow()][pos.getColumn()];
+        return cells[row][column];
     }
 
     class BoardDrawThread extends Thread {
