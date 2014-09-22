@@ -24,7 +24,7 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
 
     private static final int ROW_COUNT      = 5;
     private static final int COLUMN_COUNT   = 3;
-    // contains the cells of the board. Should never be accessed directly. Use getCell() instead.
+    /** contains the cells of the board. Should never be accessed directly. Use getCell() instead. */
     private final Cell[][] cells;
 
     private SurfaceView gameBoard;
