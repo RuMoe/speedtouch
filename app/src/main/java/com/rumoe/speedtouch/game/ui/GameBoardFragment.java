@@ -2,6 +2,7 @@ package com.rumoe.speedtouch.game.ui;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -15,6 +16,11 @@ import com.rumoe.speedtouch.game.ui.gameboard.CellPosition;
 import com.rumoe.speedtouch.game.ui.gameboard.CellType;
 
 public class GameBoardFragment extends Fragment implements SurfaceHolder.Callback {
+
+    private int boardWidth;
+    private int boardHeight;
+
+    private Thread boardDrawThread;
 
     private static final int ROW_COUNT      = 5;
     private static final int COLUMN_COUNT   = 3;
@@ -37,16 +43,23 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-
-    }
+    public void surfaceCreated(SurfaceHolder holder) { }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        if (boardDrawThread != null && boardDrawThread.isAlive()){
+            boardDrawThread.interrupt();
+        }
+        boardDrawThread = new BoardDrawThread();
+        boardDrawThread.start();
+    }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         gameBoard.getHolder().removeCallback(this);
+        if (boardDrawThread != null) {
+            boardDrawThread.interrupt();
+        }
         clearAllCells();
     }
 
@@ -110,6 +123,14 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     /**
+     * Gets the total amount of rows of the game board.
+     * @return rows of the game board.
+     */
+    public int getRowCount() {
+        return ROW_COUNT;
+    }
+
+    /**
      * Starts the lifecycle of the cell on a specified position. A lifecycle contains three stages:
      * grow, constant size and shrink.
      * When calling this method successfully the cell will emit an CellEvent.ACTIVATED event.
@@ -161,6 +182,7 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
         }
     }
 
+
     /**
      * Returns the position of the center a cell on the board (which is its position on the
      * surface of its SurfaceView)
@@ -175,20 +197,33 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
         return new int[]{0, 0};
     }
 
-
-    /**
-     * Gets the total amount of rows of the game board.
-     * @return rows of the game board.
-     */
-    public int getRowCount() {
-        return ROW_COUNT;
-    }
-
     /**
      * Gets the total amount of columns of the game board.
      * @return columns of the game board.
      */
     public int getColumnCount() {
         return COLUMN_COUNT;
+    }
+
+    class BoardDrawThread extends Thread {
+
+        private static final int FPS = 40;
+        private static final int MS_WAIT_PER_FRAME = 1000 / FPS;
+
+        @Override
+        public void run() {
+            long lastRefresh = System.currentTimeMillis();
+            while(!isInterrupted()) {
+
+
+                try {
+                    long frameDelay = System.currentTimeMillis() - lastRefresh;
+                    Thread.sleep(MS_WAIT_PER_FRAME - frameDelay);
+                } catch (InterruptedException e) {
+                    Log.e("GameBoardFragment", "Draw thread interrupted");
+                    break;
+                }
+            }
+        }
     }
 }
