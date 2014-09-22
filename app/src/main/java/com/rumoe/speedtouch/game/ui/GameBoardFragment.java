@@ -50,6 +50,8 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
         if (boardDrawThread != null && boardDrawThread.isAlive()){
             boardDrawThread.interrupt();
         }
+        boardWidth = width;
+        boardHeight = height;
         boardDrawThread = new BoardDrawThread();
         boardDrawThread.start();
     }
@@ -181,7 +183,6 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
             }
         }
     }
-
 
     /**
      * Returns the position of the center a cell on the board (which is its position on the
