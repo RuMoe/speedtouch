@@ -47,7 +47,7 @@ public class GameActivity extends Activity implements GameObserver {
         //TODO for now scoreUpdater and lifeUpdater will be hardcoded.. change that at some point
         scoreUpdater = new SurvivalScoreUpdater(this);
         lifeUpdater = new SurvivalLifeUpdater(this);
-        gameThread = new GameThread(gameBoard);
+      //  gameThread = new GameThread(gameBoard);
 
         //TODO temporary clusterfuck
         new Thread() {
