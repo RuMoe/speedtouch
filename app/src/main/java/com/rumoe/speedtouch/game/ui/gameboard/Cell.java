@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
@@ -20,7 +21,8 @@ public class Cell {
     public static final int DEFAULT_SHRINK_ANIMATION_DURATION   = 2000;
     public static final int DEFAULT_BLINK_ANIMATION_DURATION    = 1000;
 
-    private Thread  lifecycle;
+    private Thread      lifecycle;
+    private Animation   animation;
     private Context context;
 
     private CellType type;
@@ -191,16 +193,33 @@ public class Cell {
                            ANIMATION OF THE RADIUS
     --------------------------------------------------------------------------------------------- */
 
+    /**
+     * Starts a new Animation which will change the cell radius depending of the following parameter.
+     * @param newType Type of the cell it will have during the animation.
+     * @param animInterpolator Interpolator for the animation timing.
+     * @param duration Duration of the animation.
+     * @param startSize The start radius of the cell.
+     * @param targetSize The end radius of the cell.
+     * @return true iff animation could be successfully started, false otherwise
+     * (e.g. an animation was already running)
+     */
     private boolean setAnimation(CellType newType, Interpolator animInterpolator, int duration,
                                  final float startSize, final float targetSize) {
 
         return false;
     }
 
+    /**
+     * Stops the currently running animation.
+     */
     private void stopAnimation() {
         //TODO
     }
 
+    /**
+     * Locks the calling thread until the animation has ended.
+     * @return
+     */
     private boolean waitUntilAnimationEnded() {
         return true;
     }
