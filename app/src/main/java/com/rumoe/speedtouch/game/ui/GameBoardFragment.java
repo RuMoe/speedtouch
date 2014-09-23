@@ -1,6 +1,7 @@
 package com.rumoe.speedtouch.game.ui;
 
 import android.app.Fragment;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -183,8 +184,10 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
      *      int[1] -> y coordinate
      */
     public int[] getCellCenterBoardPosition(CellPosition pos) {
-        // TODO
-        return new int[]{0, 0};
+        int[] cellDimension = getCellDimensions();
+        int xCoord = (int) (cellDimension[0] * (pos.getRow() + 0.5));
+        int yCoord = (int) (cellDimension[1] * (pos.getColumn() + 0.5));
+        return new int[]{xCoord, yCoord};
     }
 
     /**
@@ -232,16 +235,50 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
         return cells[row][column];
     }
 
+    /**
+     * Returns the dimensions of the cells of the board.
+     * @return array of length two:
+     *      int[0] - width of the cells
+     *      int[1] - height of the cells
+     */
+    private int[] getCellDimensions() {
+        return new int[]{ boardWidth / getColumnCount(), boardHeight / getRowCount(), };
+    }
+
+    /**
+     * This inner class is the draw thread of GameBoard. Draws at a constant frame rate the board
+     * depending on the state of all cells.
+     */
     class BoardDrawThread extends Thread {
 
-        private static final int FPS = 40;
+        /** frame rate which is used to draw the board */
+        private static final int FPS = 2;
+        /** amount of ms to wait between each frame */
         private static final int MS_WAIT_PER_FRAME = 1000 / FPS;
 
         @Override
         public void run() {
+            SurfaceHolder surfaceHolder = gameBoard.getHolder();
+
             while(!isInterrupted()) {
                 long refreshStart = System.currentTimeMillis();
 
+                if (surfaceHolder != null && surfaceHolder.getSurface().isValid()) {
+                    Canvas canvas = surfaceHolder.lockCanvas();
+                    canvas.drawColor(getResources().getColor(R.color.game_board_background));
+
+                    for (int r = 0; r < getRowCount(); r++) {
+                        for (int c = 0; c < getColumnCount(); c++) {
+                            CellPosition pos = new CellPosition(r, c);
+                            int[] cellCenter = getCellCenterBoardPosition(pos);
+                            Cell cell = getCell(pos);
+                            int radius = getCellCircleRadius(cell.getRadiusInterpolation());
+                            canvas.drawCircle(cellCenter[0], cellCenter[1], radius, cell.getPaint());
+                        }
+                    }
+
+                    surfaceHolder.unlockCanvasAndPost(canvas);
+                }
 
                 try {
                     long frameDelay = System.currentTimeMillis() - refreshStart;
