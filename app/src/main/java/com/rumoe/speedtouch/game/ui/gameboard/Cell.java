@@ -1,25 +1,54 @@
 package com.rumoe.speedtouch.game.ui.gameboard;
 
+import android.content.Context;
 import android.graphics.Paint;
+import android.util.Log;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
+
+import com.rumoe.speedtouch.game.ui.gameboard.anim.BlinkInterpolator;
 
 public class Cell {
+
+    private static final Interpolator GROW_INTERPOLATOR     = new LinearInterpolator();
+    private static final Interpolator SHRINK_INTERPOLATOR   = new AccelerateInterpolator(3.5f);
+    private static final Interpolator BLINK_INTERPOLATOR    = new BlinkInterpolator();
 
     public static final int DEFAULT_WAIT_BEFORE_SHRINK_TIME     = 1000;
     public static final int DEFAULT_GROW_ANIMATION_DURATION     = 100;
     public static final int DEFAULT_SHRINK_ANIMATION_DURATION   = 2000;
     public static final int DEFAULT_BLINK_ANIMATION_DURATION    = 1000;
 
-    private Thread lifecycle;
+    private Thread  lifecycle;
+    private Context context;
 
     private CellType type;
+    private Paint paint;
     private boolean active;
 
-    private long cellActivatedTime;
-    private long cellTimeoutTime;
+    private float radius;
+    private long activationTime;
+    private long timeoutTime;
 
-    public Cell() {
+    public Cell(Context context) {
+        this.context = context;
+
+        radius = 0.0f;
         type = CellType.STANDARD;
         active = false;
+
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        updatePaint();
+    }
+
+    /**
+     * Refresh the cells paint (and thus its look) based on its state.
+     * E.g. the current CellType.
+     */
+    private void updatePaint() {
+        paint.setColor(CellType.getCellColor(type, context));
+        paint.setShadowLayer(15.0f, 0.0f, 0.0f, CellType.getShadowColor(type, context));
     }
 
     /**
@@ -27,6 +56,7 @@ public class Cell {
      * @return true iff an animation is executed, false otherwise.
      */
     public boolean isActive() {
+        if (lifecycle != null && !lifecycle.isInterrupted()) return true;
         return active;
     }
 
@@ -44,8 +74,7 @@ public class Cell {
      * @return Paint of the cell.
      */
     public Paint getPaint() {
-        // TODO
-        return null;
+        return paint;
     }
 
     /**
@@ -55,8 +84,7 @@ public class Cell {
      * @return radius of the cell.
      */
     public float getRadius() {
-        // TODO
-        return 0.0f;
+        return radius;
     }
 
     /**
@@ -64,8 +92,7 @@ public class Cell {
      * @return activation time
      */
     public long getActivationTime() {
-        // TODO
-        return 0;
+        return activationTime;
     }
 
     /**
@@ -74,8 +101,7 @@ public class Cell {
      * @return timeout time.
      */
     public long getTimeoutTime() {
-        // TODO
-        return 0;
+        return isActive()? timeoutTime : -1;
     }
 
     /* ---------------------------------------------------------------------------------------------
@@ -88,8 +114,7 @@ public class Cell {
      * @return true on success, false otherwise.
      */
     public boolean activate(CellType type) {
-        // TODO
-        return false;
+        return activate(type, DEFAULT_GROW_ANIMATION_DURATION);
     }
 
     /**
@@ -99,8 +124,9 @@ public class Cell {
      * @return true on success, false otherwise.
      */
     public boolean activate(CellType type, int growTime) {
-        // TODO
-        return false;
+        activationTime = System.currentTimeMillis();
+        timeoutTime = -1;
+        return setAnimation(type, GROW_INTERPOLATOR, growTime, 0.0f, 1.0f);
     }
 
     /**
@@ -109,8 +135,8 @@ public class Cell {
      * @return true on success, false otherwise.
      */
     public boolean activateLifecycle(CellType type) {
-        // TODO
-        return false;
+        return activateLifecycle(type, DEFAULT_GROW_ANIMATION_DURATION,
+                DEFAULT_WAIT_BEFORE_SHRINK_TIME, DEFAULT_SHRINK_ANIMATION_DURATION);
     }
 
     /**
@@ -121,8 +147,32 @@ public class Cell {
      * @param shrinkTime Time in ms the cell needs to reach a radius of 0.0f again.
      * @return true on success, false otherwise.
      */
-    public boolean activateLifecycle(CellType type, int growTime, int constantTime, int shrinkTime) {
-        // TODO
+    public boolean activateLifecycle(final CellType type, final int growTime,
+                                     final int constantTime, final int shrinkTime) {
+        activationTime = System.currentTimeMillis();
+        timeoutTime = growTime + constantTime + shrinkTime;
+
+        lifecycle = new Thread() {
+            @Override
+            public void run() {
+                cycle :
+                {
+                    setAnimation(type, GROW_INTERPOLATOR, growTime, 0.0f, 1.0f);
+                    if (!waitUntilAnimationEnded()) break cycle;
+                    try {
+                        Thread.sleep(constantTime);
+                    } catch (InterruptedException e) {
+                        Log.d("Cell", "Lifecycle-Thread interrupted");
+                        break cycle;
+                    }
+                    setAnimation(type, SHRINK_INTERPOLATOR, shrinkTime, 1.0f, 0.0f);
+                    if (!waitUntilAnimationEnded()) break cycle;
+                }
+                clearCell();
+            }
+        };
+        lifecycle.start();
+
         return false;
     }
 
@@ -131,6 +181,27 @@ public class Cell {
      * The CellType will stay the same.
      */
     public void clearCell() {
-        // TODO
+        if (lifecycle != null) lifecycle.interrupt();
+        stopAnimation();
+        active = false;
+        radius = 0.0f;
+    }
+
+    /* ---------------------------------------------------------------------------------------------
+                           ANIMATION OF THE RADIUS
+    --------------------------------------------------------------------------------------------- */
+
+    private boolean setAnimation(CellType newType, Interpolator animInterpolator, int duration,
+                                 final float startSize, final float targetSize) {
+
+        return false;
+    }
+
+    private void stopAnimation() {
+        //TODO
+    }
+
+    private boolean waitUntilAnimationEnded() {
+        return true;
     }
 }
