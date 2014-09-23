@@ -141,6 +141,8 @@ public class Cell {
      * @return true on success, false otherwise.
      */
     public boolean activate(CellType type, int growTime) {
+        if (isActive()) return false;
+
         activationTime = System.currentTimeMillis();
         timeoutTime = -1;
         return setAnimation(type, GROW_INTERPOLATOR, growTime, 0.0f, 1.0f);
@@ -166,6 +168,8 @@ public class Cell {
      */
     public boolean activateLifecycle(final CellType type, final int growTime,
                                      final int constantTime, final int shrinkTime) {
+        if (isActive()) return false;
+
         activationTime = System.currentTimeMillis();
         timeoutTime = growTime + constantTime + shrinkTime;
 
@@ -219,8 +223,10 @@ public class Cell {
      */
     private boolean setAnimation(CellType newType, Interpolator animInterpolator, int duration,
                                  final float startSize, final float targetSize) {
+        if (isAnimationRunning()) return false;
 
-        return false;
+
+        return true;
     }
 
     /**
