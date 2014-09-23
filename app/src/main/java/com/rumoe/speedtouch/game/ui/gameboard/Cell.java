@@ -23,22 +23,20 @@ public class Cell {
 
     private Thread      lifecycle;
     private Animation   animation;
-    private Context context;
+    private Context     context;
 
-    private CellType type;
-    private Paint paint;
-    private boolean active;
+    private CellType    type;
+    private Paint       paint;
 
-    private float radius;
-    private long activationTime;
-    private long timeoutTime;
+    private float   radius;
+    private long    activationTime;
+    private long    timeoutTime;
 
     public Cell(Context context) {
         this.context = context;
 
         radius = 0.0f;
         type = CellType.STANDARD;
-        active = false;
 
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         updatePaint();
@@ -54,12 +52,29 @@ public class Cell {
     }
 
     /**
-     * Tells if the cell is currently executing an animation.
-     * @return true iff an animation is executed, false otherwise.
+     * Tells if the cell is currently executing an animation or its lifecycle thread.
+     * @return isAnimationRunning() || isLifecycleRunning()
      */
     public boolean isActive() {
+        return isAnimationRunning() || isLifecycleRunning();
+    }
+
+    /**
+     * Tells if the radius change animation is running.
+     * @return true iff animation is being executed, false otherwise.
+     */
+    public boolean isAnimationRunning() {
+        if (animation != null && !animation.hasEnded()) return true;
+        return false;
+    }
+
+    /**
+     * Tells if the cell lifecycle is currently running.
+     * @return true iff lifecycle is being executed, false otherwise.
+     */
+    public boolean isLifecycleRunning() {
         if (lifecycle != null && !lifecycle.isInterrupted()) return true;
-        return active;
+        return false;
     }
 
     /**
@@ -185,7 +200,6 @@ public class Cell {
     public void clearCell() {
         if (lifecycle != null) lifecycle.interrupt();
         stopAnimation();
-        active = false;
         radius = 0.0f;
     }
 
