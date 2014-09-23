@@ -16,7 +16,7 @@ public class CellEvent {
 
 
     public enum EventType {
-        ACTIVATED, MISSED, TIMEOUT, TOUCHED;
+        ACTIVATED, MISSED, TIMEOUT, TOUCHED, KILLED;
     }
 
     private CellEvent(CellPosition pos, EventType eventType, CellType cellType, long delay, long timeUntilDecay) {
@@ -32,7 +32,11 @@ public class CellEvent {
     }
 
     public static  CellEvent generateMissedEvent(CellPosition pos, CellType cellType, long delay, long timeUntilDecay) {
-        return new CellEvent(pos, EventType.TOUCHED.MISSED, cellType, delay, timeUntilDecay);
+        return new CellEvent(pos, EventType.MISSED, cellType, delay, timeUntilDecay);
+    }
+
+    public static CellEvent generateKilledEvent(CellPosition pos, CellType cellType) {
+        return new CellEvent(pos, EventType.KILLED, cellType, -1L, -1L);
     }
 
     public static CellEvent generateActivatedEvent(CellPosition pos, CellType cellType, long timeUntilDecay) {

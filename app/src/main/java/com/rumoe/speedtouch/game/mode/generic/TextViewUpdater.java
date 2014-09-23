@@ -37,4 +37,6 @@ abstract class TextViewUpdater implements CellObserver {
     public void notifyOnTouch(CellEvent event) {};
 
     public void notifyOnMissedTouch(CellEvent event) {};
+
+    public void notifyOnKill(CellEvent event) {};
 }

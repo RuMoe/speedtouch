@@ -89,7 +89,6 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
                 board.clearCell(pos);
             }
         }
-        activeCells = 0;
     }
 
     @Override
@@ -106,6 +105,9 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
     public void notifyOnTouch(CellEvent event) {
         activeCells--;
     }
+
+    @Override
+    public void notifyOnKill(CellEvent event) {activeCells--;}
 
     @Override
     public void notifyOnMissedTouch(CellEvent event) {}
