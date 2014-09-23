@@ -246,6 +246,17 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     /**
+     * Calculates the actual visible radius of the circle.
+     * @param radiusPercentage value between 0.0f and 1.0f. 1.0f means maximum radius.
+     * @return radius of the cell in px.
+     */
+    private int getCellCircleRadius(float radiusPercentage) {
+        float maxRadius = Math.min(boardHeight, boardWidth)
+                - 2 * getResources().getDimension(R.dimen.board_cell_padding);
+        return (int) (maxRadius * radiusPercentage);
+    }
+
+    /**
      * This inner class is the draw thread of GameBoard. Draws at a constant frame rate the board
      * depending on the state of all cells.
      */
@@ -272,7 +283,7 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
                             CellPosition pos = new CellPosition(r, c);
                             int[] cellCenter = getCellCenterBoardPosition(pos);
                             Cell cell = getCell(pos);
-                            int radius = getCellCircleRadius(cell.getRadiusInterpolation());
+                            int radius = getCellCircleRadius(cell.getRadius());
                             canvas.drawCircle(cellCenter[0], cellCenter[1], radius, cell.getPaint());
                         }
                     }
