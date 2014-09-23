@@ -1,10 +1,11 @@
 package com.rumoe.speedtouch.game.ui.gameboard;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
@@ -21,9 +22,12 @@ public class Cell {
     public static final int DEFAULT_SHRINK_ANIMATION_DURATION   = 2000;
     public static final int DEFAULT_BLINK_ANIMATION_DURATION    = 1000;
 
-    private Thread      lifecycle;
-    private Animation   animation;
-    private Context     context;
+    private Thread          lifecycle;
+    private Context         context;
+    private ValueAnimator   animator;
+
+    /** necessary to have something to synchronized to */
+    private final Object animLock = true;
 
     private CellType    type;
     private Paint       paint;
@@ -64,7 +68,7 @@ public class Cell {
      * @return true iff animation is being executed, false otherwise.
      */
     public boolean isAnimationRunning() {
-        if (animation != null && !animation.hasEnded()) return true;
+        if (animator != null && animator.isRunning()) return true;
         return false;
     }
 
@@ -225,6 +229,35 @@ public class Cell {
                                  final float startSize, final float targetSize) {
         if (isAnimationRunning()) return false;
 
+        type = newType;
+        updatePaint();
+
+        animator = ValueAnimator.ofFloat(startSize, targetSize);
+        animator.setInterpolator(animInterpolator);
+        animator.setDuration(duration);
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                radius = (Float) animation.getAnimatedValue();
+            }
+        });
+
+        animator.addListener(new Animator.AnimatorListener() {
+            public void onAnimationEnd(Animator animation) {
+                // notify all waiting threads that the animation has stopped
+                synchronized (animator) {
+                    animator.notifyAll();
+                }
+            }
+            // those are not necessary.
+            public void onAnimationStart(Animator animation) {}
+            public void onAnimationCancel(Animator animation) {}
+            public void onAnimationRepeat(Animator animation) {}
+
+        });
+
+        animator.start();
 
         return true;
     }
@@ -233,14 +266,25 @@ public class Cell {
      * Stops the currently running animation.
      */
     private void stopAnimation() {
-        //TODO
+        animator.end();
     }
 
     /**
-     * Locks the calling thread until the animation has ended.
-     * @return
+     * Locks the calling thread until the animation has ended. Instantly returns true if no
+     * animation is running.
+     * @return true no animation is running or waited until animation completed, false if
+     * waiting was interrupted.
      */
     private boolean waitUntilAnimationEnded() {
+        if (!isAnimationRunning()) return true;
+
+        synchronized (animLock) {
+            try {
+                animator.wait();
+            } catch (InterruptedException e) {
+                return false;
+            }
+        }
         return true;
     }
 }
