@@ -130,6 +130,24 @@ public class Cell {
     --------------------------------------------------------------------------------------------- */
 
     /**
+     * Let the cell blink 3 times for the default duration.
+     * @param type New type of the cell.
+     * @return true on success, false otherwise.
+     */
+    public boolean blink(CellType type) {
+        return blink(type, DEFAULT_BLINK_ANIMATION_DURATION);
+    }
+
+    /**
+     * Let the cell blink 3 times in given time interval.
+     * @param type New type of the cell.
+     * @return true on success, false otherwise.
+     */
+    public boolean blink(CellType type, int duration) {
+        return setAnimation(type, BLINK_INTERPOLATOR, duration, 0.0f, 1.0f);
+    }
+
+    /**
      * Activates the cell without a timeout and its default grow time.
      * @param type New type of the cell.
      * @return true on success, false otherwise.
