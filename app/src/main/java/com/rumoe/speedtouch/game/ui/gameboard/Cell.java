@@ -1,302 +1,136 @@
 package com.rumoe.speedtouch.game.ui.gameboard;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.graphics.Paint;
 
-import com.rumoe.speedtouch.R;
-import com.rumoe.speedtouch.game.event.CellEvent;
-import com.rumoe.speedtouch.game.event.CellObserver;
-import com.rumoe.speedtouch.game.ui.gameboard.anim.CellAnimation;
-
-import java.util.ArrayList;
-
-public class Cell extends SurfaceView implements SurfaceHolder.Callback {
+public class Cell {
 
     public static final int DEFAULT_WAIT_BEFORE_SHRINK_TIME     = 1000;
     public static final int DEFAULT_GROW_ANIMATION_DURATION     = 100;
     public static final int DEFAULT_SHRINK_ANIMATION_DURATION   = 2000;
     public static final int DEFAULT_BLINK_ANIMATION_DURATION    = 1000;
 
-    private CellAnimation animation;
     private Thread lifecycle;
 
     private CellType type;
-    private final CellPosition pos;
-
-    private ArrayList<CellObserver> observer;
     private boolean active;
 
     private long cellActivatedTime;
     private long cellTimeoutTime;
 
-    public Cell(Context context, int xPos, int yPos) {
-        super(context);
-
+    public Cell() {
         type = CellType.STANDARD;
-        pos = new CellPosition(xPos, yPos);
-
         active = false;
-        animation = new CellAnimation(this, CellType.STANDARD, context);
-
-        // a cell is part of one game board -> in most cases there is exactly one observer
-        // (except multiplayer)
-        observer = new ArrayList<CellObserver>(1);
-
-        // registers the listener
-        getHolder().addCallback(this);
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        animation.clearBackground();
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.d("Cell", "surface destroyed");
-        clearCell();
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        int cellPadding = (int) getResources().getDimension(R.dimen.board_cell_padding);
-        animation.setDimensions(width, height, cellPadding);
-    }
-
-
-    @Override
-    public boolean onTouchEvent(@NonNull MotionEvent e) {
-        super.onTouchEvent(e);
-
-        if (e.getAction() == MotionEvent.ACTION_DOWN) {
-            if (active) {
-                if (animation.isTargetHit(e.getX(), e.getY())) {
-                    deactivate();
-                    animation.clearCell();
-
-                    notifyAllOnTouch();
-                } else {
-                    notifyAllOnMissedTouch();
-                }
-            } else {
-                notifyAllOnMissedTouch();
-            }
-        }
-        return true;
     }
 
     /**
-     * Deactivated the cells lifecycle and the cell animation.
+     * Tells if the cell is currently executing an animation.
+     * @return true iff an animation is executed, false otherwise.
      */
-    private void deactivate() {
-        if (lifecycle != null) lifecycle.interrupt();
-        animation.stopAnimation();
-        active = false;
-    }
-
-    public void clearCell() {
-        deactivate();
-        animation.clearCell();
-    }
-
     public boolean isActive() {
         return active;
     }
 
     /**
-     * Checks if the cell is already active and a new action can be performed.
-     * Also checks for consistency between cell state and animation state and tries
-     * to fix any issues.
-     * @return true iff activation is possible, false otherwise
+     * Returns the current CellType which was set the last time the cell was activated.
+     * @return cellType
      */
-    private boolean checkActivatePossibility() {
-        if (active || getHolder() == null || !getHolder().getSurface().isValid()) return false;
-
-        if (animation.isAnimationRunning()) {
-            Log.e("Cell", "Inconsistent cell state: Animation running but cell appears " +
-                    "inactive");
-
-            // try to kill every running thread to get an consistent state again
-            deactivate();
-            animation.clearCell();
-        }
-        return true;
+    public CellType getType() {
+        return type;
     }
 
-    // TODO rename...
-    public boolean blink(int blinkDuration) {
-        if (!checkActivatePossibility()) return false;
-
-        animation.setCellType(type);
-        animation.setDefaultBlinkAnimation(blinkDuration);
-
-        return true;
+    /**
+     * Returns the Paint of the cell which decides is lock. The object which
+     * is returned depends on the CellType passed last time the cell was activated.
+     * @return Paint of the cell.
+     */
+    public Paint getPaint() {
+        // TODO
+        return null;
     }
 
+    /**
+     * Returns the current radius of the cell which is a value between 0.0f and 1.0f.
+     * The value 1.0f means that the cell is at its maximum value.
+     * The value is changed whenever an animation is running.
+     * @return radius of the cell.
+     */
+    public float getRadius() {
+        // TODO
+        return 0.0f;
+    }
+
+    /**
+     * Gets the timestamp (ms since epoch) of the last activation of the cell.
+     * @return activation time
+     */
+    public long getActivationTime() {
+        // TODO
+        return 0;
+    }
+
+    /**
+     * Gets the timestamp (ms since epoch) at which the current cell lifecycle will end, or
+     * -1 if no lifecycle is active.
+     * @return timeout time.
+     */
+    public long getTimeoutTime() {
+        // TODO
+        return 0;
+    }
+
+    /* ---------------------------------------------------------------------------------------------
+                            CELL ACTIVATION AND DEACTIVATION
+    --------------------------------------------------------------------------------------------- */
+
+    /**
+     * Activates the cell without a timeout and its default grow time.
+     * @param type New type of the cell.
+     * @return true on success, false otherwise.
+     */
     public boolean activate(CellType type) {
-        return activate(type, DEFAULT_GROW_ANIMATION_DURATION);
-    }
-
-    public boolean activate(CellType type, int growDuration) {
-        if (!checkActivatePossibility()) return false;
-
-        cellActivatedTime = System.currentTimeMillis();
-        cellTimeoutTime = Long.MAX_VALUE;   // there is no timeout here
-
-        this.type = type;
-        animation.setCellType(type);
-        animation.setDefaultGrowAnimation(growDuration);
-        active = true;
-        notifyAllOnActive();
-
-        return active;
-    }
-
-    public boolean activateLifecycle(CellType type) {
-        return activateLifecycle(type,
-                DEFAULT_GROW_ANIMATION_DURATION,
-                DEFAULT_WAIT_BEFORE_SHRINK_TIME,
-                DEFAULT_SHRINK_ANIMATION_DURATION);
-    }
-
-    public boolean activateLifecycle(CellType type, final int growDuration, final int waitDuration,
-                                     final int shrinkDuration) {
-        if (!checkActivatePossibility()) return false;
-
-        cellActivatedTime = System.currentTimeMillis();
-        cellTimeoutTime = cellActivatedTime +
-                growDuration +
-                waitDuration +
-                shrinkDuration;
-
-        this.type = type;
-        animation.setCellType(type);
-        active = true;
-        notifyAllOnActive();
-
-        lifecycle = new Thread() {
-            @Override
-            public void run() {
-                animation.setDefaultGrowAnimation(growDuration);
-                if (!animation.waitUntilAnimationEnded()) return;
-                try {
-                    Thread.sleep(waitDuration);
-                } catch (InterruptedException e) {
-                    Log.d("Cell", "Lifecycle-Thread interrupted");
-                    return;
-                }
-                animation.setDefaultShrinkAnimation(shrinkDuration);
-                if (!animation.waitUntilAnimationEnded()) return;
-
-                // the cell is not visible anymore --> player didn't touch it in time
-                notifyAllOnTimeout();
-            }
-        };
-        startLifecycle();
-        return true;
-    }
-
-    private void startLifecycle() {
-        new Thread() {
-            @Override
-            public void run() {
-                lifecycle.start();
-                try {
-                    lifecycle.join();
-                } catch (InterruptedException e) {
-                    // Does not matter why we don't wait anymore -
-                    // deactivate the cell in any case.
-                } finally {
-                    deactivate();
-                }
-            }
-        }.start();
-    }
-
-    /**
-     * Adds an CellObserver to the cell which will be notified on multiple events:
-     * <ul>
-     *     <li>Cell is activated</li>
-     *     <li>Cell is deactivated through timeout</li>
-     *     <li>Cell is deactivated through touch</li>
-     *     <li>Cell registers ACTION_DOWN MotionEvent outside its active area</li>
-     * </ul>
-     * @param obs The CellObserver to be added.
-     * @return true
-     */
-    public synchronized boolean registerObserver(CellObserver obs) {
-        observer.add(obs);
-        return true;
-    }
-
-    /**
-     * Removes an CellObserver. Is the same observer registered multiple times then it will
-     * be removed only once.
-     * @param obs The CellObserver to be removed
-     * @return true iff the CellObserver was registered and removed, false otherwise
-     */
-    public synchronized boolean removeObserver(CellObserver obs) {
-        for (int i = observer.size() - 1; i >= 0; i--) {
-            if (obs.equals(observer.get(i))) {
-                observer.remove(i);
-                return true;
-            }
-        }
+        // TODO
         return false;
     }
 
     /**
-     * Notify all observer that the cell is now active.
+     * Activates the cell without a timeout.
+     * @param type New type of the cell.
+     * @param growTime Time in ms the cell needs to reach its full radius.
+     * @return true on success, false otherwise.
      */
-    private synchronized void notifyAllOnActive() {
-        long time = System.currentTimeMillis();
-        CellEvent event = CellEvent.generateActivatedEvent(pos, type, time - cellTimeoutTime);
-
-        for (CellObserver obs : observer) {
-            obs.notifyOnActive(event);
-        }
+    public boolean activate(CellType type, int growTime) {
+        // TODO
+        return false;
     }
 
     /**
-     * Notify all observer that the cell is now inactive due to timeout.
+     * Activates the cell lifecycle with its default timing.
+     * @param type New type of the cell.
+     * @return true on success, false otherwise.
      */
-    private synchronized void notifyAllOnTimeout() {
-        CellEvent event = CellEvent.generateTimeoutEvent(pos, type,
-                cellTimeoutTime - cellActivatedTime);
-
-        for (CellObserver obs : observer) {
-            obs.notifyOnTimeout(event);
-        }
+    public boolean activateLifecycle(CellType type) {
+        // TODO
+        return false;
     }
 
     /**
-     * Notify all observer that the cell is now inactive due to touch event.
+     * Activates the cell lifecycle,
+     * @param type New type of the cell.
+     * @param growTime Time in ms the cell needs to reach its full radius.
+     * @param constantTime Time in ms the cell radius will stay constant.
+     * @param shrinkTime Time in ms the cell needs to reach a radius of 0.0f again.
+     * @return true on success, false otherwise.
      */
-    private synchronized void notifyAllOnTouch() {
-        long time = System.currentTimeMillis();
-        CellEvent event = CellEvent.generateTouchedEvent(pos, type, time - cellActivatedTime,
-                cellTimeoutTime - time);
-
-        for (CellObserver obs : observer) {
-            obs.notifyOnTouch(event);
-        }
+    public boolean activateLifecycle(CellType type, int growTime, int constantTime, int shrinkTime) {
+        // TODO
+        return false;
     }
 
     /**
-     * Notify all observer tht there was a touch event which did not hit a
-     * target.
+     * Stops the cell animation and sets its radius to 0.0f.
+     * The CellType will stay the same.
      */
-    private synchronized void notifyAllOnMissedTouch() {
-        long time = System.currentTimeMillis();
-        CellEvent event = CellEvent.generateMissedEvent(pos, type, time - cellActivatedTime,
-                cellTimeoutTime - time);
-
-        for (CellObserver obs : observer) {
-            obs.notifyOnMissedTouch(event);
-        }
+    public void clearCell() {
+        // TODO
     }
 }
