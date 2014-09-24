@@ -164,7 +164,7 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
      * @return true iff clear was successful, false otherwise.
      */
     public boolean clearCell(CellPosition pos) {
-        getCell(pos).clearCell();
+        getCell(pos).deactivate();
         return true;
     }
 
