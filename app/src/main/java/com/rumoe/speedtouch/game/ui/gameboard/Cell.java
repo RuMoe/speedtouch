@@ -9,7 +9,11 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
+import com.rumoe.speedtouch.game.event.CellEvent;
+import com.rumoe.speedtouch.game.event.CellObserver;
 import com.rumoe.speedtouch.game.ui.gameboard.anim.BlinkInterpolator;
+
+import java.util.ArrayList;
 
 public class Cell {
 
@@ -22,6 +26,8 @@ public class Cell {
     public static final int DEFAULT_SHRINK_ANIMATION_DURATION   = 2000;
     public static final int DEFAULT_BLINK_ANIMATION_DURATION    = 1000;
 
+    private ArrayList<CellObserver> observer;
+
     private Thread          lifecycle;
     private Context         context;
     private ValueAnimator   animator;
@@ -29,16 +35,19 @@ public class Cell {
     /** necessary to have something to synchronized to */
     private final Object animLock = true;
 
-    private CellType    type;
-    private Paint       paint;
+    private CellType        type;
+    private CellPosition    pos;
+    private Paint           paint;
 
     private float   radius;
     private long    activationTime;
     private long    timeoutTime;
 
-    public Cell(Context context) {
+    public Cell(Context context, CellPosition pos) {
         this.context = context;
+        this.pos = pos;
 
+        observer = new ArrayList<CellObserver>(5);
         radius = 0.0f;
         type = CellType.STANDARD;
 
@@ -193,7 +202,7 @@ public class Cell {
         if (isActive()) return false;
 
         activationTime = System.currentTimeMillis();
-        timeoutTime = growTime + constantTime + shrinkTime;
+        timeoutTime = activationTime + growTime + constantTime + shrinkTime;
 
         lifecycle = new Thread() {
             @Override
@@ -304,5 +313,103 @@ public class Cell {
             }
         }
         return true;
+    }
+
+    /* ---------------------------------------------------------------------------------------------
+                            OBSERVER NOTIFICATION
+    --------------------------------------------------------------------------------------------- */
+
+    /**
+     * Adds an CellObserver to the cell which will be notified on multiple events:
+     * <ul>
+     *     <li>Cell is activated</li>
+     *     <li>Cell is deactivated through timeout</li>
+     *     <li>Cell is deactivated through touch</li>
+     *     <li>Cell registers ACTION_DOWN MotionEvent outside its active area</li>
+     *     <li>Cell is deactivated through a system event (clear is called)</li>
+     * </ul>
+     * @param obs The CellObserver to be added.
+     * @return true
+     */
+    public synchronized boolean registerObserver(CellObserver obs) {
+        observer.add(obs);
+        return true;
+    }
+
+    /**
+     * Removes an CellObserver. Is the same observer registered multiple times then it will
+     * be removed only once.
+     * @param obs The CellObserver to be removed
+     * @return true iff the CellObserver was registered and removed, false otherwise
+     */
+    public synchronized boolean removeObserver(CellObserver obs) {
+        for (int i = observer.size() - 1; i >= 0; i--) {
+            if (obs.equals(observer.get(i))) {
+                observer.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Notify all observer that the cell is now active.
+     */
+    private synchronized void notifyAllOnActive() {
+        CellEvent event = CellEvent.generateActivatedEvent(pos, type, timeoutTime);
+
+        for (CellObserver obs : observer) {
+            obs.notifyOnActive(event);
+        }
+    }
+
+    /**
+     * Notify all observer that the cell is now inactive due to timeout.
+     */
+    private synchronized void notifyAllOnTimeout() {
+        CellEvent event = CellEvent.generateTimeoutEvent(pos, type,
+                timeoutTime - activationTime);
+
+        for (CellObserver obs : observer) {
+            obs.notifyOnTimeout(event);
+        }
+    }
+
+    /**
+     * Notify all observer that the cell is now inactive due to touch event.
+     */
+    private synchronized void notifyAllOnTouch() {
+        long time = System.currentTimeMillis();
+        CellEvent event = CellEvent.generateTouchedEvent(pos, type, time - activationTime,
+                timeoutTime);
+
+        for (CellObserver obs : observer) {
+            obs.notifyOnTouch(event);
+        }
+    }
+
+    /**
+     * Notify all observer that there was a touch event which did not hit a
+     * target.
+     */
+    private synchronized void notifyAllOnMissedTouch() {
+        long time = System.currentTimeMillis();
+        CellEvent event = CellEvent.generateMissedEvent(pos, type, time - activationTime,
+                timeoutTime);
+
+        for (CellObserver obs : observer) {
+            obs.notifyOnMissedTouch(event);
+        }
+    }
+
+    /**
+     * Notify all observer that the cell was deactivated by clear() call.
+     */
+    private void notifyAllOnKill() {
+        CellEvent event = CellEvent.generateKilledEvent(pos, type);
+
+        for (CellObserver obs: observer) {
+            obs.notifyOnKill(event);
+        }
     }
 }
