@@ -41,6 +41,12 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
         gameBoard       = (SurfaceView) rootView.findViewById(R.id.gameBoard);
         gameBoard.getHolder().addCallback(this);
 
+        for (int r = 0; r < getRowCount(); r++) {
+            for (int c = 0; c < getColumnCount(); c++) {
+                cells[r][c] = new Cell(this.getActivity());
+            }
+        }
+
         return rootView;
     }
 
