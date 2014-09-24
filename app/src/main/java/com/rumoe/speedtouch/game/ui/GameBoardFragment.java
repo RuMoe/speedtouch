@@ -130,14 +130,6 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     /**
-     * Gets the total amount of rows of the game board.
-     * @return rows of the game board.
-     */
-    public int getRowCount() {
-        return ROW_COUNT;
-    }
-
-    /**
      * Starts the lifecycle of the cell on a specified position. A lifecycle contains three stages:
      * grow, constant size and shrink.
      * When calling this method successfully the cell will emit an CellEvent.ACTIVATED event.
@@ -190,6 +182,15 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
         int xCoord = (int) (cellDimension[0] * (pos.getRow() + 0.5));
         int yCoord = (int) (cellDimension[1] * (pos.getColumn() + 0.5));
         return new int[]{xCoord, yCoord};
+    }
+
+
+    /**
+     * Gets the total amount of rows of the game board.
+     * @return rows of the game board.
+     */
+    public int getRowCount() {
+        return ROW_COUNT;
     }
 
     /**
