@@ -428,7 +428,7 @@ public class Cell {
     /**
      * Notify all observer that the cell was deactivated by clear() call.
      */
-    private void notifyAllOnKill() {
+    private synchronized void notifyAllOnKill() {
         CellEvent event = CellEvent.generateKilledEvent(pos, type);
 
         for (CellObserver obs: observer) {
