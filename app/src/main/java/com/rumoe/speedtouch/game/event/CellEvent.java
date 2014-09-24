@@ -44,7 +44,7 @@ public class CellEvent {
     }
 
     public static CellEvent generateTimeoutEvent(CellPosition pos, CellType cellType, long delay) {
-        return new CellEvent(pos, EventType.TIMEOUT, cellType, delay, 0L);
+        return new CellEvent(pos, EventType.TIMEOUT, cellType, delay, System.currentTimeMillis());
     }
 
     public EventType getEventType() {
