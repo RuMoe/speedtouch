@@ -13,7 +13,7 @@ public class CellEvent {
     private final CellType cellType;
     private final long delay;
     private final long decayTime;
-
+    private final long eventTime;
 
     public enum EventType {
         ACTIVATED, MISSED, TIMEOUT, TOUCHED, KILLED;
@@ -25,6 +25,7 @@ public class CellEvent {
         this.cellType = cellType;
         this.delay = delay;
         this.decayTime = decayTime;
+        eventTime = System.currentTimeMillis();
     }
 
     public static CellEvent generateTouchedEvent(CellPosition pos, CellType cellType, long delay, long decayTime) {
@@ -58,6 +59,8 @@ public class CellEvent {
     public long getDelay() {
         return delay;
     }
+
+    public long getEventTime() { return eventTime; }
 
     public long getDecayTime() {
         return decayTime;
