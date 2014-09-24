@@ -323,7 +323,13 @@ public class Cell {
      * Stops the currently running animation.
      */
     private void stopAnimation() {
-        animator.end();
+        new Thread() {
+            public void run() {
+                Looper.prepare();
+                if (animator != null) animator.end();
+                Looper.loop();
+            }
+        }.start();
     }
 
     /**
