@@ -3,9 +3,6 @@ package com.rumoe.speedtouch.game.event;
 import com.rumoe.speedtouch.game.ui.gameboard.CellPosition;
 import com.rumoe.speedtouch.game.ui.gameboard.CellType;
 
-/**
- * Created by jan on 30.08.2014.
- */
 public class CellEvent {
 
     private final CellPosition cellPosition;
@@ -16,7 +13,7 @@ public class CellEvent {
     private final long eventTime;
 
     public enum EventType {
-        ACTIVATED, MISSED, TIMEOUT, TOUCHED, KILLED;
+        ACTIVATED, MISSED, TIMEOUT, TOUCHED, KILLED
     }
 
     private CellEvent(CellPosition pos, EventType eventType, CellType cellType, long delay, long decayTime) {
