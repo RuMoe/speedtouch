@@ -99,8 +99,7 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
      * @return true iff the cell is active, false otherwise.
      */
     public boolean isCellActive(CellPosition pos) {
-        // TODO
-        return true;
+        return getCell(pos).isActive();
     }
 
     /**
@@ -113,8 +112,7 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
      */
     public boolean activateCell(CellPosition pos, CellType type) {
         if (isCellActive(pos)) return false;
-        // TODO
-        return true;
+        return getCell(pos).activateLifecycle(type);
     }
 
     /**
@@ -154,8 +152,7 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
     public boolean activateCellLifeCycle(CellPosition pos, CellType type,
                                          int growTime, int stayTime, int shrinkTime) {
         if (isCellActive(pos)) return false;
-        // TODO
-        return true;
+        return getCell(pos).activateLifecycle(type, growTime, stayTime, shrinkTime);
     }
 
     /**
@@ -165,8 +162,8 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
      */
     public boolean blinkCell(CellPosition pos) {
         if (isCellActive(pos)) return false;
-        // TODO
-        return true;
+        Cell c = getCell(pos);
+        return c.blink(c.getType());
     }
 
     /**
@@ -176,7 +173,7 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
      * @return true iff clear was successful, false otherwise.
      */
     public boolean clearCell(CellPosition pos) {
-        // TODO
+        getCell(pos).clearCell();
         return true;
     }
 
