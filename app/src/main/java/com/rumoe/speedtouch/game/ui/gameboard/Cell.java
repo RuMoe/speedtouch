@@ -86,7 +86,7 @@ public class Cell {
      * @return true iff lifecycle is being executed, false otherwise.
      */
     public boolean isLifecycleRunning() {
-        if (lifecycle != null && !lifecycle.isInterrupted()) return true;
+        if (lifecycle != null && lifecycle.isAlive()) return true;
         return false;
     }
 
