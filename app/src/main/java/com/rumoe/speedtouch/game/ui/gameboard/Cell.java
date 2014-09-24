@@ -307,6 +307,14 @@ public class Cell {
 
         });
 
+        // Animators may only be run on Looper threads
+        new Thread() {
+            public void run() {
+                Looper.prepare();
+                animator.start();
+                Looper.loop();
+            }
+        }.start();
 
         return true;
     }
