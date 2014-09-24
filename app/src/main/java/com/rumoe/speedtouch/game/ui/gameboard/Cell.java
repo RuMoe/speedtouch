@@ -140,6 +140,8 @@ public class Cell {
 
     /**
      * Let the cell blink 3 times for the default duration.
+     * This does not count as an activation and thus observers won't be notified.
+     * The cell is blocked for further animations until blinking is done.
      * @param type New type of the cell.
      * @return true on success, false otherwise.
      */
@@ -148,7 +150,9 @@ public class Cell {
     }
 
     /**
-     * Let the cell blink 3 times in given time interval.
+     * Let the cell blink 3 times in given time interval. This does not count as an activation and
+     * thus observers won't be notified.
+     * The cell is blocked for further animations until blinking is done.
      * @param type New type of the cell.
      * @return true on success, false otherwise.
      */
@@ -158,6 +162,7 @@ public class Cell {
 
     /**
      * Activates the cell without a timeout and its default grow time.
+     * This notifies all observer thru the notifyOnActive method.
      * @param type New type of the cell.
      * @return true on success, false otherwise.
      */
@@ -167,6 +172,7 @@ public class Cell {
 
     /**
      * Activates the cell without a timeout.
+     * This notifies all observer thru the notifyOnActive method.
      * @param type New type of the cell.
      * @param growTime Time in ms the cell needs to reach its full radius.
      * @return true on success, false otherwise.
@@ -174,6 +180,7 @@ public class Cell {
     public boolean activate(CellType type, int growTime) {
         if (isActive()) return false;
 
+        notifyAllOnActive();
         activationTime = System.currentTimeMillis();
         timeoutTime = -1;
         return setAnimation(type, GROW_INTERPOLATOR, growTime, 0.0f, 1.0f);
@@ -181,6 +188,9 @@ public class Cell {
 
     /**
      * Activates the cell lifecycle with its default timing.
+     * This notifies all observer thru the notifyOnActive method.
+     * Ends the lifecycle and the cell is still active, all observer
+     * will be notified thru the notifyOnTimeout method.
      * @param type New type of the cell.
      * @return true on success, false otherwise.
      */
@@ -190,7 +200,9 @@ public class Cell {
     }
 
     /**
-     * Activates the cell lifecycle,
+     * Activates the cell lifecycle. This notifies all observer thru the notifyOnActive method.
+     * Ends the lifecycle and the cell is still active, all observer
+     * will be notified thru the notifyOnTimeout method.
      * @param type New type of the cell.
      * @param growTime Time in ms the cell needs to reach its full radius.
      * @param constantTime Time in ms the cell radius will stay constant.
@@ -200,7 +212,7 @@ public class Cell {
     public boolean activateLifecycle(final CellType type, final int growTime,
                                      final int constantTime, final int shrinkTime) {
         if (isActive()) return false;
-
+        notifyAllOnActive();
         activationTime = System.currentTimeMillis();
         timeoutTime = activationTime + growTime + constantTime + shrinkTime;
 
@@ -220,7 +232,8 @@ public class Cell {
                     setAnimation(type, SHRINK_INTERPOLATOR, shrinkTime, 1.0f, 0.0f);
                     if (!waitUntilAnimationEnded()) break cycle;
                 }
-                clearCell();
+                clear();
+                notifyAllOnTimeout();
             }
         };
         lifecycle.start();
@@ -232,10 +245,20 @@ public class Cell {
      * Stops the cell animation and sets its radius to 0.0f.
      * The CellType will stay the same.
      */
-    public void clearCell() {
+    private void clear() {
         if (lifecycle != null) lifecycle.interrupt();
         stopAnimation();
         radius = 0.0f;
+    }
+
+    /**
+     * Stops the cell animation and sets its radius to 0.0f.
+     * The CellType will stay the same.
+     * Calling this method will notify all observer thru the notifyOnKill method.
+     */
+    public void deactivate() {
+        clear();
+        notifyAllOnKill();
     }
 
     /* ---------------------------------------------------------------------------------------------
