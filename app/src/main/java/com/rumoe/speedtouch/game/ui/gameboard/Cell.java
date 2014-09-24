@@ -297,7 +297,7 @@ public class Cell {
             public void onAnimationEnd(Animator animation) {
                 // notify all waiting threads that the animation has stopped
                 synchronized (animLock) {
-                    animator.notifyAll();
+                    animLock.notifyAll();
                 }
             }
             // those are not necessary.
@@ -337,7 +337,7 @@ public class Cell {
 
         synchronized (animLock) {
             try {
-                animator.wait();
+                animLock.wait();
             } catch (InterruptedException e) {
                 return false;
             }
