@@ -12,35 +12,35 @@ public class CellEvent {
     private final EventType eventType;
     private final CellType cellType;
     private final long delay;
-    private final long timeUntilDecay;
+    private final long decayTime;
 
 
     public enum EventType {
         ACTIVATED, MISSED, TIMEOUT, TOUCHED, KILLED;
     }
 
-    private CellEvent(CellPosition pos, EventType eventType, CellType cellType, long delay, long timeUntilDecay) {
+    private CellEvent(CellPosition pos, EventType eventType, CellType cellType, long delay, long decayTime) {
         this.cellPosition = pos;
         this.eventType = eventType;
         this.cellType = cellType;
         this.delay = delay;
-        this.timeUntilDecay = timeUntilDecay;
+        this.decayTime = decayTime;
     }
 
-    public static CellEvent generateTouchedEvent(CellPosition pos, CellType cellType, long delay, long timeUntilDecay) {
-        return new CellEvent(pos, EventType.TOUCHED, cellType, delay, timeUntilDecay);
+    public static CellEvent generateTouchedEvent(CellPosition pos, CellType cellType, long delay, long decayTime) {
+        return new CellEvent(pos, EventType.TOUCHED, cellType, delay, decayTime);
     }
 
-    public static  CellEvent generateMissedEvent(CellPosition pos, CellType cellType, long delay, long timeUntilDecay) {
-        return new CellEvent(pos, EventType.MISSED, cellType, delay, timeUntilDecay);
+    public static  CellEvent generateMissedEvent(CellPosition pos, CellType cellType, long delay, long decayTime) {
+        return new CellEvent(pos, EventType.MISSED, cellType, delay, decayTime);
     }
 
     public static CellEvent generateKilledEvent(CellPosition pos, CellType cellType) {
         return new CellEvent(pos, EventType.KILLED, cellType, -1L, -1L);
     }
 
-    public static CellEvent generateActivatedEvent(CellPosition pos, CellType cellType, long timeUntilDecay) {
-        return new CellEvent(pos, EventType.ACTIVATED, cellType, 0L, timeUntilDecay);
+    public static CellEvent generateActivatedEvent(CellPosition pos, CellType cellType, long decayTime) {
+        return new CellEvent(pos, EventType.ACTIVATED, cellType, 0L, decayTime);
     }
 
     public static CellEvent generateTimeoutEvent(CellPosition pos, CellType cellType, long delay) {
@@ -59,8 +59,8 @@ public class CellEvent {
         return delay;
     }
 
-    public long getTimeUntilDecay() {
-        return timeUntilDecay;
+    public long getDecayTime() {
+        return decayTime;
     }
 
     public CellPosition getCellPosition() {return cellPosition;}
