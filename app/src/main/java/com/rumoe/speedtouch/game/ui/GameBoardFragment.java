@@ -43,7 +43,8 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
 
         for (int r = 0; r < getRowCount(); r++) {
             for (int c = 0; c < getColumnCount(); c++) {
-                cells[r][c] = new Cell(this.getActivity());
+                CellPosition pos = new CellPosition(r, c);
+                cells[r][c] = new Cell(this.getActivity(), pos);
             }
         }
 
