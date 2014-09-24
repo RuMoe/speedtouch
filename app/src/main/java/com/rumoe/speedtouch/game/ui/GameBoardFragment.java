@@ -75,23 +75,23 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     public void subscribeToCells(CellObserver... obs) {
-     /*   for (int i = 0; i < ROW_COUNT; i++) {
+        for (int i = 0; i < ROW_COUNT; i++) {
             for (int j = 0; j < COLUMN_COUNT; j++) {
                 for (CellObserver o : obs) {
                     cells[i][j].registerObserver(o);
                 }
             }
-        }*/
+        }
     }
 
     public void unsubscribeToCells(CellObserver... obs) {
-       /* for (int i = 0; i < ROW_COUNT; i++) {
+        for (int i = 0; i < ROW_COUNT; i++) {
             for (int j = 0; j < COLUMN_COUNT; j++) {
                 for (CellObserver o : obs) {
                     cells[i][j].removeObserver(o);
                 }
             }
-        } */
+        }
     }
 
     /**
