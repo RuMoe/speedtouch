@@ -77,8 +77,7 @@ public class Cell {
      * @return true iff animation is being executed, false otherwise.
      */
     public boolean isAnimationRunning() {
-        if (animator != null && animator.isRunning()) return true;
-        return false;
+        return animator != null && animator.isRunning();
     }
 
     /**
@@ -86,8 +85,7 @@ public class Cell {
      * @return true iff lifecycle is being executed, false otherwise.
      */
     public boolean isLifecycleRunning() {
-        if (lifecycle != null && lifecycle.isAlive()) return true;
-        return false;
+        return lifecycle != null && lifecycle.isAlive();
     }
 
     /**
