@@ -4,10 +4,12 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Paint;
+import android.os.Looper;
 import android.util.Log;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.os.Handler;
 
 import com.rumoe.speedtouch.game.event.CellEvent;
 import com.rumoe.speedtouch.game.event.CellObserver;
@@ -294,7 +296,7 @@ public class Cell {
         animator.addListener(new Animator.AnimatorListener() {
             public void onAnimationEnd(Animator animation) {
                 // notify all waiting threads that the animation has stopped
-                synchronized (animator) {
+                synchronized (animLock) {
                     animator.notifyAll();
                 }
             }
@@ -305,7 +307,6 @@ public class Cell {
 
         });
 
-        animator.start();
 
         return true;
     }
