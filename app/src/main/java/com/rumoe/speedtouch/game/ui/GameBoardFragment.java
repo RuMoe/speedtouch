@@ -112,7 +112,7 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
      */
     public boolean activateCell(CellPosition pos, CellType type) {
         if (isCellActive(pos)) return false;
-        return getCell(pos).activateLifecycle(type);
+        return getCell(pos).activate(type);
     }
 
     /**
@@ -126,8 +126,7 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
      */
     public boolean activateCellLifeCycle(CellPosition pos, CellType type) {
         if (isCellActive(pos)) return false;
-        // TODO
-        return true;
+        return getCell(pos).activateLifecycle(type);
     }
 
     /**
