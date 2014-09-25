@@ -16,8 +16,6 @@ import com.rumoe.speedtouch.game.ui.gameboard.Cell;
 import com.rumoe.speedtouch.game.ui.gameboard.CellPosition;
 import com.rumoe.speedtouch.game.ui.gameboard.CellType;
 
-import java.util.Arrays;
-
 public class GameBoardFragment extends Fragment implements SurfaceHolder.Callback {
 
     private int boardWidth;
@@ -115,8 +113,7 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
      * @return true iff animation could be applied successfully, false otherwise.
      */
     public boolean activateCellLifeCycle(CellPosition pos, CellType type) {
-        if (isCellActive(pos)) return false;
-        return getCell(pos).activateLifecycle(type);
+        return !isCellActive(pos) && getCell(pos).activateLifecycle(type);
     }
 
     /**
@@ -132,8 +129,7 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
      */
     public boolean activateCellLifeCycle(CellPosition pos, CellType type,
                                          int growTime, int stayTime, int shrinkTime) {
-        if (isCellActive(pos)) return false;
-        return getCell(pos).activateLifecycle(type, growTime, stayTime, shrinkTime);
+       return !isCellActive(pos) && getCell(pos).activateLifecycle(type, growTime, stayTime, shrinkTime);
     }
 
     /**
