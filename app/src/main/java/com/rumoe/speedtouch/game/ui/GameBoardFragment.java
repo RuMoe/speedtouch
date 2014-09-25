@@ -106,19 +106,6 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     /**
-     * Activated the cell on the specified position. In contrast to the lifecycle method, the cell
-     * we be visible indefinitely.
-     * When calling this method successfully the cell will emit an CellEvent.ACTIVATED event.
-     * @param pos The position of the cell which will be activated.
-     * @param type Type the cell will have.
-     * @return true iff animation could be applied successfully, false otherwise.
-     */
-    public boolean activateCell(CellPosition pos, CellType type) {
-        if (isCellActive(pos)) return false;
-        return getCell(pos).activate(type);
-    }
-
-    /**
      * Starts the lifecycle of the cell on a specified position. A lifecycle contains three stages:
      * grow, constant size and shrink.
      * Calling this method will use the default timing of the lifecycle.

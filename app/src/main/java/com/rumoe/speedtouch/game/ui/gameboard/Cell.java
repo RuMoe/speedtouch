@@ -160,32 +160,6 @@ public class Cell {
     }
 
     /**
-     * Activates the cell without a timeout and its default grow time.
-     * This notifies all observer thru the notifyOnActive method.
-     * @param type New type of the cell.
-     * @return true on success, false otherwise.
-     */
-    public boolean activate(CellType type) {
-        return activate(type, DEFAULT_GROW_ANIMATION_DURATION);
-    }
-
-    /**
-     * Activates the cell without a timeout.
-     * This notifies all observer thru the notifyOnActive method.
-     * @param type New type of the cell.
-     * @param growTime Time in ms the cell needs to reach its full radius.
-     * @return true on success, false otherwise.
-     */
-    public boolean activate(CellType type, int growTime) {
-        if (isActive()) return false;
-
-        notifyAllOnActive();
-        activationTime = System.currentTimeMillis();
-        timeoutTime = -1;
-        return setAnimation(type, GROW_INTERPOLATOR, growTime, 0.0f, 1.0f);
-    }
-
-    /**
      * Activates the cell lifecycle with its default timing.
      * This notifies all observer thru the notifyOnActive method.
      * Ends the lifecycle and the cell is still active, all observer
