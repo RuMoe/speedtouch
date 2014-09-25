@@ -296,6 +296,7 @@ public class Cell {
         animator.addListener(new Animator.AnimatorListener() {
             public void onAnimationEnd(Animator animation) {
                 // notify all waiting threads that the animation has stopped
+                Log.d("debug", "at " + pos + " onAnimationEnd notification");
                 synchronized (animLock) {
                     animLock.notifyAll();
                 }
@@ -308,9 +309,10 @@ public class Cell {
         });
 
         // Animators may only be run on Looper threads
-        new Thread() {
+         new Thread() {
             public void run() {
                 Looper.prepare();
+                Log.d("debug", "at "+ pos + " start animation");
                 animator.start();
                 Looper.loop();
             }
@@ -326,6 +328,7 @@ public class Cell {
         new Thread() {
             public void run() {
                 Looper.prepare();
+                Log.d("debug", "at " + pos + " stop animation");
                 if (animator != null) animator.end();
                 Looper.loop();
             }
@@ -339,8 +342,10 @@ public class Cell {
      * waiting was interrupted.
      */
     private boolean waitUntilAnimationEnded() {
+        Log.d("debug", "cell at " + pos + " enter wait method");
         if (!isAnimationRunning()) return true;
 
+        Log.d("debug", "cell at " + pos + " waits for anim end");
         synchronized (animLock) {
             try {
                 animLock.wait();
@@ -348,6 +353,7 @@ public class Cell {
                 return false;
             }
         }
+        Log.d("debug", "cell at " + pos + " is done waiting");
         return true;
     }
 

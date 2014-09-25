@@ -270,7 +270,7 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
     class BoardDrawThread extends Thread {
 
         /** frame rate which is used to draw the board */
-        private static final int FPS = 2;
+        private static final int FPS = 40;
         /** amount of ms to wait between each frame */
         private static final int MS_WAIT_PER_FRAME = 1000 / FPS;
 
@@ -292,9 +292,7 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
                             if (cell.getRadius() == 0.0f) continue;
 
                             int[] cellCenter = getCellCenterBoardPosition(pos);
-                            Log.d("debug", "Center:" + Arrays.toString(cellCenter));
                             int radius = getCellCircleRadius(cell.getRadius());
-                            Log.d("debug", "Radius:" + cell.getRadius() + "\tCalcradius:" + radius);
                             canvas.drawCircle(cellCenter[0], cellCenter[1], radius, cell.getPaint());
                         }
                     }
