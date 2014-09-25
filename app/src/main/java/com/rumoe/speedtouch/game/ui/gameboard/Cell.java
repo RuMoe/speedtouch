@@ -394,6 +394,7 @@ public class Cell {
     private synchronized void notifyAllOnActive() {
         CellEvent event = CellEvent.generateActivatedEvent(pos, type, timeoutTime);
 
+        Log.d("debug", "Cell at " + pos.toString() + " notifies active");
         for (CellObserver obs : observer) {
             obs.notifyOnActive(event);
         }
@@ -406,6 +407,7 @@ public class Cell {
         CellEvent event = CellEvent.generateTimeoutEvent(pos, type,
                 timeoutTime - activationTime);
 
+        Log.d("debug", "Cell at " + pos.toString() + " notifies timeout");
         for (CellObserver obs : observer) {
             obs.notifyOnTimeout(event);
         }
