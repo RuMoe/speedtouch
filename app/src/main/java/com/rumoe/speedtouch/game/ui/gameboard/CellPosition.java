@@ -25,4 +25,9 @@ public class CellPosition {
     public int getColumn() {
         return column;
     }
+
+    @Override
+    public String toString() {
+        return String.format("(row %d, column %d)", row, column);
+    }
 }
