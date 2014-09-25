@@ -222,6 +222,7 @@ public class Cell {
                 {
                     setAnimation(type, GROW_INTERPOLATOR, growTime, 0.0f, 1.0f);
                     if (!waitUntilAnimationEnded()) break cycle;
+                    if (isInterrupted()) break cycle;
                     try {
                         Thread.sleep(constantTime);
                     } catch (InterruptedException e) {
@@ -253,9 +254,12 @@ public class Cell {
     /**
      * Stops the cell animation and sets its radius to 0.0f.
      * The CellType will stay the same.
-     * Calling this method will notify all observer thru the notifyOnKill method.
+     * Calling this method will notify all observer thru the notifyOnKill method is the cell was
+     * active.
      */
     public void deactivate() {
+        if (!isActive()) return;
+
         clear();
         notifyAllOnKill();
     }
