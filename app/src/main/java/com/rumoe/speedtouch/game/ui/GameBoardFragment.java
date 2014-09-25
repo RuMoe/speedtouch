@@ -16,6 +16,8 @@ import com.rumoe.speedtouch.game.ui.gameboard.Cell;
 import com.rumoe.speedtouch.game.ui.gameboard.CellPosition;
 import com.rumoe.speedtouch.game.ui.gameboard.CellType;
 
+import java.util.Arrays;
+
 public class GameBoardFragment extends Fragment implements SurfaceHolder.Callback {
 
     private int boardWidth;
@@ -285,8 +287,10 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
                     for (int r = 0; r < getRowCount(); r++) {
                         for (int c = 0; c < getColumnCount(); c++) {
                             CellPosition pos = new CellPosition(r, c);
-                            int[] cellCenter = getCellCenterBoardPosition(pos);
                             Cell cell = getCell(pos);
+                            if (cell.getRadius() == 0.0f) continue;
+
+                            int[] cellCenter = getCellCenterBoardPosition(pos);
                             int radius = getCellCircleRadius(cell.getRadius());
                             canvas.drawCircle(cellCenter[0], cellCenter[1], radius, cell.getPaint());
                         }
