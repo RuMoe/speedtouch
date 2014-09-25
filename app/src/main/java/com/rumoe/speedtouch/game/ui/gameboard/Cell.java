@@ -34,9 +34,6 @@ public class Cell {
     private Context         context;
     private ValueAnimator   animator;
 
-    /** necessary to have something to synchronized to */
-    private final Object animLock = true;
-
     private CellType        type;
     private CellPosition    pos;
     private Paint           paint;
@@ -297,8 +294,8 @@ public class Cell {
             public void onAnimationEnd(Animator animation) {
                 // notify all waiting threads that the animation has stopped
                 Log.d("debug", "at " + pos + " onAnimationEnd notification");
-                synchronized (animLock) {
-                    animLock.notifyAll();
+                synchronized (Cell.this) {
+                    Cell.this.notifyAll();
                 }
             }
             // those are not necessary.
@@ -345,9 +342,9 @@ public class Cell {
         Log.d("debug", "cell at " + pos + " enter wait method");
 
         Log.d("debug", "cell at " + pos + " waits for anim end");
-        synchronized (animLock) {
+        synchronized (this) {
             try {
-                animLock.wait();
+                this.wait();
             } catch (InterruptedException e) {
                 return false;
             }
