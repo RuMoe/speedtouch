@@ -238,14 +238,12 @@ public class Cell {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 radius = (Float) animation.getAnimatedValue();
-                Log.d("debug", pos + " radius changed to " + radius);
             }
         });
 
         animator.addListener(new Animator.AnimatorListener() {
             public void onAnimationEnd(Animator animation) {
                 // notify all waiting threads that the animation has stopped
-                Log.d("debug", "at " + pos + " onAnimationEnd notification");
                 synchronized (Cell.this) {
                     Cell.this.notifyAll();
                 }
@@ -260,7 +258,6 @@ public class Cell {
         // Animators may only be run on Looper threads
         ((Activity) context).runOnUiThread(new Runnable() {
             public void run() {
-                Log.d("debug", "at " + pos + " start animation");
                 animator.start();
             }
          });
@@ -274,7 +271,6 @@ public class Cell {
     private synchronized void stopAnimation() {
         ((Activity) context).runOnUiThread(new Runnable() {
             public void run() {
-                Log.d("debug", "at " + pos + " stop animation");
                 if (animator != null) animator.cancel();
                 radius = 0.0f;
             }
@@ -288,17 +284,11 @@ public class Cell {
      * waiting was interrupted.
      */
     private synchronized boolean waitUntilAnimationEnded() {
-        Log.d("debug", "cell at " + pos + " enter wait method");
-
-        Log.d("debug", "cell at " + pos + " waits for anim end");
-
         try {
             Cell.this.wait();
         } catch (InterruptedException e) {
              return false;
         }
-
-        Log.d("debug", "cell at " + pos + " is done waiting");
         return true;
     }
 
@@ -345,7 +335,7 @@ public class Cell {
     private void notifyAllOnActive() {
         CellEvent event = CellEvent.generateActivatedEvent(pos, type, timeoutTime);
 
-        Log.d("debug", "Cell at " + pos.toString() + " notifies active");
+        Log.d("Cell", "Cell at " + pos.toString() + " notifies active");
         for (CellObserver obs : observer) {
             obs.notifyOnActive(event);
         }
@@ -358,7 +348,7 @@ public class Cell {
         CellEvent event = CellEvent.generateTimeoutEvent(pos, type,
                 timeoutTime - activationTime);
 
-        Log.d("debug", "Cell at " + pos.toString() + " notifies timeout");
+        Log.d("Cell", "Cell at " + pos.toString() + " notifies timeout");
         for (CellObserver obs : observer) {
             obs.notifyOnTimeout(event);
         }
@@ -372,6 +362,7 @@ public class Cell {
         CellEvent event = CellEvent.generateTouchedEvent(pos, type, time - activationTime,
                 timeoutTime);
 
+        Log.d("Cell", "Cell at " + pos.toString() + " notifies touch");
         for (CellObserver obs : observer) {
             obs.notifyOnTouch(event);
         }
@@ -386,6 +377,7 @@ public class Cell {
         CellEvent event = CellEvent.generateMissedEvent(pos, type, time - activationTime,
                 timeoutTime);
 
+        Log.d("Cell", "Cell at " + pos.toString() + " notifies missed touch");
         for (CellObserver obs : observer) {
             obs.notifyOnMissedTouch(event);
         }
@@ -397,6 +389,7 @@ public class Cell {
     private void notifyAllOnKill() {
         CellEvent event = CellEvent.generateKilledEvent(pos, type);
 
+        Log.d("Cell", "Cell at " + pos.toString() + " notifies kill");
         for (CellObserver obs: observer) {
             obs.notifyOnKill(event);
         }

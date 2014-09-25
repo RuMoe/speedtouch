@@ -41,9 +41,9 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
 
     @Override
     public void run() {
+        Log.d("GameThread", "GameThread run loop started");
         while (!thread.isInterrupted()) {
 
-            Log.d("debug", "active cells in game thread " + activeCells);
             if (activeCells < 5) {
                 CellPosition randomCell;
                 do {
@@ -58,7 +58,6 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
                 if (Math.random() < 0.05) nextType = CellType.BAD;
                 board.activateCellLifeCycle(randomCell, nextType);
             }
-            Log.d("thread", "thread is running");
             try {
                 Thread.sleep(CLOCK_RATE);
             } catch (InterruptedException e) {
@@ -66,11 +65,12 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
                 break; // duh the interrupted state clears when the InterruptedException is thrown
             }
         }
-        Log.d("GameThread", "Threads run loop exited");
+        Log.d("GameThread", "GameThread run loop exited");
     }
 
     public void gameOver() {
         GameEventManager.getInstance().unregister(this);
+        Log.i("GameThread", "Game over");
         gameOver = true;
         clearAndStop();
     }
@@ -78,19 +78,18 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
     private void gameStart() {
         // prevent starting multiple threads
         if (thread != null && thread.isAlive()) return;
-
-        Log.d("thread", "thread is started");
+        Log.i("GameThread", "Game thread started");
         thread = new Thread(this);
         thread.start();
     }
 
     private void gameContinue() {
         if (gameOver) return;
+        Log.i("GameThread", "Game continue");
         gameStart();
     }
 
     private void clearAndStop() {
-        Log.d("thread", "thread is stopped");
         if (thread != null) thread.interrupt();
         clearAlLCells();
     }
