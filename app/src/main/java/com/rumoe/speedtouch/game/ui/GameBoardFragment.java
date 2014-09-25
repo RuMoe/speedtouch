@@ -257,7 +257,8 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
      * @return radius of the cell in px.
      */
     private int getCellCircleRadius(float radiusPercentage) {
-        float maxRadius = Math.min(boardHeight, boardWidth)
+        int[] cellDimen = getCellDimensions();
+        float maxRadius = Math.min(cellDimen[0], cellDimen[1]) / 2
                 - 2 * getResources().getDimension(R.dimen.board_cell_padding);
         return (int) (maxRadius * radiusPercentage);
     }
