@@ -343,7 +343,6 @@ public class Cell {
      */
     private boolean waitUntilAnimationEnded() {
         Log.d("debug", "cell at " + pos + " enter wait method");
-        //if (!isAnimationRunning()) return true;
 
         Log.d("debug", "cell at " + pos + " waits for anim end");
         synchronized (animLock) {
