@@ -291,7 +291,9 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
                             if (cell.getRadius() == 0.0f) continue;
 
                             int[] cellCenter = getCellCenterBoardPosition(pos);
+                            Log.d("debug", "Center:" + Arrays.toString(cellCenter));
                             int radius = getCellCircleRadius(cell.getRadius());
+                            Log.d("debug", "Radius:" + cell.getRadius() + "\tCalcradius:" + radius);
                             canvas.drawCircle(cellCenter[0], cellCenter[1], radius, cell.getPaint());
                         }
                     }
