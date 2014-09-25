@@ -2,7 +2,9 @@ package com.rumoe.speedtouch.game.ui.gameboard;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.AvoidXfermode;
 import android.graphics.Paint;
 import android.os.Looper;
 import android.util.Log;
@@ -306,14 +308,12 @@ public class Cell {
         });
 
         // Animators may only be run on Looper threads
-         new Thread() {
+        ((Activity) context).runOnUiThread(new Runnable() {
             public void run() {
-                Looper.prepare();
-                Log.d("debug", "at "+ pos + " start animation");
+                Log.d("debug", "at " + pos + " start animation");
                 animator.start();
-                Looper.loop();
             }
-        }.start();
+         });
 
         return true;
     }
@@ -322,14 +322,12 @@ public class Cell {
      * Stops the currently running animation.
      */
     private void stopAnimation() {
-        new Thread() {
+        ((Activity) context).runOnUiThread(new Runnable() {
             public void run() {
-                Looper.prepare();
                 Log.d("debug", "at " + pos + " stop animation");
                 if (animator != null) animator.end();
-                Looper.loop();
             }
-        }.start();
+        });
     }
 
     /**
