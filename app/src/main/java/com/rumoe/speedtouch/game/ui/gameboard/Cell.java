@@ -196,7 +196,6 @@ public class Cell {
                 {
                     setAnimation(type, GROW_INTERPOLATOR, growTime, 0.0f, 1.0f);
                     if (!waitUntilAnimationEnded()) break cycle;
-                    if (isInterrupted()) break cycle;
                     try {
                         Thread.sleep(constantTime);
                     } catch (InterruptedException e) {
@@ -222,7 +221,6 @@ public class Cell {
     private void clear() {
         if (lifecycle != null) lifecycle.interrupt();
         stopAnimation();
-        radius = 0.0f;
     }
 
     /**
@@ -304,6 +302,7 @@ public class Cell {
             public void run() {
                 Log.d("debug", "at " + pos + " stop animation");
                 if (animator != null) animator.end();
+                radius = 0.0f;
             }
         });
     }

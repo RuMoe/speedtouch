@@ -75,7 +75,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
 
     private void gameStart() {
         // prevent starting multiple threads
-        if (thread != null && !thread.isInterrupted()) return;
+        if (thread != null && thread.isAlive()) return;
 
         Log.d("thread", "thread is started");
         thread = new Thread(this);
@@ -83,7 +83,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
     }
 
     private void gameContinue() {
-        if (gameOver == true) return;
+        if (gameOver) return;
         gameStart();
     }
 
