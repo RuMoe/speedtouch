@@ -2,6 +2,7 @@ package com.rumoe.speedtouch.game.ui;
 
 import android.app.Fragment;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -277,13 +278,14 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
 
                                 int[] cellCenter = getCellCenterBoardPosition(pos);
                                 int radius = getCellCircleRadius(cell.getRadius());
-                                canvas.drawCircle(cellCenter[0], cellCenter[1], radius, cell.getPaint());
+                                canvas.drawCircle(cellCenter[0], cellCenter[1], radius, getPaint(cell.getType()));
                             }
                         }
                         surfaceHolder.unlockCanvasAndPost(canvas);
                     } else {
                         Log.d("GameBoardFragment", "Draw canvas unavailable");
                     }
+                    canvas = null;
                 }
 
                 try {
@@ -294,6 +296,19 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
                     break;
                 }
             }
+        }
+
+        /**
+         * Returns the Paint of the cell which decides is lock. The object which
+         * is returned depends on the CellType passed last time the cell was activated.
+         * @return Paint of the cell.
+         */
+        public Paint getPaint(CellType type) {
+            Paint paint = new Paint();
+            paint.setColor(CellType.getCellColor(type, GameBoardFragment.this.getActivity()));
+            paint.setShadowLayer(15.0f, 0.0f, 0.0f,
+                    CellType.getShadowColor(type, GameBoardFragment.this.getActivity()));
+            return paint;
         }
     }
 }

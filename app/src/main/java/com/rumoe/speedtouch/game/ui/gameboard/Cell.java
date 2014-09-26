@@ -4,14 +4,10 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.AvoidXfermode;
-import android.graphics.Paint;
-import android.os.Looper;
 import android.util.Log;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
-import android.os.Handler;
 
 import com.rumoe.speedtouch.game.event.CellEvent;
 import com.rumoe.speedtouch.game.event.CellObserver;
@@ -38,7 +34,6 @@ public class Cell {
 
     private CellType        type;
     private CellPosition    pos;
-    private Paint           paint;
 
     private float   radius;
     private long    activationTime;
@@ -51,18 +46,6 @@ public class Cell {
         observer = new ArrayList<CellObserver>(5);
         radius = 0.0f;
         type = CellType.STANDARD;
-
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        updatePaint();
-    }
-
-    /**
-     * Refresh the cells paint (and thus its look) based on its state.
-     * E.g. the current CellType.
-     */
-    private void updatePaint() {
-        paint.setColor(CellType.getCellColor(type, context));
-        paint.setShadowLayer(15.0f, 0.0f, 0.0f, CellType.getShadowColor(type, context));
     }
 
     /**
@@ -95,15 +78,6 @@ public class Cell {
      */
     public CellType getType() {
         return type;
-    }
-
-    /**
-     * Returns the Paint of the cell which decides is lock. The object which
-     * is returned depends on the CellType passed last time the cell was activated.
-     * @return Paint of the cell.
-     */
-    public Paint getPaint() {
-        return paint;
     }
 
     /**
@@ -255,7 +229,6 @@ public class Cell {
         if (isAnimationRunning()) return false;
 
         type = newType;
-        updatePaint();
 
         animator = ValueAnimator.ofFloat(startSize, targetSize);
         animator.setInterpolator(animInterpolator);
