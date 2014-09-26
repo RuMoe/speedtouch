@@ -205,9 +205,9 @@ public class Cell {
                     }
                     setAnimation(type, SHRINK_INTERPOLATOR, shrinkTime, 1.0f, 0.0f);
                     if (!waitUntilAnimationEnded()) break cycle;
+                    notifyAllOnTimeout();
                 }
                 clear();
-                notifyAllOnTimeout();
             }
         };
         lifecycle.start();
