@@ -285,7 +285,6 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
                     } else {
                         Log.d("GameBoardFragment", "Draw canvas unavailable");
                     }
-                    canvas = null;
                 }
 
                 try {
