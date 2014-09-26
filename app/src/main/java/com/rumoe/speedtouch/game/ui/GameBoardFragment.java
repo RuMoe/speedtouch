@@ -266,21 +266,24 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
 
                 if (surfaceHolder != null && surfaceHolder.getSurface().isValid()) {
                     Canvas canvas = surfaceHolder.lockCanvas();
-                    canvas.drawColor(getResources().getColor(R.color.game_board_background));
+                    if (canvas != null ) {
+                        canvas.drawColor(getResources().getColor(R.color.game_board_background));
 
-                    for (int r = 0; r < getRowCount(); r++) {
-                        for (int c = 0; c < getColumnCount(); c++) {
-                            CellPosition pos = new CellPosition(r, c);
-                            Cell cell = getCell(pos);
-                            if (cell.getRadius() == 0.0f) continue;
+                        for (int r = 0; r < getRowCount(); r++) {
+                            for (int c = 0; c < getColumnCount(); c++) {
+                                CellPosition pos = new CellPosition(r, c);
+                                Cell cell = getCell(pos);
+                                if (cell.getRadius() == 0.0f) continue;
 
-                            int[] cellCenter = getCellCenterBoardPosition(pos);
-                            int radius = getCellCircleRadius(cell.getRadius());
-                            canvas.drawCircle(cellCenter[0], cellCenter[1], radius, cell.getPaint());
+                                int[] cellCenter = getCellCenterBoardPosition(pos);
+                                int radius = getCellCircleRadius(cell.getRadius());
+                                canvas.drawCircle(cellCenter[0], cellCenter[1], radius, cell.getPaint());
+                            }
                         }
+                        surfaceHolder.unlockCanvasAndPost(canvas);
+                    } else {
+                        Log.d("GameBoardFragment", "Draw canvas unavailable");
                     }
-
-                    surfaceHolder.unlockCanvasAndPost(canvas);
                 }
 
                 try {
