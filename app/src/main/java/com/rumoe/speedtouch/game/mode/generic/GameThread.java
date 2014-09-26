@@ -56,7 +56,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
                 if (Math.random() < 0.05) nextType = CellType.BAD;
                 board.activateCellLifeCycle(randomCell, nextType);
             }
-
+            Log.d("thread", "thread is running");
             try {
                 Thread.sleep(CLOCK_RATE);
             } catch (InterruptedException e) {
@@ -71,12 +71,14 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
     }
 
     private void gameStart() {
+        Log.d("thread", "thread is started");
         thread = new Thread(this);
         stopped = false;
         thread.start();
     }
 
     private void clearAndStop() {
+        Log.d("thread", "thread is stopped");
         stopped = true;
         if (thread != null) thread.interrupt();
         clearAlLCells();
