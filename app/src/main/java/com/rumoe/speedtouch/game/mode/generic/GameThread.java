@@ -19,7 +19,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
 
     /** Sleep time between to actions of the game thread in ms */
     private static final long CLOCK_RATE = 1000;
-    private boolean stopped;
+    private boolean gameOver;
 
     private final GameBoardFragment board;
 
@@ -30,6 +30,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
 
     public GameThread(final GameBoardFragment board) {
         GameEventManager.getInstance().register(this);
+        gameOver = false;
         this.board = board;
 
         rows = board.getRowCount();
@@ -40,7 +41,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
 
     @Override
     public void run() {
-        while (!stopped) {
+        while (!thread.isInterrupted()) {
 
             if (activeCells < 5) {
                 CellPosition randomCell;
@@ -60,9 +61,11 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
             try {
                 Thread.sleep(CLOCK_RATE);
             } catch (InterruptedException e) {
-                Log.w("GameThread", "Sleep phase interrupted");
+                Log.d("GameThread", "Sleep phase interrupted");
+                break; // duh the interrupted state clears when the InterruptedException is thrown
             }
         }
+        Log.d("GameThread", "Threads run loop exited");
     }
 
     public void gameOver() {
@@ -71,15 +74,21 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
     }
 
     private void gameStart() {
+        // prevent starting multiple threads
+        if (thread != null && !thread.isInterrupted()) return;
+
         Log.d("thread", "thread is started");
         thread = new Thread(this);
-        stopped = false;
         thread.start();
+    }
+
+    private void gameContinue() {
+        if (gameOver == true) return;
+        gameStart();
     }
 
     private void clearAndStop() {
         Log.d("thread", "thread is stopped");
-        stopped = true;
         if (thread != null) thread.interrupt();
         clearAlLCells();
     }
@@ -136,7 +145,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
                         } catch (InterruptedException e) {
 
                         } finally {
-                            gameStart();
+                            gameContinue();
                         }
                     }
                 }.start();
