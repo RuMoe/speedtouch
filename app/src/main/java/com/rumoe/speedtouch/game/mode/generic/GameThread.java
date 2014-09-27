@@ -142,7 +142,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
                         board.blinkCell(cp);
 
                         try {
-                            Thread.sleep(Cell.DEFAULT_BLINK_ANIMATION_DURATION);
+                            Thread.sleep(Cell.DEFAULT_BLINK_ANIMATION_DURATION + 500);
                         } catch (InterruptedException e) {
 
                         } finally {
