@@ -118,7 +118,7 @@ public class Cell {
      * @param type New type of the cell.
      * @return true on success, false otherwise.
      */
-    public boolean blink(CellType type) {
+    public synchronized boolean blink(CellType type) {
         return blink(type, DEFAULT_BLINK_ANIMATION_DURATION);
     }
 
@@ -129,7 +129,7 @@ public class Cell {
      * @param type New type of the cell.
      * @return true on success, false otherwise.
      */
-    public boolean blink(CellType type, int duration) {
+    public synchronized boolean blink(CellType type, int duration) {
         return setAnimation(type, BLINK_INTERPOLATOR, duration, 0.0f, 1.0f);
     }
 
@@ -141,7 +141,7 @@ public class Cell {
      * @param type New type of the cell.
      * @return true on success, false otherwise.
      */
-    public boolean activateLifecycle(CellType type) {
+    public synchronized boolean activateLifecycle(CellType type) {
         return activateLifecycle(type, DEFAULT_GROW_ANIMATION_DURATION,
                 DEFAULT_WAIT_BEFORE_SHRINK_TIME, DEFAULT_SHRINK_ANIMATION_DURATION);
     }
@@ -156,7 +156,7 @@ public class Cell {
      * @param shrinkTime Time in ms the cell needs to reach a radius of 0.0f again.
      * @return true on success, false otherwise.
      */
-    public boolean activateLifecycle(final CellType type, final int growTime,
+    public synchronized boolean activateLifecycle(final CellType type, final int growTime,
                                      final int constantTime, final int shrinkTime) {
         if (isActive()) return false;
         notifyAllOnActive();
@@ -192,7 +192,7 @@ public class Cell {
      * Stops the cell animation and sets its radius to 0.0f.
      * The CellType will stay the same.
      */
-    private void clear() {
+    private synchronized void clear() {
         if (lifecycle != null) lifecycle.interrupt();
         stopAnimation();
     }
@@ -203,7 +203,7 @@ public class Cell {
      * Calling this method will notify all observer thru the notifyOnKill method is the cell was
      * active.
      */
-    public void deactivate() {
+    public synchronized void deactivate() {
         if (!isActive()) return;
 
         clear();
@@ -224,7 +224,7 @@ public class Cell {
      * @return true iff animation could be successfully started, false otherwise
      * (e.g. an animation was already running)
      */
-    private boolean setAnimation(CellType newType, Interpolator animInterpolator, int duration,
+    private synchronized boolean setAnimation(CellType newType, Interpolator animInterpolator, int duration,
                                  final float startSize, final float targetSize) {
         if (isAnimationRunning()) return false;
 
@@ -271,7 +271,7 @@ public class Cell {
     /**
      * Stops the currently running animation. And sets its radius to 0.0f
      */
-    private void stopAnimation() {
+    private synchronized void stopAnimation() {
         ((Activity) context).runOnUiThread(new Runnable() {
             public void run() {
                 Log.d("debug", "at " + pos + " stop animation");
@@ -287,17 +287,17 @@ public class Cell {
      * @return true no animation is running or waited until animation completed, false if
      * waiting was interrupted.
      */
-    private boolean waitUntilAnimationEnded() {
+    private synchronized boolean waitUntilAnimationEnded() {
         Log.d("debug", "cell at " + pos + " enter wait method");
 
         Log.d("debug", "cell at " + pos + " waits for anim end");
-        synchronized (Cell.this) {
-            try {
-                Cell.this.wait();
-            } catch (InterruptedException e) {
-                return false;
-            }
+
+        try {
+            Cell.this.wait();
+        } catch (InterruptedException e) {
+             return false;
         }
+
         Log.d("debug", "cell at " + pos + " is done waiting");
         return true;
     }
@@ -342,7 +342,7 @@ public class Cell {
     /**
      * Notify all observer that the cell is now active.
      */
-    private synchronized void notifyAllOnActive() {
+    private void notifyAllOnActive() {
         CellEvent event = CellEvent.generateActivatedEvent(pos, type, timeoutTime);
 
         Log.d("debug", "Cell at " + pos.toString() + " notifies active");
@@ -354,7 +354,7 @@ public class Cell {
     /**
      * Notify all observer that the cell is now inactive due to timeout.
      */
-    private synchronized void notifyAllOnTimeout() {
+    private void notifyAllOnTimeout() {
         CellEvent event = CellEvent.generateTimeoutEvent(pos, type,
                 timeoutTime - activationTime);
 
@@ -367,7 +367,7 @@ public class Cell {
     /**
      * Notify all observer that the cell is now inactive due to touch event.
      */
-    private synchronized void notifyAllOnTouch() {
+    private void notifyAllOnTouch() {
         long time = System.currentTimeMillis();
         CellEvent event = CellEvent.generateTouchedEvent(pos, type, time - activationTime,
                 timeoutTime);
@@ -381,7 +381,7 @@ public class Cell {
      * Notify all observer that there was a touch event which did not hit a
      * target.
      */
-    private synchronized void notifyAllOnMissedTouch() {
+    private void notifyAllOnMissedTouch() {
         long time = System.currentTimeMillis();
         CellEvent event = CellEvent.generateMissedEvent(pos, type, time - activationTime,
                 timeoutTime);
@@ -394,7 +394,7 @@ public class Cell {
     /**
      * Notify all observer that the cell was deactivated by clear() call.
      */
-    private synchronized void notifyAllOnKill() {
+    private void notifyAllOnKill() {
         CellEvent event = CellEvent.generateKilledEvent(pos, type);
 
         for (CellObserver obs: observer) {
