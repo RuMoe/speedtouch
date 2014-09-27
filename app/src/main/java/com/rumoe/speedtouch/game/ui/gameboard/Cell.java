@@ -238,6 +238,7 @@ public class Cell {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 radius = (Float) animation.getAnimatedValue();
+                Log.d("debug", pos + " radius changed to " + radius);
             }
         });
 
@@ -268,13 +269,13 @@ public class Cell {
     }
 
     /**
-     * Stops the currently running animation.
+     * Stops the currently running animation. And sets its radius to 0.0f
      */
     private void stopAnimation() {
         ((Activity) context).runOnUiThread(new Runnable() {
             public void run() {
                 Log.d("debug", "at " + pos + " stop animation");
-                if (animator != null) animator.end();
+                if (animator != null) animator.cancel();
                 radius = 0.0f;
             }
         });
