@@ -166,8 +166,8 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
      */
     public int[] getCellCenterBoardPosition(CellPosition pos) {
         int[] cellDimension = getCellDimensions();
-        int xCoord = (int) (cellDimension[0] * (pos.getRow() + 0.5));
-        int yCoord = (int) (cellDimension[1] * (pos.getColumn() + 0.5));
+        int xCoord = (int) (cellDimension[0] * (pos.getColumn() + 0.5));
+        int yCoord = (int) (cellDimension[1] * (pos.getRow() + 0.5));
         return new int[]{xCoord, yCoord};
     }
 

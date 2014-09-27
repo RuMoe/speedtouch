@@ -35,7 +35,7 @@ public class Cell {
     private CellType        type;
     private CellPosition    pos;
 
-    private float   radius;
+    private volatile float   radius;
     private long    activationTime;
     private long    timeoutTime;
 
@@ -291,9 +291,9 @@ public class Cell {
         Log.d("debug", "cell at " + pos + " enter wait method");
 
         Log.d("debug", "cell at " + pos + " waits for anim end");
-        synchronized (this) {
+        synchronized (Cell.this) {
             try {
-                this.wait();
+                Cell.this.wait();
             } catch (InterruptedException e) {
                 return false;
             }
