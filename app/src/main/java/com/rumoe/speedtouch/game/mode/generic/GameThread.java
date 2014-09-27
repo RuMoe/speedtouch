@@ -43,6 +43,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
     public void run() {
         while (!thread.isInterrupted()) {
 
+            Log.d("debug", "active cells in game thread " + activeCells);
             if (activeCells < 1) {
                 CellPosition randomCell;
                 do {
