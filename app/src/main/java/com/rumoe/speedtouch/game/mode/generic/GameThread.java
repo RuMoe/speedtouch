@@ -70,6 +70,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
 
     public void gameOver() {
         GameEventManager.getInstance().unregister(this);
+        gameOver = true;
         clearAndStop();
     }
 
