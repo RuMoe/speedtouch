@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -17,7 +18,8 @@ import com.rumoe.speedtouch.game.ui.gameboard.Cell;
 import com.rumoe.speedtouch.game.ui.gameboard.CellPosition;
 import com.rumoe.speedtouch.game.ui.gameboard.CellType;
 
-public class GameBoardFragment extends Fragment implements SurfaceHolder.Callback {
+public class GameBoardFragment extends Fragment implements SurfaceHolder.Callback,
+        View.OnTouchListener {
 
     private int boardWidth;
     private int boardHeight;
@@ -45,6 +47,7 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
         View rootView   = inflater.inflate(R.layout.fragment_game, container, false);
         gameBoard       = (SurfaceView) rootView.findViewById(R.id.gameBoard);
         gameBoard.getHolder().addCallback(this);
+        gameBoard.setOnTouchListener(this);
 
         for (int r = 0; r < getRowCount(); r++) {
             for (int c = 0; c < getColumnCount(); c++) {
@@ -77,6 +80,38 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
             boardDrawThread.interrupt();
         }
         clearAllCells();
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent e) {
+        if (e.getAction() != MotionEvent.ACTION_DOWN) return true;
+
+        float yCoord = e.getY();
+        float xCoord = e.getX();
+
+        int[] cellDim = getCellDimensions();
+        int touchedRow      = (int) (yCoord / cellDim[1]);
+        int touchedColumn   = (int) (xCoord / cellDim[0]);
+
+        // these cells do not exist
+        if (touchedRow >= getRowCount() || touchedColumn >= getColumnCount() ) {
+            Log.w("GameBoardFragment", String.format("Ignored touch because of impossible " +
+                    "coordinates %d,%d (Cell %d,%d)", (int) xCoord, (int) yCoord,
+                    touchedRow, touchedColumn));
+            return false;
+        }
+        Log.d("GameBoardFragment", "Touch on cell " + touchedRow + "," + touchedColumn);
+
+        // calculating the point in the cell that was hit
+        float yCell     = yCoord - touchedRow * cellDim[1];
+        float xCell     = xCoord - touchedColumn * cellDim[0];
+
+        Cell c = getCell(touchedRow, touchedColumn);
+        c.delegateTouch(xCell, yCell, cellDim[0], cellDim[1], getCellCircleRadius(c.getRadius()));
+
+        // tell android this event was not consumed and thus we don't want
+        // follow-ups like gestures
+        return false;
     }
 
     /* ---------------------------------------------------------------------------------------------
