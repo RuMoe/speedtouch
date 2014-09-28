@@ -108,7 +108,7 @@ public class Cell {
     }
 
     /* ---------------------------------------------------------------------------------------------
-                            CELL ACTIVATION AND DEACTIVATION
+                                CELL MANIPULATION
     --------------------------------------------------------------------------------------------- */
 
     /**
@@ -208,6 +208,29 @@ public class Cell {
 
         clear();
         notifyAllOnKill();
+    }
+
+    /**
+     * Tells the cell that there was an touch event. Due to the fact that a cell does not know
+     * its own dimensions at the event time these must be passed in order to determine
+     * if the touch event hits the active area or not. According to that it will notify all
+     * observers with onNotifyTouch or onNotifyMissedTouch.
+     * @param xCoord The x coordinate of the touch event relative to the cells upper left corner.
+     * @param yCoord The y coordinate of the touch event relative to the cells upper left corner.
+     * @param cellWidth The width of the cell on event occurrence.
+     * @param cellHeight The height of the cell on event occurrence.
+     * @param cellRadius The shown radius (in px) on event occurrence.
+     */
+    public synchronized void delegateTouch(float xCoord, float yCoord,
+                                           int cellWidth, int cellHeight, int cellRadius) {
+        float deltaX = cellWidth    / 2.0f - xCoord;
+        float deltaY = cellHeight   / 2.0f - yCoord;
+        if ( deltaX*deltaX + deltaY*deltaY <= cellRadius*cellRadius ) {
+            // hit the target
+            notifyAllOnTouch();
+        } else {
+            notifyAllOnMissedTouch();
+        }
     }
 
     /* ---------------------------------------------------------------------------------------------
