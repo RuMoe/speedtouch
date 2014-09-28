@@ -35,6 +35,10 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
         cells = new Cell[ROW_COUNT][COLUMN_COUNT];
     }
 
+    /* ---------------------------------------------------------------------------------------------
+                                    OVERRIDES
+    --------------------------------------------------------------------------------------------- */
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -75,6 +79,10 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
         clearAllCells();
     }
 
+    /* ---------------------------------------------------------------------------------------------
+                                    CELL MANIPULATION
+    --------------------------------------------------------------------------------------------- */
+
     public void subscribeToCells(CellObserver... obs) {
         for (int i = 0; i < ROW_COUNT; i++) {
             for (int j = 0; j < COLUMN_COUNT; j++) {
@@ -93,15 +101,6 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
                 }
             }
         }
-    }
-
-    /**
-     * Can be used to determine if a cell is currently active.
-     * @param pos The cell to be checked.
-     * @return true iff the cell is active, false otherwise.
-     */
-    public boolean isCellActive(CellPosition pos) {
-        return getCell(pos).isActive();
     }
 
     /**
@@ -156,21 +155,20 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     /**
-     * Returns the position of the center a cell on the board (which is its position on the
-     * surface of its SurfaceView)
-     *
-     * @param pos CellPosition of the cell the coordinates are returned
-     * @return A int array of length 2 containing the coordinates from top left corner
-     *      int[0] -> x coordinate
-     *      int[1] -> y coordinate
+     * Clears the whole game board and deactivates all cells.
      */
-    public int[] getCellCenterBoardPosition(CellPosition pos) {
-        int[] cellDimension = getCellDimensions();
-        int xCoord = (int) (cellDimension[0] * (pos.getColumn() + 0.5));
-        int yCoord = (int) (cellDimension[1] * (pos.getRow() + 0.5));
-        return new int[]{xCoord, yCoord};
+    private void clearAllCells() {
+        for (int i = 0; i < ROW_COUNT; i++) {
+            for (int j = 0; j < COLUMN_COUNT; j++) {
+                CellPosition pos = new CellPosition(i, j);
+                clearCell(pos);
+            }
+        }
     }
 
+    /* ---------------------------------------------------------------------------------------------
+                                    BOARD AND CELL STATE
+    --------------------------------------------------------------------------------------------- */
 
     /**
      * Gets the total amount of rows of the game board.
@@ -186,18 +184,6 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
      */
     public int getColumnCount() {
         return COLUMN_COUNT;
-    }
-
-    /**
-     * Clears the whole game board and deactivates all cells.
-     */
-    private void clearAllCells() {
-        for (int i = 0; i < ROW_COUNT; i++) {
-            for (int j = 0; j < COLUMN_COUNT; j++) {
-                CellPosition pos = new CellPosition(i, j);
-                clearCell(pos);
-            }
-        }
     }
 
     /**
@@ -226,6 +212,31 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     /**
+     * Can be used to determine if a cell is currently active.
+     * @param pos The cell to be checked.
+     * @return true iff the cell is active, false otherwise.
+     */
+    public boolean isCellActive(CellPosition pos) {
+        return getCell(pos).isActive();
+    }
+
+    /**
+     * Returns the position of the center a cell on the board (which is its position on the
+     * surface of its SurfaceView)
+     *
+     * @param pos CellPosition of the cell the coordinates are returned
+     * @return A int array of length 2 containing the coordinates from top left corner
+     *      int[0] -> x coordinate
+     *      int[1] -> y coordinate
+     */
+    public int[] getCellCenterBoardPosition(CellPosition pos) {
+        int[] cellDimension = getCellDimensions();
+        int xCoord = (int) (cellDimension[0] * (pos.getColumn() + 0.5));
+        int yCoord = (int) (cellDimension[1] * (pos.getRow() + 0.5));
+        return new int[]{xCoord, yCoord};
+    }
+
+    /**
      * Returns the dimensions of the cells of the board.
      * @return array of length two:
      *      int[0] - width of the cells
@@ -246,6 +257,10 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
                 - 2 * getResources().getDimension(R.dimen.board_cell_padding);
         return (int) (maxRadius * radiusPercentage);
     }
+
+    /* ---------------------------------------------------------------------------------------------
+                                    DRAW AND LOOK
+    --------------------------------------------------------------------------------------------- */
 
     /**
      * This inner class is the draw thread of GameBoard. Draws at a constant frame rate the board
