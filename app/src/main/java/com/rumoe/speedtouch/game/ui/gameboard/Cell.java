@@ -228,6 +228,7 @@ public class Cell {
         if ( deltaX*deltaX + deltaY*deltaY <= cellRadius*cellRadius ) {
             // hit the target
             notifyAllOnTouch();
+            clear();
         } else {
             notifyAllOnMissedTouch();
         }
