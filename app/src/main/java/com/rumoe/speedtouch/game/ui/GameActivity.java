@@ -125,10 +125,13 @@ public class GameActivity extends Activity implements GameObserver {
     public int[] getCellCenterScreenPosition(CellPosition pos) {
         int[] cellBoardPos = gameBoard.getCellCenterBoardPosition(pos);
 
-        // TODO
+        int[] viewPosHolder = new int[2];
+        gameBoard.getView().getLocationOnScreen(viewPosHolder);
 
-        int[] posHolder = new int[2];
-        return posHolder;
+        cellBoardPos[0] += viewPosHolder[0];
+        cellBoardPos[1] += viewPosHolder[1];
+
+        return cellBoardPos;
     }
 
     private void transitionToMenu() {
