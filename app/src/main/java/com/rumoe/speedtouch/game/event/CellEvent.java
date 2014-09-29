@@ -1,5 +1,6 @@
 package com.rumoe.speedtouch.game.event;
 
+import com.rumoe.speedtouch.game.ui.gameboard.Cell;
 import com.rumoe.speedtouch.game.ui.gameboard.CellPosition;
 import com.rumoe.speedtouch.game.ui.gameboard.CellType;
 
@@ -8,60 +9,66 @@ public class CellEvent {
     private final CellPosition cellPosition;
     private final EventType eventType;
     private final CellType cellType;
-    private final long delay;
-    private final long decayTime;
+    private final long cellActivationTime;
     private final long eventTime;
+    private final long cellDecayTime;
 
     public enum EventType {
         ACTIVATED, MISSED, TIMEOUT, TOUCHED, KILLED
     }
 
-    private CellEvent(CellPosition pos, EventType eventType, CellType cellType, long delay, long decayTime) {
-        this.cellPosition = pos;
-        this.eventType = eventType;
-        this.cellType = cellType;
-        this.delay = delay;
-        this.decayTime = decayTime;
+    public CellEvent(Cell cell, EventType type) {
+        this.cellPosition = cell.getPosition();
+        this.eventType = type;
+        this.cellType = cell.getType();
+
+        this.cellActivationTime = cell.getActivationTime();
         eventTime = System.currentTimeMillis();
+        this.cellDecayTime = cell.getTimeoutTime();
     }
 
-    public static CellEvent generateTouchedEvent(CellPosition pos, CellType cellType, long delay, long decayTime) {
-        return new CellEvent(pos, EventType.TOUCHED, cellType, delay, decayTime);
-    }
-
-    public static  CellEvent generateMissedEvent(CellPosition pos, CellType cellType, long delay, long decayTime) {
-        return new CellEvent(pos, EventType.MISSED, cellType, delay, decayTime);
-    }
-
-    public static CellEvent generateKilledEvent(CellPosition pos, CellType cellType) {
-        return new CellEvent(pos, EventType.KILLED, cellType, -1L, -1L);
-    }
-
-    public static CellEvent generateActivatedEvent(CellPosition pos, CellType cellType, long decayTime) {
-        return new CellEvent(pos, EventType.ACTIVATED, cellType, 0L, decayTime);
-    }
-
-    public static CellEvent generateTimeoutEvent(CellPosition pos, CellType cellType, long delay) {
-        return new CellEvent(pos, EventType.TIMEOUT, cellType, delay, System.currentTimeMillis());
-    }
-
+    /**
+     * Returns the type of the event. See CellEvent.EventType.
+     * @return event type
+     */
     public EventType getEventType() {
         return eventType;
     }
 
+    /**
+     * Returns the type of the cell at the time the event was created.
+     * @return Type of the cell.
+     */
     public CellType getCellType() {
         return cellType;
     }
 
-    public long getDelay() {
-        return delay;
-    }
-
-    public long getEventTime() { return eventTime; }
-
-    public long getDecayTime() {
-        return decayTime;
-    }
-
+    /**
+     * The position of the cell on the board the event was created for.
+     * @return Position of the cell.
+     */
     public CellPosition getCellPosition() {return cellPosition;}
+
+    /**
+     * The time in ms since epoch the cell was activated.
+     * @return Activation time.
+     */
+    public long getCellActivationTime() {
+        return cellActivationTime;
+    }
+
+    /**
+     * The time in ms since epoch the cell will be deactivated because of timeout. Depending
+     * on the event it is possible that the cell will by deactivated before this time (e.g. touch)
+     * @return Deactivation time of the cell due to timeout.
+     */
+    public long getCelLDecayTime() {
+        return cellDecayTime;
+    }
+
+    /**
+     * This time in ms since epoch the event was generated.
+     * @return Time of the event.
+     */
+    public long getEventTime() { return eventTime; }
 }
