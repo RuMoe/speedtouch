@@ -48,6 +48,10 @@ public class Cell {
         type = CellType.STANDARD;
     }
 
+    /* ---------------------------------------------------------------------------------------------
+                                    CELL STATUS
+    --------------------------------------------------------------------------------------------- */
+
     /**
      * Tells if the cell is currently executing an animation or its lifecycle thread.
      * @return isAnimationRunning() || isLifecycleRunning()
@@ -80,6 +84,13 @@ public class Cell {
         return type;
     }
 
+    /**
+     * Returns the position of the cell on the game board.
+     * @return cell position.
+     */
+    public CellPosition getPosition() {
+        return pos;
+    }
     /**
      * Returns the current radius of the cell which is a value between 0.0f and 1.0f.
      * The value 1.0f means that the cell is at its maximum value.
@@ -357,7 +368,7 @@ public class Cell {
      * Notify all observer that the cell is now active.
      */
     private void notifyAllOnActive() {
-        CellEvent event = CellEvent.generateActivatedEvent(pos, type, timeoutTime);
+        CellEvent event = new CellEvent(this, CellEvent.EventType.ACTIVATED);
 
         Log.d("Cell", "Cell at " + pos.toString() + " notifies active");
         for (CellObserver obs : observer) {
@@ -369,8 +380,7 @@ public class Cell {
      * Notify all observer that the cell is now inactive due to timeout.
      */
     private void notifyAllOnTimeout() {
-        CellEvent event = CellEvent.generateTimeoutEvent(pos, type,
-                timeoutTime - activationTime);
+        CellEvent event = new CellEvent(this, CellEvent.EventType.TIMEOUT);
 
         Log.d("Cell", "Cell at " + pos.toString() + " notifies timeout");
         for (CellObserver obs : observer) {
@@ -382,9 +392,7 @@ public class Cell {
      * Notify all observer that the cell is now inactive due to touch event.
      */
     private void notifyAllOnTouch() {
-        long time = System.currentTimeMillis();
-        CellEvent event = CellEvent.generateTouchedEvent(pos, type, time - activationTime,
-                timeoutTime);
+        CellEvent event = new CellEvent(this, CellEvent.EventType.TOUCHED);
 
         Log.d("Cell", "Cell at " + pos.toString() + " notifies touch");
         for (CellObserver obs : observer) {
@@ -397,9 +405,7 @@ public class Cell {
      * target.
      */
     private void notifyAllOnMissedTouch() {
-        long time = System.currentTimeMillis();
-        CellEvent event = CellEvent.generateMissedEvent(pos, type, time - activationTime,
-                timeoutTime);
+        CellEvent event = new CellEvent(this, CellEvent.EventType.MISSED);
 
         Log.d("Cell", "Cell at " + pos.toString() + " notifies missed touch");
         for (CellObserver obs : observer) {
@@ -411,7 +417,7 @@ public class Cell {
      * Notify all observer that the cell was deactivated by clear() call.
      */
     private void notifyAllOnKill() {
-        CellEvent event = CellEvent.generateKilledEvent(pos, type);
+        CellEvent event = new CellEvent(this, CellEvent.EventType.KILLED);
 
         Log.d("Cell", "Cell at " + pos.toString() + " notifies kill");
         for (CellObserver obs: observer) {
