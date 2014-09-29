@@ -46,9 +46,12 @@ public class SurvivalScoreUpdater extends GameScoreUpdater {
              * How fast the player touches the cell is important..
              * ratio timeToDecay / totalLifeTime is used multiplier for the baseScore
              */
-            long totalTime = event.getDelay() + event.getDecayTime() - event.getEventTime();
-            int scoreGain = (int) (event.getDecayTime() - event.getEventTime() * baseScore *
-                    getEffectiveMultiplier() / totalTime );
+            long cellLifeTime   = event.getCelLDecayTime() - event.getCellActivationTime();
+            long touchDelay     = event.getEventTime() - event.getCellActivationTime();
+
+
+            int scoreGain = (int) (baseScore * getEffectiveMultiplier() *
+                    (1 - (((float) touchDelay) / cellLifeTime)));
 
             switch (event.getCellType()) {
                 case BAD:
