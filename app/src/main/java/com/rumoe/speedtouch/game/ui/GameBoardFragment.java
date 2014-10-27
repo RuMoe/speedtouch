@@ -1,54 +1,122 @@
 package com.rumoe.speedtouch.game.ui;
 
 import android.app.Fragment;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 
 import com.rumoe.speedtouch.R;
 import com.rumoe.speedtouch.game.event.CellObserver;
 import com.rumoe.speedtouch.game.ui.gameboard.Cell;
 import com.rumoe.speedtouch.game.ui.gameboard.CellPosition;
+import com.rumoe.speedtouch.game.ui.gameboard.CellType;
 
-public class GameBoardFragment extends Fragment {
+public class GameBoardFragment extends Fragment implements SurfaceHolder.Callback,
+        View.OnTouchListener {
+
+    private int boardWidth;
+    private int boardHeight;
+
+    private Thread boardDrawThread;
 
     private static final int ROW_COUNT      = 5;
     private static final int COLUMN_COUNT   = 3;
-
+    /** contains the cells of the board. Should never be accessed directly. Use getCell() instead. */
     private final Cell[][] cells;
+
+    private SurfaceView gameBoard;
 
     public GameBoardFragment() {
         cells = new Cell[ROW_COUNT][COLUMN_COUNT];
     }
 
+    /* ---------------------------------------------------------------------------------------------
+                                    OVERRIDES
+    --------------------------------------------------------------------------------------------- */
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView           = inflater.inflate(R.layout.fragment_game, container, false);
-        final TableLayout gameBoard   = (TableLayout) rootView.findViewById(R.id.gameBoard);
+        View rootView   = inflater.inflate(R.layout.fragment_game, container, false);
+        gameBoard       = (SurfaceView) rootView.findViewById(R.id.gameBoard);
+        gameBoard.getHolder().addCallback(this);
+        gameBoard.setOnTouchListener(this);
 
-        for (int i = 0; i < ROW_COUNT; i++) {
-            for (int j = 0; j < COLUMN_COUNT; j++) {
-                cells[i][j] = new Cell(getActivity(), j, i);
+        for (int r = 0; r < getRowCount(); r++) {
+            for (int c = 0; c < getColumnCount(); c++) {
+                CellPosition pos = new CellPosition(r, c);
+                cells[r][c] = new Cell(this.getActivity(), pos);
             }
-        }
-
-        final float cellHeight = 1.0f / ROW_COUNT;
-        final float cellWidth = 1.0f / COLUMN_COUNT;
-
-        for (int i = 0; i < ROW_COUNT; i++) {
-            final TableRow tr = new TableRow(gameBoard.getContext());
-            for (int j = 0; j < COLUMN_COUNT; j++) {
-                tr.addView(cells[i][j], new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, cellWidth));
-            }
-            gameBoard.addView(tr, new TableLayout.LayoutParams(0, 0, cellHeight));
         }
 
         return rootView;
     }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) { }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        if (boardDrawThread != null && boardDrawThread.isAlive()){
+            boardDrawThread.interrupt();
+        }
+        boardWidth = width;
+        boardHeight = height;
+        boardDrawThread = new BoardDrawThread();
+        boardDrawThread.start();
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        gameBoard.getHolder().removeCallback(this);
+        if (boardDrawThread != null) {
+            boardDrawThread.interrupt();
+        }
+        clearAllCells();
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent e) {
+        if (e.getAction() != MotionEvent.ACTION_DOWN) return true;
+
+        float yCoord = e.getY();
+        float xCoord = e.getX();
+
+        int[] cellDim = getCellDimensions();
+        int touchedRow      = (int) (yCoord / cellDim[1]);
+        int touchedColumn   = (int) (xCoord / cellDim[0]);
+
+        // these cells do not exist
+        if (touchedRow >= getRowCount() || touchedColumn >= getColumnCount() ) {
+            Log.w("GameBoardFragment", String.format("Ignored touch because of impossible " +
+                    "coordinates %d,%d (Cell %d,%d)", (int) xCoord, (int) yCoord,
+                    touchedRow, touchedColumn));
+            return false;
+        }
+        Log.d("GameBoardFragment", "Touch on cell " + touchedRow + "," + touchedColumn);
+
+        // calculating the point in the cell that was hit
+        float yCell     = yCoord - touchedRow * cellDim[1];
+        float xCell     = xCoord - touchedColumn * cellDim[0];
+
+        Cell c = getCell(touchedRow, touchedColumn);
+        c.delegateTouch(xCell, yCell, cellDim[0], cellDim[1], getCellCircleRadius(c.getRadius()));
+
+        // tell android this event was not consumed and thus we don't want
+        // follow-ups like gestures
+        return false;
+    }
+
+    /* ---------------------------------------------------------------------------------------------
+                                    CELL MANIPULATION
+    --------------------------------------------------------------------------------------------- */
 
     public void subscribeToCells(CellObserver... obs) {
         for (int i = 0; i < ROW_COUNT; i++) {
@@ -70,19 +138,226 @@ public class GameBoardFragment extends Fragment {
         }
     }
 
-    public Cell getCell(CellPosition pos) {
-        return getCell(pos.getY(), pos.getX());
+    /**
+     * Starts the lifecycle of the cell on a specified position. A lifecycle contains three stages:
+     * grow, constant size and shrink.
+     * Calling this method will use the default timing of the lifecycle.
+     * When calling this method successfully the cell will emit an CellEvent.ACTIVATED event.
+     * @param pos The position of the cell which will be activated.
+     * @param type Type the cell will have.
+     * @return true iff animation could be applied successfully, false otherwise.
+     */
+    public boolean activateCellLifeCycle(CellPosition pos, CellType type) {
+        return !isCellActive(pos) && getCell(pos).activateLifecycle(type);
     }
 
-    public Cell getCell(int row, int column) {
-        return cells[row][column];
+    /**
+     * Starts the lifecycle of the cell on a specified position. A lifecycle contains three stages:
+     * grow, constant size and shrink.
+     * When calling this method successfully the cell will emit an CellEvent.ACTIVATED event.
+     * @param pos The position of the cell which will be activated.
+     * @param type Type the cell will have.
+     * @param growTime Time in ms for the grow phase of the lifecycle.
+     * @param stayTime Time in ms for the constant size phase of the lifecycle.
+     * @param shrinkTime Time in ms for the shrink phase of the lifecycle.
+     * @return true iff animation could be applied successfully, false otherwise.
+     */
+    public boolean activateCellLifeCycle(CellPosition pos, CellType type,
+                                         int growTime, int stayTime, int shrinkTime) {
+       return !isCellActive(pos) && getCell(pos).activateLifecycle(type, growTime, stayTime, shrinkTime);
     }
 
+    /**
+     * Starts the default blink animation of the cell on the specified position.
+     * @param pos The position of the cell which shall blink.
+     * @return true iff animation could be applied successfully, false otherwise.
+     */
+    public boolean blinkCell(CellPosition pos) {
+        if (isCellActive(pos)) return false;
+        Cell c = getCell(pos);
+        return c.blink(c.getType());
+    }
+
+    /**
+     * Clears the cell at the specified position. That means its state is set to deactivated and
+     * all animations are stopped.
+     * @param pos The position of the cell we want to clear.
+     * @return true iff clear was successful, false otherwise.
+     */
+    public boolean clearCell(CellPosition pos) {
+        getCell(pos).deactivate();
+        return true;
+    }
+
+    /**
+     * Clears the whole game board and deactivates all cells.
+     */
+    private void clearAllCells() {
+        for (int i = 0; i < ROW_COUNT; i++) {
+            for (int j = 0; j < COLUMN_COUNT; j++) {
+                CellPosition pos = new CellPosition(i, j);
+                clearCell(pos);
+            }
+        }
+    }
+
+    /* ---------------------------------------------------------------------------------------------
+                                    BOARD AND CELL STATE
+    --------------------------------------------------------------------------------------------- */
+
+    /**
+     * Gets the total amount of rows of the game board.
+     * @return rows of the game board.
+     */
     public int getRowCount() {
         return ROW_COUNT;
     }
 
+    /**
+     * Gets the total amount of columns of the game board.
+     * @return columns of the game board.
+     */
     public int getColumnCount() {
         return COLUMN_COUNT;
+    }
+
+    /**
+     * Internal wrapper to make sure not to mess up rows and columns when retrieving a cell.
+     * @param pos Position of the cell which will be retrieved.
+     * @return The cell object at the requested position or null if the position does not exist.
+     */
+    private Cell getCell(CellPosition pos) {
+        return getCell(pos.getRow(), pos.getColumn());
+    }
+
+    /**
+     * Internal wrapper to make sure not to mess up rows and columns when retrieving a cell.
+     * @param row Row of the cell which will be retrieved.
+     * @param column Column of the cell which will be retrieved.
+     * @return The cell object at the requested position or null if the position does not exist.
+     */
+    private Cell getCell(int row, int column) {
+        if (row < 0 || row >= getRowCount() ||
+                column < 0 || column >= getColumnCount()) {
+            Log.e("GameBoardFragment" , String.format("Requested cell position is out of bounds. " +
+                            "The board has dimension %d,%d. Requested cell was %d, %d",
+                    getRowCount(), getColumnCount(), row,column));
+        }
+        return cells[row][column];
+    }
+
+    /**
+     * Can be used to determine if a cell is currently active.
+     * @param pos The cell to be checked.
+     * @return true iff the cell is active, false otherwise.
+     */
+    public boolean isCellActive(CellPosition pos) {
+        return getCell(pos).isActive();
+    }
+
+    /**
+     * Returns the position of the center a cell on the board (which is its position on the
+     * surface of its SurfaceView)
+     *
+     * @param pos CellPosition of the cell the coordinates are returned
+     * @return A int array of length 2 containing the coordinates from top left corner
+     *      int[0] -> x coordinate
+     *      int[1] -> y coordinate
+     */
+    public int[] getCellCenterBoardPosition(CellPosition pos) {
+        int[] cellDimension = getCellDimensions();
+        int xCoord = (int) (cellDimension[0] * (pos.getColumn() + 0.5));
+        int yCoord = (int) (cellDimension[1] * (pos.getRow() + 0.5));
+        return new int[]{xCoord, yCoord};
+    }
+
+    /**
+     * Returns the dimensions of the cells of the board.
+     * @return array of length two:
+     *      int[0] - width of the cells
+     *      int[1] - height of the cells
+     */
+    private int[] getCellDimensions() {
+        return new int[]{ boardWidth / getColumnCount(), boardHeight / getRowCount(), };
+    }
+
+    /**
+     * Calculates the actual visible radius of the circle.
+     * @param radiusPercentage value between 0.0f and 1.0f. 1.0f means maximum radius.
+     * @return radius of the cell in px.
+     */
+    private int getCellCircleRadius(float radiusPercentage) {
+        int[] cellDimen = getCellDimensions();
+        float maxRadius = Math.min(cellDimen[0], cellDimen[1]) / 2
+                - 2 * getResources().getDimension(R.dimen.board_cell_padding);
+        return (int) (maxRadius * radiusPercentage);
+    }
+
+    /* ---------------------------------------------------------------------------------------------
+                                    DRAW AND LOOK
+    --------------------------------------------------------------------------------------------- */
+
+    /**
+     * This inner class is the draw thread of GameBoard. Draws at a constant frame rate the board
+     * depending on the state of all cells.
+     */
+    class BoardDrawThread extends Thread {
+
+        /** frame rate which is used to draw the board */
+        private static final int FPS = 40;
+        /** amount of ms to wait between each frame */
+        private static final int MS_WAIT_PER_FRAME = 1000 / FPS;
+
+        @Override
+        public void run() {
+            SurfaceHolder surfaceHolder = gameBoard.getHolder();
+
+            while(!isInterrupted()) {
+                long refreshStart = System.currentTimeMillis();
+
+                if (surfaceHolder != null && surfaceHolder.getSurface().isValid()) {
+                    Canvas canvas = surfaceHolder.lockCanvas();
+                    if (canvas != null ) {
+                        canvas.drawColor(getResources().getColor(R.color.game_board_background));
+
+                        for (int r = 0; r < getRowCount(); r++) {
+                            for (int c = 0; c < getColumnCount(); c++) {
+                                CellPosition pos = new CellPosition(r, c);
+                                Cell cell = getCell(pos);
+                                if (cell.getRadius() == 0.0f) continue;
+
+                                int[] cellCenter = getCellCenterBoardPosition(pos);
+                                int radius = getCellCircleRadius(cell.getRadius());
+                                canvas.drawCircle(cellCenter[0], cellCenter[1], radius, getPaint(cell.getType()));
+                            }
+                        }
+                        surfaceHolder.unlockCanvasAndPost(canvas);
+                    } else {
+                        Log.d("GameBoardFragment", "Draw canvas unavailable");
+                    }
+                }
+
+                try {
+                    long frameDelay = System.currentTimeMillis() - refreshStart;
+                    Thread.sleep(Math.max(MS_WAIT_PER_FRAME - frameDelay, 0));
+                } catch (InterruptedException e) {
+                    Log.d("GameBoardFragment", "Draw thread interrupted");
+                    break;
+                }
+            }
+        }
+
+        /**
+         * Returns the Paint of the cell which decides is lock. The object which
+         * is returned depends on the CellType passed last time the cell was activated.
+         * @return Paint of the cell.
+         */
+        public Paint getPaint(CellType type) {
+            Paint paint = new Paint();
+            paint.setColor(CellType.getCellColor(type, GameBoardFragment.this.getActivity()));
+            paint.setShadowLayer(15.0f, 0.0f, 0.0f,
+                    CellType.getShadowColor(type, GameBoardFragment.this.getActivity()));
+            return paint;
+        }
     }
 }

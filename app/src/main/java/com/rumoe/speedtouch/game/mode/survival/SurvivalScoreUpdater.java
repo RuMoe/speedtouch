@@ -10,9 +10,6 @@ import com.rumoe.speedtouch.game.event.GameStatEvent;
 import com.rumoe.speedtouch.game.mode.generic.GameScoreUpdater;
 import com.rumoe.speedtouch.game.ui.gameboard.CellType;
 
-/**
- * Created by jan on 30.08.2014.
- */
 public class SurvivalScoreUpdater extends GameScoreUpdater {
 
         // Holds the current score of the player during the game.
@@ -45,13 +42,16 @@ public class SurvivalScoreUpdater extends GameScoreUpdater {
     @Override
     protected void calculateNewScore(CellEvent event) {
         if (event.getEventType().equals(CellEvent.EventType.TOUCHED)) {
-            /**
+            /*
              * How fast the player touches the cell is important..
              * ratio timeToDecay / totalLifeTime is used multiplier for the baseScore
              */
-            long totalTime = event.getDelay() + event.getTimeUntilDecay();
-            int scoreGain = (int) (event.getTimeUntilDecay() * baseScore *
-                    getEffectiveMultiplier() / totalTime );
+            long cellLifeTime   = event.getCelLDecayTime() - event.getCellActivationTime();
+            long touchDelay     = event.getEventTime() - event.getCellActivationTime();
+
+
+            int scoreGain = (int) (baseScore * getEffectiveMultiplier() *
+                    (1 - (((float) touchDelay) / cellLifeTime)));
 
             switch (event.getCellType()) {
                 case BAD:

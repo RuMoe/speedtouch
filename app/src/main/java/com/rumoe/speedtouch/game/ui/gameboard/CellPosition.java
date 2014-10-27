@@ -1,20 +1,33 @@
 package com.rumoe.speedtouch.game.ui.gameboard;
 
 /**
- * Created by jan on 04.09.2014.
+ * This class is a container to prevent messing up rows and columns when trying to access cells.
+ * This should be used whenever handling cells of the board.
+ * Row and column are starting with 0.
  */
 public class CellPosition {
 
-    private final int x;
-    private final int y;
+    private final int row;
+    private final int column;
 
-    public CellPosition(int x, int y) {this.x = x; this.y = y;}
+    public CellPosition(int row, int column) {this.row = row; this.column = column;}
 
-    public int getX() {
-        return x;
+    /**
+     * @return row of the cell starting with 0.
+     */
+    public int getRow() {
+        return row;
     }
 
-    public int getY() {
-        return y;
+    /**
+     * @return column of the cell starting with 0.
+     */
+    public int getColumn() {
+        return column;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("(row %d, column %d)", row, column);
     }
 }

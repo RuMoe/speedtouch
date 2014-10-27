@@ -19,7 +19,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
 
     /** Sleep time between to actions of the game thread in ms */
     private static final long CLOCK_RATE = 1000;
-    private boolean stopped;
+    private boolean gameOver;
 
     private final GameBoardFragment board;
 
@@ -30,6 +30,7 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
 
     public GameThread(final GameBoardFragment board) {
         GameEventManager.getInstance().register(this);
+        gameOver = false;
         this.board = board;
 
         rows = board.getRowCount();
@@ -40,44 +41,55 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
 
     @Override
     public void run() {
-        while (!stopped) {
+        Log.d("GameThread", "GameThread run loop started");
+        while (!thread.isInterrupted()) {
 
             if (activeCells < 5) {
-                Cell randomCell;
+                CellPosition randomCell;
                 do {
                     int randomCellNr = (int) (Math.random() * rows * columns);
                     int row = randomCellNr / columns;
                     int column = randomCellNr % columns;
 
-                    randomCell = board.getCell(row, column);
-                }while(randomCell.isActive());
+                        randomCell = new CellPosition(row, column);
+                }while(board.isCellActive(randomCell));
 
                 CellType nextType = CellType.STANDARD;
                 if (Math.random() < 0.05) nextType = CellType.BAD;
-                randomCell.activateLifecycle(nextType);
+                board.activateCellLifeCycle(randomCell, nextType);
             }
-
             try {
                 Thread.sleep(CLOCK_RATE);
             } catch (InterruptedException e) {
-                Log.w("GameThread", "Sleep phase interrupted");
+                Log.d("GameThread", "Sleep phase interrupted");
+                break; // duh the interrupted state clears when the InterruptedException is thrown
             }
         }
+        Log.d("GameThread", "GameThread run loop exited");
     }
 
     public void gameOver() {
         GameEventManager.getInstance().unregister(this);
+        Log.i("GameThread", "Game over");
+        gameOver = true;
         clearAndStop();
     }
 
     private void gameStart() {
+        // prevent starting multiple threads
+        if (thread != null && thread.isAlive()) return;
+        Log.i("GameThread", "Game thread started");
         thread = new Thread(this);
-        stopped = false;
         thread.start();
     }
 
+    private void gameContinue() {
+        if (gameOver) return;
+        Log.i("GameThread", "Game continue");
+        gameStart();
+    }
+
     private void clearAndStop() {
-        stopped = true;
         if (thread != null) thread.interrupt();
         clearAlLCells();
     }
@@ -85,10 +97,10 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
     private void clearAlLCells() {
         for (int row = 0; row < board.getRowCount(); row++) {
             for (int column = 0; column < board.getColumnCount(); column++) {
-                board.getCell(row, column).clearCell();
+                CellPosition pos = new CellPosition(row, column);
+                board.clearCell(pos);
             }
         }
-        activeCells = 0;
     }
 
     @Override
@@ -105,6 +117,9 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
     public void notifyOnTouch(CellEvent event) {
         activeCells--;
     }
+
+    @Override
+    public void notifyOnKill(CellEvent event) {activeCells--;}
 
     @Override
     public void notifyOnMissedTouch(CellEvent event) {}
@@ -124,15 +139,14 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
                     public void run() {
                         clearAndStop();
                         CellPosition cp = ((GameStatEvent) event).getCausingCell();
-                        Cell c = board.getCell(cp);
-                        c.blink(Cell.DEFAULT_BLINK_ANIMATION_DURATION);
+                        board.blinkCell(cp);
 
                         try {
                             Thread.sleep(Cell.DEFAULT_BLINK_ANIMATION_DURATION + 500);
                         } catch (InterruptedException e) {
 
                         } finally {
-                            gameStart();
+                            gameContinue();
                         }
                     }
                 }.start();
