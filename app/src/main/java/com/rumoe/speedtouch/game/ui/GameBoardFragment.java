@@ -348,7 +348,7 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
         }
 
         /**
-         * Returns the Paint of the cell which decides is lock. The object which
+         * Returns the Paint of the cell which decides its look. The object which
          * is returned depends on the CellType passed last time the cell was activated.
          * @return Paint of the cell.
          */
