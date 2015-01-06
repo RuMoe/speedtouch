@@ -1,6 +1,7 @@
 package com.rumoe.speedtouch.game.ui;
 
 import android.app.Fragment;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -355,8 +356,7 @@ public class GameBoardFragment extends Fragment implements SurfaceHolder.Callbac
         public Paint getPaint(CellType type) {
             Paint paint = new Paint();
             paint.setColor(CellType.getCellColor(type, GameBoardFragment.this.getActivity()));
-            paint.setShadowLayer(15.0f, 0.0f, 0.0f,
-                    CellType.getShadowColor(type, GameBoardFragment.this.getActivity()));
+            paint.setMaskFilter(new BlurMaskFilter(15, BlurMaskFilter.Blur.SOLID));
             return paint;
         }
     }
