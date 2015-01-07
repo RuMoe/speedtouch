@@ -144,6 +144,5 @@ public class GameActivity extends Activity implements GameObserver {
         intent.putExtra(HighscoreActivity.INTENT_CURRENT_SCORE, scoreUpdater.getScore());
 
         startActivity(intent);
-        overridePendingTransition(R.anim.to_game_enter, R.anim.to_game_exit);
     }
 }

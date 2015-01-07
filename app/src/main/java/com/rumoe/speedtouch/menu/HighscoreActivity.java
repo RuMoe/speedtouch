@@ -123,12 +123,10 @@ public class HighscoreActivity extends Activity {
     private void transitionToGame() {
         Intent intent = new Intent(this, GameActivity.class);
         startActivity(intent);
-        overridePendingTransition(R.anim.to_game_enter, R.anim.to_game_exit);
     }
 
     private void transitionToMenu() {
         Intent intent = new Intent(this, TempStart.class);
         startActivity(intent);
-        overridePendingTransition(R.anim.to_game_enter, R.anim.to_game_exit);
     }
 }

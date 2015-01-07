@@ -9,6 +9,16 @@
         <item name="android:windowActionBar"> false </item>
         <!-- Disables the title bar -->
         <item name="android:windowNoTitle"> true </item>
+        <!-- Custom transition animations -->
+        <item name="android:windowAnimationStyle">@style/ActivityAnimations</item>
+    </style>
+
+    <!-- Global exit and enter animations of activities -->
+    <style name="ActivityAnimations" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/to_game_enter</item>
+        <item name="android:activityOpenExitAnimation">@anim/to_game_exit</item>
+        <item name="android:activityCloseEnterAnimation">@anim/to_game_enter</item>
+        <item name="android:activityCloseExitAnimation">@anim/to_game_exit</item>
     </style>
 
     <style name= "genericMenu">
