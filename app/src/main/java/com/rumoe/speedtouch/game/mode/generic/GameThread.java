@@ -72,7 +72,6 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
         GameEventManager.getInstance().unregister(this);
         Log.i("GameThread", "Game over");
         gameOver = true;
-        clearAndStop();
     }
 
     private void gameStart() {
@@ -139,8 +138,12 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
                     public void run() {
                         clearAndStop();
                         CellPosition cp = ((GameStatEvent) event).getCausingCell();
+                        try {
+                            // add a little delay between clearing and blinking so that eventual
+                            // still running animation lifecycle have a change to terminate.
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {};
                         board.blinkCell(cp);
-
                         try {
                             Thread.sleep(Cell.DEFAULT_BLINK_ANIMATION_DURATION + 500);
                         } catch (InterruptedException e) {
