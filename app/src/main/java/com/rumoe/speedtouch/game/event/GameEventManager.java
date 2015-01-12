@@ -34,13 +34,18 @@ public class GameEventManager {
         observer.clear();
     }
 
-    public synchronized void notifyAll(GameEvent event) {
-        for (int i = observer.size() - 1; i >= 0; i--) {
-            if (observer.get(i) == null) {
-                observer.remove(i);
-            } else {
-                observer.get(i).notifyOnGameEvent(event);
+    public synchronized void notifyAll(final GameEvent event) {
+        new Thread() {
+            public void run() {
+                for (int i = observer.size() - 1; i >= 0; i--) {
+                    if (observer.get(i) == null) {
+                        observer.remove(i);
+                    } else {
+                        observer.get(i).notifyOnGameEvent(event);
+                    }
+                }
             }
-        }
+        }.start();
+
     }
 }
