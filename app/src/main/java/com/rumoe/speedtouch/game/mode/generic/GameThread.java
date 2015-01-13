@@ -13,7 +13,7 @@ import com.rumoe.speedtouch.game.ui.gameboard.Cell;
 import com.rumoe.speedtouch.game.ui.gameboard.CellPosition;
 import com.rumoe.speedtouch.game.ui.gameboard.CellType;
 
-public class GameThread implements Runnable, CellObserver, GameObserver {
+public abstract class GameThread implements Runnable, CellObserver, GameObserver {
 
     private Thread thread;
 
@@ -21,12 +21,12 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
     private static final long CLOCK_RATE = 1000;
     private boolean gameOver;
 
-    private final GameBoardFragment board;
+    protected GameBoardFragment board;
 
-    private final int rows;
-    private final int columns;
+    protected int rows;
+    protected int columns;
 
-    private int activeCells;
+    protected int activeCells;
 
     public GameThread(final GameBoardFragment board) {
         GameEventManager.getInstance().register(this);
@@ -43,21 +43,8 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
     public void run() {
         Log.d("GameThread", "GameThread run loop started");
         while (!thread.isInterrupted()) {
+            nextGameThreadCycle();
 
-            if (activeCells < 5) {
-                CellPosition randomCell;
-                do {
-                    int randomCellNr = (int) (Math.random() * rows * columns);
-                    int row = randomCellNr / columns;
-                    int column = randomCellNr % columns;
-
-                        randomCell = new CellPosition(row, column);
-                }while(board.isCellActive(randomCell));
-
-                CellType nextType = CellType.STANDARD;
-                if (Math.random() < 0.05) nextType = CellType.BAD;
-                board.activateCellLifeCycle(randomCell, nextType);
-            }
             try {
                 Thread.sleep(CLOCK_RATE);
             } catch (InterruptedException e) {
@@ -67,6 +54,8 @@ public class GameThread implements Runnable, CellObserver, GameObserver {
         }
         Log.d("GameThread", "GameThread run loop exited");
     }
+
+    protected abstract void nextGameThreadCycle();
 
     public void gameOver() {
         GameEventManager.getInstance().unregister(this);

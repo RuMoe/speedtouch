@@ -12,6 +12,7 @@ import com.rumoe.speedtouch.game.event.GameObserver;
 import com.rumoe.speedtouch.game.mode.generic.GameLifeUpdater;
 import com.rumoe.speedtouch.game.mode.generic.GameScoreUpdater;
 import com.rumoe.speedtouch.game.mode.generic.GameThread;
+import com.rumoe.speedtouch.game.mode.survival.SurvivalGameThread;
 import com.rumoe.speedtouch.game.mode.survival.SurvivalLifeUpdater;
 import com.rumoe.speedtouch.game.mode.survival.SurvivalScoreUpdater;
 import com.rumoe.speedtouch.game.ui.gameboard.CellPosition;
@@ -52,7 +53,7 @@ public class GameActivity extends Activity implements GameObserver {
         //TODO for now scoreUpdater and lifeUpdater will be hardcoded.. change that at some point
         scoreUpdater = new SurvivalScoreUpdater(this);
         lifeUpdater = new SurvivalLifeUpdater(this);
-        gameThread = new GameThread(gameBoard);
+        gameThread = new SurvivalGameThread(gameBoard);
 
         //TODO temporary clusterfuck
         new Thread() {
