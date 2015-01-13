@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
@@ -17,8 +18,8 @@ import java.util.ArrayList;
 
 public class Cell {
 
-    private static final Interpolator GROW_INTERPOLATOR     = new LinearInterpolator();
-    private static final Interpolator SHRINK_INTERPOLATOR   = new AccelerateInterpolator(3.5f);
+    private static final Interpolator GROW_INTERPOLATOR     = new DecelerateInterpolator(2f);
+    private static final Interpolator SHRINK_INTERPOLATOR   = new AccelerateInterpolator(2f);
     private static final Interpolator BLINK_INTERPOLATOR    = new BlinkInterpolator();
 
     public static final int DEFAULT_WAIT_BEFORE_SHRINK_TIME     = 1000;
