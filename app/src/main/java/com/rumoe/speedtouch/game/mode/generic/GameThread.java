@@ -18,7 +18,7 @@ public abstract class GameThread implements Runnable, CellObserver, GameObserver
     private Thread thread;
 
     /** Sleep time between to actions of the game thread in ms */
-    private static final long CLOCK_RATE = 1000;
+    private static final long CLOCK_RATE = 50;
     private boolean gameOver;
 
     protected GameBoardFragment board;
