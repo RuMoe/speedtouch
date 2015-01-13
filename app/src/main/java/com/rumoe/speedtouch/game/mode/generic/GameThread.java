@@ -26,7 +26,10 @@ public abstract class GameThread implements Runnable, CellObserver, GameObserver
     protected int rows;
     protected int columns;
 
+    // The number of currently active cells.
     protected int activeCells;
+    // The number of acitive cells seen during the whole game.
+    protected int totalCellsActivated;
 
     public GameThread(final GameBoardFragment board) {
         GameEventManager.getInstance().register(this);
@@ -94,6 +97,7 @@ public abstract class GameThread implements Runnable, CellObserver, GameObserver
 
     @Override
     public void notifyOnActive(CellEvent event) {
+        totalCellsActivated++;
         activeCells++;
     }
 
