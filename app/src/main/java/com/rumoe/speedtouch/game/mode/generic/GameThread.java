@@ -28,8 +28,10 @@ public abstract class GameThread implements Runnable, CellObserver, GameObserver
 
     // The number of currently active cells.
     protected int activeCells;
-    // The number of acitive cells seen during the whole game.
+    // The number of active cells seen during the whole game.
     protected int totalCellsActivated;
+    // The time of the last activated cell;
+    protected long lastCellActivationTime;
 
     public GameThread(final GameBoardFragment board) {
         GameEventManager.getInstance().register(this);
@@ -98,6 +100,7 @@ public abstract class GameThread implements Runnable, CellObserver, GameObserver
     @Override
     public void notifyOnActive(CellEvent event) {
         totalCellsActivated++;
+        lastCellActivationTime = System.currentTimeMillis();
         activeCells++;
     }
 
