@@ -3,9 +3,7 @@
     <color name="stat_bar_background">#E0E0E0</color>
     <color name="game_board_background">#FFFFFF</color>
 
-    <color name="cell_standard_shadow">#000000</color>
     <color name="cell_standard">#000000</color>
-    <color name="cell_bad_shadow">#FF0000</color>
     <color name="cell_bad">#FF0000</color>
 
     <color name="life_lost_flash">#AAFF0000</color>

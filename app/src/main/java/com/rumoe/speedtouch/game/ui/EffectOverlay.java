@@ -7,8 +7,8 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -22,7 +22,7 @@ import com.rumoe.speedtouch.game.event.GameStatEvent;
 
 public class EffectOverlay extends RelativeLayout implements GameObserver {
 
-    private static final int LIFE_LOST_FLASH_DURATION = 600;
+    private static final int LIFE_LOST_FLASH_DURATION = 500;
 
     private static final int SCORE_ANIM_DURATION = 600;
     private static final int SCORE_ANIM_DISTANCE = 50;
@@ -101,14 +101,14 @@ public class EffectOverlay extends RelativeLayout implements GameObserver {
 
     private void executeLifeLostEffect() {
         final int startColor = getResources().getColor(R.color.life_lost_flash);
-        final int endColor   = getResources().getColor(R.color.life_lost_flash_end);
+        final int endColor   = getResources().getColor(R.color.transparent);
 
         ((Activity) getContext()).runOnUiThread(new Runnable() {
             public void run() {
                 ObjectAnimator bgColorAnimator =
                         ObjectAnimator.ofObject(EffectOverlay.this, "backgroundColor",
                                 new ArgbEvaluator(), startColor, endColor);
-                bgColorAnimator.setInterpolator(new DecelerateInterpolator());
+                bgColorAnimator.setInterpolator(new AccelerateInterpolator());
                 bgColorAnimator.setDuration(LIFE_LOST_FLASH_DURATION);
                 bgColorAnimator.start();
             }

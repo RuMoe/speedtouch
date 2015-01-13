@@ -273,6 +273,8 @@ public class Cell {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 radius = (Float) animation.getAnimatedValue();
+                // round to 3 digits after decimal point preventing jerking for slowly changing values
+                radius = Math.round(radius * 1000) / 1000.0f;
             }
         });
 

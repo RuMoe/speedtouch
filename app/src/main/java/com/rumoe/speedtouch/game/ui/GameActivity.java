@@ -42,6 +42,11 @@ public class GameActivity extends Activity implements GameObserver {
     @Override
     public void onResume() {
         super.onResume();
+        if (gameOverTriggered) {
+            transitionToHighscore();
+            return;
+        }
+
         GameEventManager.getInstance().register(this);
 
         //TODO for now scoreUpdater and lifeUpdater will be hardcoded.. change that at some point
@@ -71,11 +76,10 @@ public class GameActivity extends Activity implements GameObserver {
     @Override
     public void onPause() {
         super.onPause();
+        gameOverTriggered = true;
         gameBoard.unsubscribeToCells(scoreUpdater, lifeUpdater, gameThread);
         GameEventManager.getInstance().unregisterAll();
         gameThread.gameOver();
-        if (!gameOverTriggered)
-            transitionToMenu();
     }
 
     @Override
@@ -144,6 +148,5 @@ public class GameActivity extends Activity implements GameObserver {
         intent.putExtra(HighscoreActivity.INTENT_CURRENT_SCORE, scoreUpdater.getScore());
 
         startActivity(intent);
-        overridePendingTransition(R.anim.to_game_enter, R.anim.to_game_exit);
     }
 }
