@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Speedtouch</string>
-    <string name="title_activity_game">GameActivity</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">SpeedTouch</string>
 
     <!-- Main game activity -->
     <string name="score_label">Score:</string>
     <string name="life_remaining">\u2665</string>
-    <string name="title_activity_temp_start">TempStart</string>
     <string name="action_settings">Settings</string>
 
     <!-- High score activity-->
