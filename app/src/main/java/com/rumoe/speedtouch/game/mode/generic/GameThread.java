@@ -26,6 +26,8 @@ public abstract class GameThread implements Runnable, CellObserver, GameObserver
     protected int rows;
     protected int columns;
 
+    // Number of lives lost throughout the game
+    protected int livesLost;
     // The number of currently active cells.
     protected int activeCells;
     // The number of active cells seen during the whole game.
@@ -130,10 +132,13 @@ public abstract class GameThread implements Runnable, CellObserver, GameObserver
                 gameStart();
                 break;
             case LIFE_LOST:
-                // TODO temporary ... remove when real game threads implemented
+                livesLost++;
                 new Thread(){
                     public void run() {
                         clearAndStop();
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {}
                         CellPosition cp = ((GameStatEvent) event).getCausingCell();
                         board.blinkCell(cp);
                         try {

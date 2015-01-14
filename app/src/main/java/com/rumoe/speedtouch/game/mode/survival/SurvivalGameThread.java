@@ -1,10 +1,7 @@
 package com.rumoe.speedtouch.game.mode.survival;
 
-import android.util.Log;
-
 import com.rumoe.speedtouch.game.mode.generic.GameThread;
 import com.rumoe.speedtouch.game.ui.GameBoardFragment;
-import com.rumoe.speedtouch.game.ui.gameboard.Cell;
 import com.rumoe.speedtouch.game.ui.gameboard.CellPosition;
 import com.rumoe.speedtouch.game.ui.gameboard.CellType;
 
@@ -39,6 +36,10 @@ public class SurvivalGameThread extends GameThread {
         }
     }
 
+    private int gameProgres() {
+        return Math.max(totalCellsActivated - 50*livesLost, 0);
+    }
+
     /**
      * Calculates the maximum number of cells to be one the board based on the number of
      * already seen cells (which is a measure for the progression)
@@ -47,14 +48,15 @@ public class SurvivalGameThread extends GameThread {
     private int calculateMaxActiveCells() {
         // The returned value is x in cellsSeen = 10x(x+1)/2
         // Maximum 5
+        int max = 5;
         int tmp = 0;
-        for (int i = 1; i < 5; i++) {
+        for (int i = 1; i < max; i++) {
             tmp += 10*i;
-            if (tmp >= totalCellsActivated) {
+            if (tmp >= gameProgres()) {
                 return i;
             }
         }
-        return 5;
+        return max;
     }
 
     /**
@@ -63,9 +65,9 @@ public class SurvivalGameThread extends GameThread {
      * @return the number of milliseconds to wait in between two cell spawn.
      */
     private int minDelayTime() {
-        if (totalCellsActivated > 500) return 0;
+        if (gameProgres() > 500) return 0;
         return Math.max(0, (int) (1500 -
-                1500*Math.pow(totalCellsActivated/500.0, 0.2)));
+                1500*Math.pow(gameProgres()/500.0, 0.2)));
     }
 
     /**
@@ -75,7 +77,7 @@ public class SurvivalGameThread extends GameThread {
      */
     private double badCellPercentage() {
         // progress from 0.01 - 0.1. increasing all 15 cells by 0.15
-        return Math.min(0.01 + ((totalCellsActivated / 15) / 100.0), 0.15);
+        return Math.min(0.01 + ((gameProgres() / 15) / 100.0), 0.15);
     }
 
     /**
@@ -84,8 +86,8 @@ public class SurvivalGameThread extends GameThread {
      * @return Duration of cell grow animation in ms
      */
     private int growTime() {
-        if (totalCellsActivated > 500) return 100;
-        return  (int) (1000 - 900 * Math.log10(1 + totalCellsActivated/50.0));
+        if (gameProgres() > 500) return 100;
+        return  (int) (1000 - 900 * Math.log10(1 + gameProgres()/50.0));
     }
 
     /**
@@ -94,8 +96,8 @@ public class SurvivalGameThread extends GameThread {
      * @return Duration of cell staying at full size.
      */
     private int stayTime() {
-        if (totalCellsActivated > 500) return 750;
-        return (int) (3000 - 2250 * Math.log10(1 + totalCellsActivated/50.0));
+        if (gameProgres() > 500) return 750;
+        return (int) (3000 - 2250 * Math.log10(1 + gameProgres()/50.0));
     }
 
     /**
@@ -104,7 +106,7 @@ public class SurvivalGameThread extends GameThread {
      * @return Duration of cell shrink animation in ms
      */
     private int shrinkTime() {
-        if (totalCellsActivated > 500) return 100;
-        return  (int) (2000 - 1900 * Math.log10(1 + totalCellsActivated/50.0));
+        if (gameProgres() > 500) return 100;
+        return  (int) (2000 - 1900 * Math.log10(1 + gameProgres()/50.0));
     }
 }
