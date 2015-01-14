@@ -53,24 +53,28 @@ public class SurvivalScoreUpdater extends GameScoreUpdater {
             int scoreGain = (int) (baseScore * getEffectiveMultiplier() *
                     (1 - (((float) touchDelay) / cellLifeTime)));
 
-            switch (event.getCellType()) {
-                case BAD:
-                    scoreGain *= badPenalty;
+              // There are instances where the cell is already gone but still registers a touch.
+              // The scoreGain in this case would be negative but we do not want those to register.
+            if (scoreGain > 0) {
+                switch (event.getCellType()) {
+                    case BAD:
+                        scoreGain *= badPenalty;
                         // don't go under 0
-                    score = Math.max(scoreGain + score, 0);
-                    break;
-                case STANDARD:
-                    score += scoreGain;
-                    currentMultiplier += multiplierIncrement;
-                    break;
-                default:
-                    Log.d("SurvivalScoreUpdater", "Unknown CellType touched");
+                        score = Math.max(scoreGain + score, 0);
+                        break;
+                    case STANDARD:
+                        score += scoreGain;
+                        currentMultiplier += multiplierIncrement;
+                        break;
+                    default:
+                        Log.d("SurvivalScoreUpdater", "Unknown CellType touched");
+                }
+                GameEventManager.getInstance().notifyAll(
+                        new GameStatEvent(
+                                GameEvent.EventType.SCORE_CHANGE,
+                                event.getCellPosition(),
+                                scoreGain));
             }
-            GameEventManager.getInstance().notifyAll(
-                    new GameStatEvent(
-                            GameEvent.EventType.SCORE_CHANGE,
-                            event.getCellPosition(),
-                            scoreGain));
         }
         if (checkForMultiplierReset(event)) {
             currentMultiplier = baseMultiplier;
