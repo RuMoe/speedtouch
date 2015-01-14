@@ -20,7 +20,7 @@ public class HighscoreActivity extends Activity {
     private static final String SCORE_FILE_NAME         = "speedtouch.stat";
 
     public static final String INTENT_CURRENT_SCORE     = "CURRENT_SCORE";
-    private static final int SCORE_LENGTH               = 8;
+    private static final int SCORE_LENGTH               = 7;
 
     private boolean wasPaused = false;
 

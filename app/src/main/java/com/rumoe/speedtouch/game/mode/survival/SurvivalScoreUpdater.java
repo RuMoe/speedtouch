@@ -20,11 +20,11 @@ public class SurvivalScoreUpdater extends GameScoreUpdater {
         // maximum possible score given when popping a cell
     private int     baseScore           = 100;
         // increment multiplier by this whenever a standard cell is popped
-    private double  multiplierIncrement = 0.02;
+    private double  multiplierIncrement = 0.1;
         // reset multiplier to this value whenever an error is made
     private double  baseMultiplier      = 1.0;
-        // percentage of popping a cell which will be used as punishment when popping a bad cell
-    private double  badPenalty          = -0.5;
+        // multiplier used as punishment when popping a bad cell
+    private double  badPenalty          = -10;
 
     public SurvivalScoreUpdater (Activity rootActivity) {
         super(rootActivity);
